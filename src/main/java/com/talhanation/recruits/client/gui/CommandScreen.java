@@ -10,7 +10,7 @@ import com.talhanation.recruits.config.RecruitsClientConfig;
 import com.talhanation.recruits.inventory.CommandMenu;
 import com.talhanation.recruits.network.*;
 import com.talhanation.recruits.world.RecruitsGroup;
-import de.maxhenkel.corelib.inventory.ScreenBase;
+import com.talhanation.recruits.client.gui.ScreenBase;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.Tooltip;

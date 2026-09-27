@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.init.ModScreens;
-import de.maxhenkel.corelib.inventory.ContainerBase;
+import com.talhanation.recruits.inventory.ContainerBase;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;

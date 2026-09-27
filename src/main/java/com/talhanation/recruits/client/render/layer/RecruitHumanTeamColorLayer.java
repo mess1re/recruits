@@ -2,7 +2,7 @@ package com.talhanation.recruits.client.render.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.talhanation.recruits.Main;
-import com.talhanation.recruits.entities.AbstractRecruitEntity;;
+import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;

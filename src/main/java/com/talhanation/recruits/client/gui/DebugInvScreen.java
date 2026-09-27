@@ -6,7 +6,7 @@ import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.inventory.DebugInvMenu;
 import com.talhanation.recruits.network.MessageDebugGui;
 import com.talhanation.recruits.world.RecruitsGroup;
-import de.maxhenkel.corelib.inventory.ScreenBase;
+import com.talhanation.recruits.client.gui.ScreenBase;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;

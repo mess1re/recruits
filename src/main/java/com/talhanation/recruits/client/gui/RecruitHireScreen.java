@@ -8,7 +8,7 @@ import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.inventory.RecruitHireMenu;
 import com.talhanation.recruits.network.MessageHire;
 import com.talhanation.recruits.world.RecruitsGroup;
-import de.maxhenkel.corelib.inventory.ScreenBase;
+import com.talhanation.recruits.client.gui.ScreenBase;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;

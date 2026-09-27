@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.Sync
 import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
 
@@ -38,6 +39,23 @@ dependencies {
     implementation("dev.architectury:architectury-neoforge:$architecturyVersion")
 }
 
+// Forge renamed its public packages when NeoForge split off. Keeping 500+ import-only
+// Stonecutter branches in the source would hide the meaningful version differences, so
+// this target performs that namespace-only relocation in generated sources. Actual API
+// changes still live explicitly in the shared source as Stonecutter branches.
+val relocateLoaderNamespace = tasks.register<Sync>("relocateLoaderNamespace") {
+    dependsOn("stonecutterGenerate")
+    from(layout.buildDirectory.dir("generated/stonecutter/main/java"))
+    into(layout.buildDirectory.dir("generated/neoforge/main/java"))
+    filter { line: String ->
+        line
+            .replace("net.minecraftforge.api.distmarker", "net.neoforged.api.distmarker")
+            .replace("net.minecraftforge.eventbus.api", "net.neoforged.bus.api")
+            .replace("net.minecraftforge.fml", "net.neoforged.fml")
+            .replace("net.minecraftforge", "net.neoforged.neoforge")
+    }
+}
+
 neoForge {
     version = project.property("deps.neoforge") as String
 
@@ -72,6 +90,7 @@ neoForge {
 }
 
 sourceSets.main {
+    java.setSrcDirs(listOf(layout.buildDirectory.dir("generated/neoforge/main/java")))
     resources.srcDir(rootProject.file("src/generated/resources"))
 }
 
@@ -81,6 +100,7 @@ java {
 }
 
 tasks.withType<JavaCompile>().configureEach {
+    dependsOn(relocateLoaderNamespace)
     options.encoding = "UTF-8"
     options.release.set(21)
 }

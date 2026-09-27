@@ -16,7 +16,7 @@ import com.talhanation.recruits.network.MessageCreateTeam;
 import com.talhanation.recruits.network.MessageSaveTeamSettings;
 import com.talhanation.recruits.world.RecruitsPlayerInfo;
 import com.talhanation.recruits.world.RecruitsFactionManager;
-import de.maxhenkel.corelib.inventory.ScreenBase;
+import com.talhanation.recruits.client.gui.ScreenBase;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;

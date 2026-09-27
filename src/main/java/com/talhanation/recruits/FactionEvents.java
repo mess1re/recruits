@@ -412,7 +412,7 @@ public class FactionEvents {
     }
 
     public static void addPlayerToData(ServerLevel level, String teamName, int x, String namePlayerToAdd){
-        RecruitsFaction recruitsFaction = recruitsFactionManager.getFactionByStringID(teamName);;
+        RecruitsFaction recruitsFaction = recruitsFactionManager.getFactionByStringID(teamName);
 
         recruitsFaction.addPlayer(x);
 
@@ -423,7 +423,7 @@ public class FactionEvents {
         recruitsFactionManager.save(level);
     }
     public static void addNPCToData(ServerLevel level, String teamName, int x){
-        RecruitsFaction recruitsFaction = recruitsFactionManager.getFactionByStringID(teamName);;
+        RecruitsFaction recruitsFaction = recruitsFactionManager.getFactionByStringID(teamName);
 
         if(recruitsFaction != null){
             recruitsFaction.addNPCs(x);

@@ -6,7 +6,7 @@ import com.talhanation.recruits.entities.AssassinLeaderEntity;
 import com.talhanation.recruits.inventory.AssassinLeaderMenu;
 import com.talhanation.recruits.network.MessageAssassinCount;
 import com.talhanation.recruits.network.MessageAssassinate;
-import de.maxhenkel.corelib.inventory.ScreenBase;
+import com.talhanation.recruits.client.gui.ScreenBase;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;

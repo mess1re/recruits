@@ -297,7 +297,7 @@ public class RecruitsGroup {
         }
         public static DisbandContext fromNBT(CompoundTag tag) {
             boolean disband = tag.getBoolean("disband");
-            boolean keepTeam =  tag.getBoolean("keepTeam");;
+            boolean keepTeam = tag.getBoolean("keepTeam");
             boolean increaseCost = tag.getBoolean("increaseCost");
 
             return new DisbandContext(disband, keepTeam, increaseCost);

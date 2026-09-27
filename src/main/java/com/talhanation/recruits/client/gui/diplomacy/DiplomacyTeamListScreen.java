@@ -126,7 +126,7 @@ public class DiplomacyTeamListScreen extends ListScreenBase {
                     else{
                         diplomacyFilter = DiplomacyTeamList.DiplomacyFilter.ALL;
                     }
-                    listUpdateFilter();;
+                    listUpdateFilter();
                 });
 
         neutralsButton = new RecruitsDiplomacyButton(RecruitsDiplomacyManager.DiplomacyStatus.NEUTRAL,guiLeft + buttonX + 21, guiTop + buttonY2, 21, 21, Component.literal(""),
