@@ -451,15 +451,25 @@ public class CommandScreen extends ScreenBase<CommandMenu> {
     }
 
     @Override
-    public boolean mouseScrolled(double p_94686_, double p_94687_, double p_94688_) {
-        if(p_94688_ > 0){
+    public boolean mouseScrolled(double mouseX, double mouseY,
+                                 //? if forge {
+                                 double scrollAmount
+                                 //?} else {
+                                 /*double scrollX, double scrollAmount
+                                 *///?}
+    ) {
+        if(scrollAmount > 0){
             this.setCurrentCategory(CommandCategoryManager.getPrevious(currentCategory));
         }
         else{
             this.setCurrentCategory(CommandCategoryManager.getNext(currentCategory));
         }
 
-        return super.mouseScrolled(p_94686_, p_94687_, p_94688_);
+        //? if forge {
+        return super.mouseScrolled(mouseX, mouseY, scrollAmount);
+        //?} else {
+        /*return super.mouseScrolled(mouseX, mouseY, scrollX, scrollAmount);
+        *///?}
     }
 
     private void invertGroups() {

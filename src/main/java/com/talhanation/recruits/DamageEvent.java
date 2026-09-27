@@ -5,7 +5,11 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+//? if forge {
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+*///?}
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -47,7 +51,13 @@ public class DamageEvent {
     }
 
     @SubscribeEvent
-    public void onEntityHurt(LivingHurtEvent event) {
+    public void onEntityHurt(
+            //? if forge {
+            LivingHurtEvent event
+            //?} else {
+            /*LivingIncomingDamageEvent event
+            *///?}
+    ) {
         if (!event.isCanceled()) {
 
             LivingEntity target = event.getEntity();
@@ -78,6 +88,9 @@ public class DamageEvent {
                 return;
             }
             target.invulnerableTime = 0;
+            //? if neoforge {
+            /*event.setInvulnerabilityTicks(0);
+            *///?}
         }
     }
 

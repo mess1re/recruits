@@ -93,7 +93,9 @@ public class DebugInvScreen extends ScreenBase<DebugInvMenu> {
 
     protected void containerTick() {
         super.containerTick();
+        //? if forge {
         if(textField != null) textField.tick();
+        //?}
     }
 
 

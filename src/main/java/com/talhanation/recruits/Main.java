@@ -90,6 +90,7 @@ public class Main {
         ModEntityTypes.ENTITY_TYPES.register();
         //? if neoforge {
         /*modEventBus.addListener(RecruitsCapabilities::register);
+        modEventBus.addListener(AbstractChunkLoaderEntity::registerTicketController);
         *///?}
 
         modEventBus.addListener(this::addCreativeTabs);

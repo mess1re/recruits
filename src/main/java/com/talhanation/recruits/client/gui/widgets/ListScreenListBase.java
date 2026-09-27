@@ -14,10 +14,18 @@ public abstract class ListScreenListBase<T extends ListScreenEntryBase<T>> exten
     }
 
     @Override
+    //? if forge {
     public void render(GuiGraphics guiGraphics, int x, int y, float partialTicks) {
+    //?} else {
+    /*public void renderWidget(GuiGraphics guiGraphics, int x, int y, float partialTicks) {
+    *///?}
         double scale = minecraft.getWindow().getGuiScale();
         RenderSystem.enableScissor((int) ((double) getRowLeft() * scale), (int) ((double) (height - y1) * scale), (int) ((double) (getScrollbarPosition() + 6) * scale), (int) ((double) (height - (height - y1) - y0 - 4) * scale));
+        //? if forge {
         super.render(guiGraphics, x, y, partialTicks);
+        //?} else {
+        /*super.renderWidget(guiGraphics, x, y, partialTicks);
+        *///?}
         RenderSystem.disableScissor();
     }
 

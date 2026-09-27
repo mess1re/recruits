@@ -31,7 +31,11 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.Team;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+//? if forge {
 import net.minecraftforge.event.entity.living.LivingEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.tick.EntityTickEvent;
+*///?}
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
@@ -92,7 +96,13 @@ public class VillagerEvents {
     };
 
     @SubscribeEvent
-    public void onVillagerLivingUpdate(LivingEvent.LivingTickEvent event) {
+    public void onVillagerLivingUpdate(
+            //? if forge {
+            LivingEvent.LivingTickEvent event
+            //?} else {
+            /*EntityTickEvent.Post event
+            *///?}
+    ) {
         Entity entity = event.getEntity();
         if (entity instanceof Villager villager) {
             VillagerProfession profession = villager.getVillagerData().getProfession();

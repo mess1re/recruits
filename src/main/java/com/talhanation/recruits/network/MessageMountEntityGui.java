@@ -13,8 +13,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraftforge.common.extensions.IForgeEntity;
-
 import java.util.*;
 import java.util.function.Function;
 

@@ -6,7 +6,13 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.item.Items;
+//? if forge {
 import net.minecraft.world.item.alchemy.PotionUtils;
+//?}
+//? if neoforge {
+/*import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.alchemy.PotionContents;
+*///?}
 import net.minecraft.world.InteractionHand;
 
 import javax.annotation.Nullable;
@@ -56,7 +62,7 @@ public class RecruitQuaffGoal extends Goal {
 
         for(int i = 0; i < inventory.getContainerSize(); i++){
             ItemStack itemStack = inventory.getItem(i);
-            if (PotionUtils.getMobEffects(itemStack).size() > 0 && PotionUtils.getMobEffects(itemStack).stream().noneMatch(instance -> instance.getEffect().getCategory().equals(MobEffectCategory.HARMFUL))) {
+            if (isUsefulPotion(itemStack)) {
                 return true;
             }
         }
@@ -69,13 +75,27 @@ public class RecruitQuaffGoal extends Goal {
         ItemStack itemStack = null;
         for(int i = 0; i < inventory.getContainerSize(); i++){
             itemStack = inventory.getItem(i);
-            if (PotionUtils.getMobEffects(itemStack).size() > 0 && PotionUtils.getMobEffects(itemStack).stream().noneMatch(instance -> instance.getEffect().getCategory().equals(MobEffectCategory.HARMFUL))) {
+            if (isUsefulPotion(itemStack)) {
                 slotID = i;
                 recruit.inventory.removeItemNoUpdate(i);
                 return itemStack;
             }
         }
         return itemStack;
+    }
+
+    private boolean isUsefulPotion(ItemStack itemStack) {
+        //? if forge {
+        return !PotionUtils.getMobEffects(itemStack).isEmpty()
+                && PotionUtils.getMobEffects(itemStack).stream().noneMatch(instance -> instance.getEffect().getCategory().equals(MobEffectCategory.HARMFUL));
+        //?} else {
+        /*PotionContents contents = itemStack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+        if (!contents.hasEffects()) return false;
+        for (var instance : contents.getAllEffects()) {
+            if (instance.getEffect().value().getCategory() == MobEffectCategory.HARMFUL) return false;
+        }
+        return true;
+        *///?}
     }
 
     @Override

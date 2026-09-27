@@ -22,9 +22,11 @@ public class DiplomacyTeamList extends ListScreenListBase<DiplomacyTeamEntry> {
         this.filter = "";
         this.diplomacyFilter = DiplomacyFilter.ALL;
 
+        //? if forge {
         setRenderBackground(false);
         setRenderTopAndBottom(false);
         setRenderSelection(true);
+        //?}
     }
 
     public void tick() {

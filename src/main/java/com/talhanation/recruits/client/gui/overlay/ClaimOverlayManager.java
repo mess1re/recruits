@@ -86,11 +86,17 @@ public class ClaimOverlayManager {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
 
+        //? if forge {
         if (mc.gui.getTabList().visible) return;
+        //?} else {
+        /*if (mc.options.keyPlayerList.isDown()) return;
+        *///?}
 
+        //? if forge {
         if (!mc.gui.getBossOverlay().events.isEmpty()) {
             return;
         }
+        //?}
 
         if (mc.level != null && mc.level.dimension() != Level.OVERWORLD)return;
 

@@ -4,7 +4,11 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+//? if forge {
 import net.minecraft.world.level.block.GlassBlock;
+//?} else {
+/*import net.minecraft.world.level.block.TransparentBlock;
+*///?}
 import net.minecraft.world.level.block.IceBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -41,7 +45,11 @@ public final class MapStateClassifier {
         Block block = state.getBlock();
         if (block == Blocks.GLASS || block == Blocks.GLASS_PANE) return false;
 
+        //? if forge {
         if (block instanceof GlassBlock) return true;
+        //?} else {
+        /*if (block instanceof TransparentBlock) return true;
+        *///?}
         return hasTranslucentRenderType(state);
     }
 

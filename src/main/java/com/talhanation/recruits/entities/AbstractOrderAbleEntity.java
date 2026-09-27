@@ -4,7 +4,11 @@ import com.talhanation.recruits.entities.ai.FleeFire;
 import com.talhanation.recruits.entities.ai.FleeTNT;
 import com.talhanation.recruits.entities.ai.FleeTarget;
 import com.talhanation.recruits.entities.ai.UseShield;
+import com.talhanation.recruits.util.RecruitsAttributeModifiers;
 import net.minecraft.core.BlockPos;
+//? if neoforge {
+/*import net.minecraft.core.component.DataComponents;
+*///?}
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -284,10 +288,14 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
     }
 
     public boolean doHurtTarget(Entity entity) {
+        //? if forge {
         boolean flag = entity.hurt(this.damageSources().mobAttack(this), (float)((int)this.getAttributeValue(Attributes.ATTACK_DAMAGE)));
         if (flag) {
             this.doEnchantDamageEffects(this, entity);
         }
+        //?} else {
+        /*boolean flag = super.doHurtTarget(entity);
+        *///?}
         this.addXp(2);
         this.checkLevel();
         this.damageMainHandItem();
@@ -297,13 +305,13 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
     public void addLevelBuffs(){
         int level = getXpLevel();
         if(level <= 10){
-            getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier("heath_bonus_level", 3D, AttributeModifier.Operation.ADDITION));
-            getAttribute(Attributes.ATTACK_DAMAGE).addPermanentModifier(new AttributeModifier("attack_bonus_level", 0.15D, AttributeModifier.Operation.ADDITION));
-            getAttribute(Attributes.KNOCKBACK_RESISTANCE).addPermanentModifier(new AttributeModifier("knockback_bonus_level", 0.01D, AttributeModifier.Operation.ADDITION));
-            getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(new AttributeModifier("speed_bonus_level", 0.01D, AttributeModifier.Operation.ADDITION));
+            getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(RecruitsAttributeModifiers.addition("heath_bonus_level", 3D));
+            getAttribute(Attributes.ATTACK_DAMAGE).addPermanentModifier(RecruitsAttributeModifiers.addition("attack_bonus_level", 0.15D));
+            getAttribute(Attributes.KNOCKBACK_RESISTANCE).addPermanentModifier(RecruitsAttributeModifiers.addition("knockback_bonus_level", 0.01D));
+            getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(RecruitsAttributeModifiers.addition("speed_bonus_level", 0.01D));
         }
         if(level > 10){
-            getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier("heath_bonus_level", 2D, AttributeModifier.Operation.ADDITION));
+            getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(RecruitsAttributeModifiers.addition("heath_bonus_level", 2D));
         }
     }
 
@@ -349,7 +357,11 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
     }
 
     @Override
-    public boolean canBeLeashed(Player player) {
+    public boolean canBeLeashed(
+            //? if forge {
+            Player player
+            //?}
+    ) {
         return false;
     }
 
@@ -363,7 +375,7 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
             }
             for (int i = 11; i < 15; ++i) {//11,12,13,14 = armor
                 ItemStack itemstack = this.inventory.getItem(i);
-                if ((!(damageSource.is(DamageTypes.IN_FIRE) && (damageSource.is(DamageTypes.ON_FIRE))) || !itemstack.getItem().isFireResistant()) && itemstack.getItem() instanceof ArmorItem) {
+                if ((!(damageSource.is(DamageTypes.IN_FIRE) && (damageSource.is(DamageTypes.ON_FIRE))) || !isFireResistant(itemstack)) && itemstack.getItem() instanceof ArmorItem) {
                     itemstack.setDamageValue((int) damage);
                 }
             }
@@ -372,7 +384,7 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
 
     protected void damageMainHandItem() {
         ItemStack itemstack = this.inventory.getItem(9);// 10 = hoffhand slot
-        if (itemstack.getItem().isDamageable(itemstack)) {
+        if (itemstack.isDamageableItem()) {
             itemstack.setDamageValue(1);
         }
     }
@@ -389,7 +401,11 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
         if (this.useItem.getItem() instanceof ShieldItem) {
             int i = 1 + Mth.floor(damage);
             InteractionHand hand = this.getUsedItemHand();
+            //? if forge {
             this.useItem.hurtAndBreak(i, this, (entity) -> entity.broadcastBreakEvent(hand));
+            //?} else {
+            /*this.useItem.hurtAndBreak(i, this, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+            *///?}
             if (this.useItem.isEmpty()) {
                 if (hand == InteractionHand.MAIN_HAND) {
                     this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
@@ -409,6 +425,14 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
                 itemstack.setDamageValue((int) damage);
             }
         }
+    }
+
+    private boolean isFireResistant(ItemStack stack) {
+        //? if forge {
+        return stack.getItem().isFireResistant();
+        //?} else {
+        /*return stack.has(DataComponents.FIRE_RESISTANT);
+        *///?}
     }
 
     @Override

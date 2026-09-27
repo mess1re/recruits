@@ -20,6 +20,7 @@ import com.talhanation.recruits.inventory.DebugInvMenu;
 import com.talhanation.recruits.inventory.RecruitHireMenu;
 import com.talhanation.recruits.inventory.RecruitInventoryMenu;
 import com.talhanation.recruits.network.*;
+import com.talhanation.recruits.util.RecruitsAttributeModifiers;
 import com.talhanation.recruits.util.RegistryUtils;
 import com.talhanation.recruits.world.RecruitsDiplomacyManager;
 import com.talhanation.recruits.world.RecruitsFaction;
@@ -27,6 +28,9 @@ import com.talhanation.recruits.world.RecruitsGroup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+//? if neoforge {
+/*import net.minecraft.core.component.DataComponents;
+*///?}
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -151,7 +155,11 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         this.xpReward = 6;
         this.navigation = this.createNavigation(world);
         this.targetingConditions = TargetingConditions.forCombat().ignoreInvisibilityTesting().ignoreLineOfSight().selector(this::shouldAttack);
+        //? if forge {
         this.setMaxUpStep(1F);
+        //?} else {
+        /*this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(1.0D);
+        *///?}
         this.setMaxFallDistance(1);
     }
 
@@ -323,10 +331,10 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         return spawnData;
     }
     public void setRandomSpawnBonus(){
-        getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier("heath_bonus", this.random.nextDouble() * 0.5D, AttributeModifier.Operation.MULTIPLY_BASE));
-        getAttribute(Attributes.ATTACK_DAMAGE).addPermanentModifier(new AttributeModifier("attack_bonus", this.random.nextDouble() * 0.5D, AttributeModifier.Operation.MULTIPLY_BASE));
-        getAttribute(Attributes.KNOCKBACK_RESISTANCE).addPermanentModifier(new AttributeModifier("knockback_bonus", this.random.nextDouble() * 0.1D, AttributeModifier.Operation.MULTIPLY_BASE));
-        getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(new AttributeModifier("speed_bonus", this.random.nextDouble() * 0.1D, AttributeModifier.Operation.MULTIPLY_BASE));
+        getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(RecruitsAttributeModifiers.multiplyBase("heath_bonus", this.random.nextDouble() * 0.5D));
+        getAttribute(Attributes.ATTACK_DAMAGE).addPermanentModifier(RecruitsAttributeModifiers.multiplyBase("attack_bonus", this.random.nextDouble() * 0.5D));
+        getAttribute(Attributes.KNOCKBACK_RESISTANCE).addPermanentModifier(RecruitsAttributeModifiers.multiplyBase("knockback_bonus", this.random.nextDouble() * 0.1D));
+        getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(RecruitsAttributeModifiers.multiplyBase("speed_bonus", this.random.nextDouble() * 0.1D));
     }
 
     ////////////////////////////////////REGISTER////////////////////////////////////
@@ -742,7 +750,11 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     }
 
     protected float getStandingEyeHeight(@NotNull Pose pos, EntityDimensions size) {
+        //? if forge {
         return size.height * 0.98F;
+        //?} else {
+        /*return size.height() * 0.98F;
+        *///?}
     }
 
     public int getMaxHeadXRot() {
@@ -1116,7 +1128,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         byte biomeByte = 2; //PLAINS
         int variant = recruit.random.nextInt(0, 14);
         //DESERT
-        if(biome.is(Biomes.ERODED_BADLANDS) || biome.containsTag(Tags.Biomes.IS_DESERT) || biome.containsTag(Tags.Biomes.IS_SANDY) && !biome.containsTag(Tags.Biomes.IS_WET_OVERWORLD)){
+        if(biome.is(Biomes.ERODED_BADLANDS) || biome.is(Tags.Biomes.IS_DESERT) || biome.is(Tags.Biomes.IS_SANDY) && !biome.is(Tags.Biomes.IS_WET_OVERWORLD)){
             biomeByte = 0;
             variant = recruit.random.nextInt(15, 19);
         }
@@ -1403,6 +1415,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     }
 
     public boolean doHurtTarget(@NotNull Entity entity) {
+        //? if forge {
         float f = (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
         if (entity instanceof LivingEntity) {
             f += EnchantmentHelper.getDamageBonus(this.getMainHandItem(), ((LivingEntity)entity).getMobType());
@@ -1419,6 +1432,9 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
             this.doEnchantDamageEffects(this, entity);
             this.setLastHurtMob(entity);
         }
+        //?} else {
+        /*boolean flag = super.doHurtTarget(entity);
+        *///?}
         this.addXp(1);
         if(this.getHunger() > 0) this.setHunger(this.getHunger() - 0.1F);
         this.checkLevel();
@@ -1430,13 +1446,13 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     public void addLevelBuffs(){
         int level = getXpLevel();
         if(level <= 10){
-            getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier("heath_bonus_level", 2D, AttributeModifier.Operation.ADDITION));
-            getAttribute(Attributes.ATTACK_DAMAGE).addPermanentModifier(new AttributeModifier("attack_bonus_level", 0.03D, AttributeModifier.Operation.ADDITION));
-            getAttribute(Attributes.KNOCKBACK_RESISTANCE).addPermanentModifier(new AttributeModifier("knockback_bonus_level", 0.0012D, AttributeModifier.Operation.ADDITION));
-            getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(new AttributeModifier("speed_bonus_level", 0.0025D, AttributeModifier.Operation.ADDITION));
+            getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(RecruitsAttributeModifiers.addition("heath_bonus_level", 2D));
+            getAttribute(Attributes.ATTACK_DAMAGE).addPermanentModifier(RecruitsAttributeModifiers.addition("attack_bonus_level", 0.03D));
+            getAttribute(Attributes.KNOCKBACK_RESISTANCE).addPermanentModifier(RecruitsAttributeModifiers.addition("knockback_bonus_level", 0.0012D));
+            getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(RecruitsAttributeModifiers.addition("speed_bonus_level", 0.0025D));
         }
         if(level > 10){
-            getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier("heath_bonus_level", 2D, AttributeModifier.Operation.ADDITION));
+            getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(RecruitsAttributeModifiers.addition("heath_bonus_level", 2D));
         }
     }
 
@@ -1444,12 +1460,12 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
 
         for(int i = 0; i < level; i++) {
             if (level <= 10) {
-                getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier("heath_bonus_level", 2D, AttributeModifier.Operation.ADDITION));
-                getAttribute(Attributes.ATTACK_DAMAGE).addPermanentModifier(new AttributeModifier("attack_bonus_level", 0.03D, AttributeModifier.Operation.ADDITION));
-                getAttribute(Attributes.KNOCKBACK_RESISTANCE).addPermanentModifier(new AttributeModifier("knockback_bonus_level", 0.0012D, AttributeModifier.Operation.ADDITION));
-                getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(new AttributeModifier("speed_bonus_level", 0.0025D, AttributeModifier.Operation.ADDITION));}
+                getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(RecruitsAttributeModifiers.addition("heath_bonus_level", 2D));
+                getAttribute(Attributes.ATTACK_DAMAGE).addPermanentModifier(RecruitsAttributeModifiers.addition("attack_bonus_level", 0.03D));
+                getAttribute(Attributes.KNOCKBACK_RESISTANCE).addPermanentModifier(RecruitsAttributeModifiers.addition("knockback_bonus_level", 0.0012D));
+                getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(RecruitsAttributeModifiers.addition("speed_bonus_level", 0.0025D));}
             if (level > 10) {
-                getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier("heath_bonus_level", 2D, AttributeModifier.Operation.ADDITION));
+                getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(RecruitsAttributeModifiers.addition("heath_bonus_level", 2D));
             }
         }
     }
@@ -1593,9 +1609,10 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     }
 
     public boolean hasFoodInInv(){
-        return this.getInventory().items
-                .stream()
-                .anyMatch(ItemStack::isEdible);
+        for (int i = 0; i < this.getInventory().getContainerSize(); i++) {
+            if (this.isFood(this.getInventory().getItem(i))) return true;
+        }
+        return false;
     }
 
     public boolean needsToEat(){
@@ -1671,7 +1688,11 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     }
 
     @Override
-    public boolean canBeLeashed(@NotNull Player player) {
+    public boolean canBeLeashed(
+            //? if forge {
+            @NotNull Player player
+            //?}
+    ) {
         return false;
     }
 
@@ -1685,11 +1706,9 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         ItemStack headArmor = this.getItemBySlot(EquipmentSlot.HEAD);
         boolean hasHeadArmor = !headArmor.isEmpty();
 
-        if (((!(damageSource.is(DamageTypes.IN_FIRE) && (damageSource.is(DamageTypes.ON_FIRE))) || !headArmor.getItem().isFireResistant()) && headArmor.getItem() instanceof ArmorItem)){
+        if (((!(damageSource.is(DamageTypes.IN_FIRE) && (damageSource.is(DamageTypes.ON_FIRE))) || !isFireResistant(headArmor)) && headArmor.getItem() instanceof ArmorItem)){
             //damage
-            headArmor.hurtAndBreak(1, this, (recruit) -> {
-                recruit.broadcastBreakEvent(EquipmentSlot.HEAD);
-            });
+            damageItem(headArmor, EquipmentSlot.HEAD);
         }
 
         if (this.getItemBySlot(EquipmentSlot.HEAD).isEmpty() && hasHeadArmor) {
@@ -1701,11 +1720,9 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
 
         ItemStack chestArmor = this.getItemBySlot(EquipmentSlot.CHEST);
         boolean hasChestArmor = !chestArmor.isEmpty();
-        if (((!(damageSource.is(DamageTypes.IN_FIRE) && (damageSource.is(DamageTypes.ON_FIRE))) || !chestArmor.getItem().isFireResistant()) && chestArmor.getItem() instanceof ArmorItem)){
+        if (((!(damageSource.is(DamageTypes.IN_FIRE) && (damageSource.is(DamageTypes.ON_FIRE))) || !isFireResistant(chestArmor)) && chestArmor.getItem() instanceof ArmorItem)){
             //damage
-            chestArmor.hurtAndBreak(1, this, (recruit) -> {
-                recruit.broadcastBreakEvent(EquipmentSlot.CHEST);
-            });
+            damageItem(chestArmor, EquipmentSlot.CHEST);
         }
         if (this.getItemBySlot(EquipmentSlot.CHEST).isEmpty() && hasChestArmor) {
             this.inventory.setItem(1, ItemStack.EMPTY);
@@ -1717,11 +1734,9 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         ItemStack legsArmor = this.getItemBySlot(EquipmentSlot.LEGS);
         boolean hasLegsArmor = !legsArmor.isEmpty();
 
-        if (((!(damageSource.is(DamageTypes.IN_FIRE) && (damageSource.is(DamageTypes.ON_FIRE))) || !legsArmor.getItem().isFireResistant()) && legsArmor.getItem() instanceof ArmorItem)){
+        if (((!(damageSource.is(DamageTypes.IN_FIRE) && (damageSource.is(DamageTypes.ON_FIRE))) || !isFireResistant(legsArmor)) && legsArmor.getItem() instanceof ArmorItem)){
             //damage
-            legsArmor.hurtAndBreak(1, this, (recruit) -> {
-                recruit.broadcastBreakEvent(EquipmentSlot.LEGS);
-            });
+            damageItem(legsArmor, EquipmentSlot.LEGS);
         }
         if (this.getItemBySlot(EquipmentSlot.LEGS).isEmpty() && hasLegsArmor) {
             this.inventory.setItem(2, ItemStack.EMPTY);
@@ -1734,11 +1749,9 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         ItemStack feetArmor = this.getItemBySlot(EquipmentSlot.FEET);
         boolean hasFeetArmor = !feetArmor.isEmpty();
 
-        if (((!(damageSource.is(DamageTypes.IN_FIRE) && (damageSource.is(DamageTypes.ON_FIRE))) || !feetArmor.getItem().isFireResistant()) && feetArmor.getItem() instanceof ArmorItem)){
+        if (((!(damageSource.is(DamageTypes.IN_FIRE) && (damageSource.is(DamageTypes.ON_FIRE))) || !isFireResistant(feetArmor)) && feetArmor.getItem() instanceof ArmorItem)){
             //damage
-            feetArmor.hurtAndBreak(1, this, (p_43296_) -> {
-
-            });
+            damageItem(feetArmor, EquipmentSlot.FEET);
 
         }
         if (this.getItemBySlot(EquipmentSlot.FEET).isEmpty() && hasFeetArmor) {
@@ -1755,9 +1768,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         ItemStack handItem = this.getItemBySlot(EquipmentSlot.MAINHAND);
         boolean hasHandItem = !handItem.isEmpty();
 
-        this.getMainHandItem().hurtAndBreak(1, this, (recruit) -> {
-            recruit.broadcastBreakEvent(EquipmentSlot.MAINHAND);
-        });
+        damageItem(this.getMainHandItem(), EquipmentSlot.MAINHAND);
 
         if (this.getMainHandItem().isEmpty() && hasHandItem) {
             this.inventory.setItem(5, ItemStack.EMPTY);
@@ -1782,7 +1793,8 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     }
 
     public void tryToReequipShield(){
-        for(ItemStack itemStack : this.getInventory().items){
+        for(int i = 0; i < this.getInventory().getContainerSize(); i++){
+            ItemStack itemStack = this.getInventory().getItem(i);
             if(itemStack.getItem() instanceof ShieldItem){
                 this.setItemSlot(EquipmentSlot.OFFHAND, itemStack);
                 this.inventory.setItem(getInventorySlotIndex(EquipmentSlot.OFFHAND), itemStack);
@@ -1799,9 +1811,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     protected void hurtCurrentlyUsedShield(float damage) {
         if(this.level().isClientSide()) return;
 
-        this.getOffhandItem().hurtAndBreak(1, this, (recruit) -> {
-            recruit.broadcastBreakEvent(EquipmentSlot.OFFHAND);
-        });
+        damageItem(this.getOffhandItem(), EquipmentSlot.OFFHAND);
 
         if (this.getOffhandItem().isEmpty()) {
             this.inventory.setItem(4, ItemStack.EMPTY);
@@ -1809,6 +1819,22 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
             this.playSound(SoundEvents.SHIELD_BREAK, 0.8F, 0.8F + this.getCommandSenderWorld().random.nextFloat() * 0.4F);
             this.tryToReequipShield();
         }
+    }
+
+    private boolean isFireResistant(ItemStack stack) {
+        //? if forge {
+        return stack.getItem().isFireResistant();
+        //?} else {
+        /*return stack.has(DataComponents.FIRE_RESISTANT);
+        *///?}
+    }
+
+    private void damageItem(ItemStack stack, EquipmentSlot slot) {
+        //? if forge {
+        stack.hurtAndBreak(1, this, recruit -> recruit.broadcastBreakEvent(slot));
+        //?} else {
+        /*stack.hurtAndBreak(1, this, slot);
+        *///?}
     }
 
     @Override
@@ -2280,7 +2306,12 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         this.getCommandSenderWorld().getEntitiesOfClass(
                 AbstractArrow.class,
                 this.getBoundingBox().inflate(7D),
-                (arrow) -> arrow.inGround &&
+                (arrow) ->
+                        //? if forge {
+                        arrow.inGround &&
+                        //?} else {
+                        /*arrow.getDeltaMovement().lengthSqr() < 0.01D &&
+                        *///?}
                         arrow.pickup == AbstractArrow.Pickup.ALLOWED &&
                         this.getInventory().canAddItem(Items.ARROW.getDefaultInstance())
         ).forEach((arrow) -> {
@@ -2308,7 +2339,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         if(RecruitsServerConfig.FoodBlackList.get().contains(location.toString())){
             return false;
         }
-        return stack.isEdible();
+        return this.isFood(stack);
     }
 
     public void checkPayment(Container container) {

@@ -10,7 +10,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+//? if forge {
 import net.minecraft.world.entity.SpawnPlacements.Type;
+//?} else {
+/*import net.minecraft.world.entity.SpawnPlacements;
+*///?}
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.monster.Pillager;
@@ -225,7 +229,11 @@ public class PillagerPatrolSpawn {
             int k = p_221244_1_.getZ() + random.nextInt(p_221244_2_ * 2) - p_221244_2_;
             int l = this.world.getHeight(Types.WORLD_SURFACE, j, k);
             BlockPos blockpos1 = new BlockPos(j, l, k);
+            //? if forge {
             if (!this.world.getLevel().isCloseToVillage(blockpos1, 2) && NaturalSpawner.isSpawnPositionOk(Type.ON_GROUND, this.world, blockpos1, EntityType.WANDERING_TRADER)) {
+            //?} else {
+            /*if (!this.world.getLevel().isCloseToVillage(blockpos1, 2) && SpawnPlacements.isSpawnPositionOk(EntityType.WANDERING_TRADER, this.world, blockpos1)) {
+            *///?}
                 blockpos = blockpos1;
                 break;
             }

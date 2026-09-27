@@ -49,9 +49,13 @@ import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+//? if forge {
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+*///?}
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
@@ -378,7 +382,13 @@ public class RecruitEvents {
     }
 
     @SubscribeEvent
-    public void onLivingHurt(LivingHurtEvent event) {
+    public void onLivingHurt(
+            //? if forge {
+            LivingHurtEvent event
+            //?} else {
+            /*LivingIncomingDamageEvent event
+            *///?}
+    ) {
         if(event.getEntity().getCommandSenderWorld().isClientSide()) return;
 
         if (Main.isMusketModLoaded) {
@@ -415,7 +425,13 @@ public class RecruitEvents {
     private static final double DAMAGE_THRESHOLD_PERCENTAGE = 0.75;
 
     @SubscribeEvent
-    public void onLivingAttack(LivingAttackEvent event) {
+    public void onLivingAttack(
+            //? if forge {
+            LivingAttackEvent event
+            //?} else {
+            /*LivingIncomingDamageEvent event
+            *///?}
+    ) {
         if(event.getEntity().getCommandSenderWorld().isClientSide()) return;
 
         Entity target = event.getEntity();

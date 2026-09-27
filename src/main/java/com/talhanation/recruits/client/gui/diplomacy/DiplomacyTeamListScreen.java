@@ -167,7 +167,9 @@ public class DiplomacyTeamListScreen extends ListScreenBase {
     public void tick() {
         super.tick();
         if (searchBox != null) {
+            //? if forge {
             searchBox.tick();
+            //?}
         }
         if (list != null) {
             list.tick();

@@ -15,7 +15,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
+//? if forge {
 import net.minecraft.world.entity.SpawnPlacements.Type;
+//?} else {
+/*import net.minecraft.world.entity.SpawnPlacements;
+*///?}
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.animal.horse.Llama;
 import net.minecraft.world.entity.animal.horse.Mule;
@@ -599,7 +603,11 @@ public class RecruitsPatrolSpawn {
             int z = center.getZ() + random.nextInt(spread * 2) - spread;
             int y = world.getHeight(Types.WORLD_SURFACE, x, z);
             BlockPos pos = new BlockPos(x, y, z);
+            //? if forge {
             if (NaturalSpawner.isSpawnPositionOk(Type.ON_GROUND, world, pos, EntityType.WANDERING_TRADER)) {
+            //?} else {
+            /*if (SpawnPlacements.isSpawnPositionOk(EntityType.WANDERING_TRADER, world, pos)) {
+            *///?}
                 return pos;
             }
         }
