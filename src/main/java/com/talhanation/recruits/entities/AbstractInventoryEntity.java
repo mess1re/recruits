@@ -2,7 +2,9 @@ package com.talhanation.recruits.entities;
 
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.FactionEvents;
+//? if forge {
 import com.talhanation.recruits.compat.corpse.RecruitCorpseSpawner;
+//?}
 import com.talhanation.recruits.config.RecruitsServerConfig;
 import com.talhanation.recruits.inventory.RecruitSimpleContainer;
 import com.talhanation.recruits.pathfinding.AsyncPathfinderMob;
@@ -39,7 +41,9 @@ public abstract class AbstractInventoryEntity extends AsyncPathfinderMob {
 
     public RecruitSimpleContainer inventory;
     private int beforeItemSlot = -1;
+    //? if forge {
     private net.minecraftforge.common.util.LazyOptional<?> itemHandler = null;
+    //?}
 
     public AbstractInventoryEntity(EntityType<? extends AbstractInventoryEntity> entityType, Level world) {
         super(entityType, world);
@@ -247,16 +251,20 @@ public abstract class AbstractInventoryEntity extends AsyncPathfinderMob {
                 }
             }
         }
+        //? if forge {
         this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.inventory));
+        //?}
     }
 
     public void die(DamageSource dmg) {
         super.die(dmg);
 
         boolean shouldUseCorpse = Main.isCorpseLoaded && !Main.isRPGZLoaded && !this.getCommandSenderWorld().isClientSide() && RecruitsServerConfig.CompatCorpseMod.get();
+        //? if forge {
         if (shouldUseCorpse && RecruitCorpseSpawner.spawnCorpse(this)) {
             return;
         }
+        //?}
 
         if (this.getCommandSenderWorld().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
             for (int i = 0; i < this.inventory.getContainerSize(); i++) {
@@ -442,6 +450,7 @@ public abstract class AbstractInventoryEntity extends AsyncPathfinderMob {
 
     public abstract void openGUI(Player player);
 
+    //? if forge {
     public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
         if (this.isAlive() && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && itemHandler != null)
             return itemHandler.cast();
@@ -457,6 +466,7 @@ public abstract class AbstractInventoryEntity extends AsyncPathfinderMob {
             oldHandler.invalidate();
         }
     }
+    //?}
 
     public void consumeArrow(){
         for(ItemStack itemStack : this.inventory.items){

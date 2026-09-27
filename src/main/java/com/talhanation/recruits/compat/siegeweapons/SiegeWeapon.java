@@ -2,12 +2,13 @@ package com.talhanation.recruits.compat.siegeweapons;
 
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.entities.SiegeEngineerEntity;
+import com.talhanation.recruits.util.RegistryUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
@@ -180,6 +181,6 @@ public abstract class SiegeWeapon {
 
     @Nullable
     public static ItemStack getSiegeWeaponItem() {
-        return ForgeRegistries.ITEMS.getDelegateOrThrow(ResourceLocation.tryParse("siegeweapons:catapult")).get().getDefaultInstance();
+        return RegistryUtils.getItem("siegeweapons:catapult").map(Item::getDefaultInstance).orElse(ItemStack.EMPTY);
     }
 }

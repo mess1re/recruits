@@ -34,7 +34,11 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.common.MinecraftForge;
+//? if forge {
 import net.minecraftforge.event.TickEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.tick.ServerTickEvent;
+*///?}
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -93,7 +97,11 @@ public class ClaimEvents {
     }
 
     @SubscribeEvent
+    //? if forge {
     public void onServerTick(TickEvent.ServerTickEvent event){
+    //?} else {
+    /*public void onServerTick(ServerTickEvent event){
+    *///?}
         if(event.getServer().overworld().isClientSide()) return;
 
         siegeCounter++;

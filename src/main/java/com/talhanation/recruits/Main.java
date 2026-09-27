@@ -19,6 +19,9 @@ import com.talhanation.recruits.init.ModScreens;
 import com.talhanation.recruits.init.*;
 import com.talhanation.recruits.network.*;
 import net.minecraft.world.item.CreativeModeTabs;
+//? if forge {
+import dev.architectury.platform.forge.EventBuses;
+//?}
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -31,7 +34,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+//? if forge {
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+//?} else {
+/*import net.neoforged.fml.ModContainer;
+*///?}
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,28 +57,42 @@ public class Main {
     public static boolean isCorpseLoaded;
     public static boolean isRPGZLoaded;
 
+    //? if forge {
     public Main() {
-        final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        EventBuses.registerModEventBus(MOD_ID, modEventBus);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, RecruitsServerConfig.SERVER);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, RecruitsClientConfig.CLIENT);
+        initialize(modEventBus);
+    }
+    //?} else {
+    /*public Main(IEventBus modEventBus, ModContainer modContainer) {
+        modContainer.registerConfig(ModConfig.Type.SERVER, RecruitsServerConfig.SERVER);
+        modContainer.registerConfig(ModConfig.Type.CLIENT, RecruitsClientConfig.CLIENT);
+        initialize(modEventBus);
+    }
+    *///?}
+
+    private void initialize(IEventBus modEventBus) {
         RecruitsClientConfig.loadConfig(RecruitsClientConfig.CLIENT, FMLPaths.CONFIGDIR.get().resolve("recruits-client.toml"));
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-                    FMLJavaModLoadingContext.get().getModEventBus().addListener(Main.this::clientSetup);
-                    FMLJavaModLoadingContext.get().getModEventBus().addListener(ModShortcuts::registerBindings);
-                }
-        );
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            modEventBus.addListener(Main.this::clientSetup);
+            modEventBus.addListener(ModShortcuts::registerBindings);
+        }
 
         modEventBus.addListener(this::setup);
-        ModBlocks.BLOCKS.register(modEventBus);
-        ModPois.POIS.register(modEventBus);
-        ModProfessions.PROFESSIONS.register(modEventBus);
-        ModScreens.MENU_TYPES.register(modEventBus);
-        ModItems.ITEMS.register(modEventBus);
-        ModEntityTypes.ENTITY_TYPES.register(modEventBus);
+        ModBlocks.BLOCKS.register();
+        ModPois.POIS.register();
+        ModProfessions.PROFESSIONS.register();
+        ModScreens.MENU_TYPES.register();
+        ModItems.ITEMS.register();
+        ModEntityTypes.ENTITY_TYPES.register();
+        //? if neoforge {
+        /*modEventBus.addListener(RecruitsCapabilities::register);
+        *///?}
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addCreativeTabs);
+        modEventBus.addListener(this::addCreativeTabs);
 
         //ModSounds.SOUNDS.register(modEventBus);
         MinecraftForge.EVENT_BUS.register(this);

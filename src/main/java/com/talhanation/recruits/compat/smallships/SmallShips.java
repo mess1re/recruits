@@ -9,16 +9,17 @@ import com.talhanation.recruits.Main;
 import com.talhanation.recruits.entities.CaptainEntity;
 import com.talhanation.recruits.entities.IRangedRecruit;
 import com.talhanation.recruits.util.Kalkuel;
+import com.talhanation.recruits.util.RegistryUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
@@ -455,7 +456,7 @@ public class SmallShips {
 
     @Nullable
     public static ItemStack getSmallShipsItem() {
-        return ForgeRegistries.ITEMS.getDelegateOrThrow(ResourceLocation.tryParse("smallships:oak_cog")).get().getDefaultInstance();
+        return RegistryUtils.getItem("smallships:oak_cog").map(Item::getDefaultInstance).orElse(ItemStack.EMPTY);
     }
 
     public void repairShip(CaptainEntity captain) {

@@ -1,6 +1,7 @@
 package com.talhanation.recruits.entities;
 
 import com.talhanation.recruits.network.RecruitsNetwork;
+import dev.architectury.registry.menu.MenuRegistry;
 //ezgi&talha kantar
 
 import com.talhanation.recruits.*;
@@ -19,11 +20,13 @@ import com.talhanation.recruits.inventory.DebugInvMenu;
 import com.talhanation.recruits.inventory.RecruitHireMenu;
 import com.talhanation.recruits.inventory.RecruitInventoryMenu;
 import com.talhanation.recruits.network.*;
+import com.talhanation.recruits.util.RegistryUtils;
 import com.talhanation.recruits.world.RecruitsDiplomacyManager;
 import com.talhanation.recruits.world.RecruitsFaction;
 import com.talhanation.recruits.world.RecruitsGroup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -73,8 +76,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -1068,23 +1069,17 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
                 String chestStr = equipmentSet.get(4);
                 String headStr = equipmentSet.get(5);
 
-                Optional<Holder<Item>> holderHead = ForgeRegistries.ITEMS.getHolder(ResourceLocation.tryParse(headStr));
-                holderHead.ifPresent(itemHolder -> this.setItemSlot(EquipmentSlot.HEAD, itemHolder.value().getDefaultInstance()));
+                RegistryUtils.getItem(headStr).ifPresent(item -> this.setItemSlot(EquipmentSlot.HEAD, item.getDefaultInstance()));
 
-                Optional<Holder<Item>> holderChest = ForgeRegistries.ITEMS.getHolder(ResourceLocation.tryParse(chestStr));
-                holderChest.ifPresent(itemHolder -> this.setItemSlot(EquipmentSlot.CHEST, itemHolder.value().getDefaultInstance()));
+                RegistryUtils.getItem(chestStr).ifPresent(item -> this.setItemSlot(EquipmentSlot.CHEST, item.getDefaultInstance()));
 
-                Optional<Holder<Item>> holderLegs = ForgeRegistries.ITEMS.getHolder(ResourceLocation.tryParse(legsStr));
-                holderLegs.ifPresent(itemHolder -> this.setItemSlot(EquipmentSlot.LEGS, itemHolder.value().getDefaultInstance()));
+                RegistryUtils.getItem(legsStr).ifPresent(item -> this.setItemSlot(EquipmentSlot.LEGS, item.getDefaultInstance()));
 
-                Optional<Holder<Item>> holderFeet = ForgeRegistries.ITEMS.getHolder(ResourceLocation.tryParse(feetStr));
-                holderFeet.ifPresent(itemHolder -> this.setItemSlot(EquipmentSlot.FEET, itemHolder.value().getDefaultInstance()));
+                RegistryUtils.getItem(feetStr).ifPresent(item -> this.setItemSlot(EquipmentSlot.FEET, item.getDefaultInstance()));
 
-                Optional<Holder<Item>> holderMainHand = ForgeRegistries.ITEMS.getHolder(ResourceLocation.tryParse(mainHandStr));
-                holderMainHand.ifPresent(itemHolder -> this.setItemSlot(EquipmentSlot.MAINHAND, itemHolder.value().getDefaultInstance()));
+                RegistryUtils.getItem(mainHandStr).ifPresent(item -> this.setItemSlot(EquipmentSlot.MAINHAND, item.getDefaultInstance()));
 
-                Optional<Holder<Item>> holderOffHand = ForgeRegistries.ITEMS.getHolder(ResourceLocation.tryParse(offHandStr));
-                holderOffHand.ifPresent(itemHolder -> this.setItemSlot(EquipmentSlot.OFFHAND, itemHolder.value().getDefaultInstance()));
+                RegistryUtils.getItem(offHandStr).ifPresent(item -> this.setItemSlot(EquipmentSlot.OFFHAND, item.getDefaultInstance()));
             }
         }
     }
@@ -1890,7 +1885,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     @Override
     public void openGUI(Player player) {
         if (player instanceof ServerPlayer) {
-            NetworkHooks.openScreen((ServerPlayer) player, new MenuProvider() {
+            MenuRegistry.openExtendedMenu((ServerPlayer) player, new MenuProvider() {
                 @Override
                 public @NotNull Component getDisplayName() {
                     return getName();
@@ -1908,7 +1903,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
 
     public void openDebugScreen(Player player) {
         if (player instanceof ServerPlayer) {
-            NetworkHooks.openScreen((ServerPlayer) player, new MenuProvider() {
+            MenuRegistry.openExtendedMenu((ServerPlayer) player, new MenuProvider() {
                 @Override
                 public @NotNull Component getDisplayName() {
                     return getName();
@@ -2082,7 +2077,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
             String stringId = ownerTeam != null ? ownerTeam.getName() : "";
             boolean canHire = RecruitEvents.recruitsPlayerUnitManager.canPlayerRecruit(stringId, player.getUUID());
             RecruitsNetwork.sendToPlayer(()-> (ServerPlayer) player, new MessageToClientUpdateHireState(canHire));
-            NetworkHooks.openScreen((ServerPlayer) player, new MenuProvider() {
+            MenuRegistry.openExtendedMenu((ServerPlayer) player, new MenuProvider() {
                 @Override
                 public @NotNull Component getDisplayName() {
                     return getName();
@@ -2308,7 +2303,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
 
 
     public boolean canEatItemStack(ItemStack stack){
-        ResourceLocation location = ForgeRegistries.ITEMS.getKey(stack.getItem());
+        ResourceLocation location = BuiltInRegistries.ITEM.getKey(stack.getItem());
 
         if(RecruitsServerConfig.FoodBlackList.get().contains(location.toString())){
             return false;

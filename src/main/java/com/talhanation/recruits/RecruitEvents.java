@@ -1,5 +1,7 @@
 package com.talhanation.recruits;
 
+import dev.architectury.registry.menu.MenuRegistry;
+
 import com.talhanation.recruits.network.RecruitsNetwork;
 
 import com.talhanation.recruits.compat.musketmod.IWeapon;
@@ -38,7 +40,11 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.scores.Team;
+//? if forge {
 import net.minecraftforge.event.TickEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.tick.LevelTickEvent;
+*///?}
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
@@ -52,7 +58,6 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -105,7 +110,7 @@ public class RecruitEvents {
 
     public static void openPromoteScreen(Player player, AbstractRecruitEntity recruit) {
         if (player instanceof ServerPlayer) {
-            NetworkHooks.openScreen((ServerPlayer) player, new MenuProvider() {
+            MenuRegistry.openExtendedMenu((ServerPlayer) player, new MenuProvider() {
                 @Override
                 public @NotNull Component getDisplayName()  {
                     return recruit.getName();
@@ -209,8 +214,14 @@ public class RecruitEvents {
     }
 
     @SubscribeEvent
+    //? if forge {
     public void onServerTick(TickEvent.LevelTickEvent event) {
-        if (!event.level.isClientSide && event.level instanceof ServerLevel serverWorld) {
+        net.minecraft.world.level.Level level = event.level;
+    //?} else {
+    /*public void onServerTick(LevelTickEvent event) {
+        net.minecraft.world.level.Level level = event.getLevel();
+    *///?}
+        if (!level.isClientSide && level instanceof ServerLevel serverWorld) {
             if (RecruitsServerConfig.ShouldRecruitPatrolsSpawn.get()) {
                 RECRUIT_PATROL.computeIfAbsent(serverWorld,
                         serverLevel -> new RecruitsPatrolSpawn(serverWorld));
@@ -620,10 +631,17 @@ public class RecruitEvents {
     private int tickCounter = 0;
 
     @SubscribeEvent
+    //? if forge {
     public void onWorldTickArrowCleaner(TickEvent.LevelTickEvent event) {//for 1.18 and 1.19 use TickEvent.WorldTickEvent
         if (event.level.isClientSide()) return;
+    //?} else {
+    /*public void onWorldTickArrowCleaner(LevelTickEvent.Post event) {
+        if (event.getLevel().isClientSide()) return;
+    *///?}
         if (!RecruitsServerConfig.AllowArrowCleaning.get()) return;
+        //? if forge {
         if (event.phase != TickEvent.Phase.END) return;
+        //?}
         if (server == null) return;
 
 
@@ -631,7 +649,11 @@ public class RecruitEvents {
         tickCounter = 0;
 
 
+        //? if forge {
         List<AbstractArrow> arrows = event.level.getEntitiesOfClass(AbstractArrow.class, event.level.getWorldBorder().getCollisionShape().bounds());
+        //?} else {
+        /*List<AbstractArrow> arrows = event.getLevel().getEntitiesOfClass(AbstractArrow.class, event.getLevel().getWorldBorder().getCollisionShape().bounds());
+        *///?}
         trackedArrows.addAll(arrows);
 
 

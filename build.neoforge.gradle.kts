@@ -47,12 +47,30 @@ val relocateLoaderNamespace = tasks.register<Sync>("relocateLoaderNamespace") {
     dependsOn("stonecutterGenerate")
     from(layout.buildDirectory.dir("generated/stonecutter/main/java"))
     into(layout.buildDirectory.dir("generated/neoforge/main/java"))
+    exclude(
+        "com/talhanation/recruits/compat/corpse/**",
+        "com/talhanation/recruits/client/render/corpse/**",
+        "com/talhanation/recruits/mixin/compat/corpse/**"
+    )
     filter { line: String ->
         line
+            .replace("net.minecraftforge.common.MinecraftForge", "net.neoforged.neoforge.common.NeoForge")
+            .replace("net.minecraftforge.common.ForgeConfigSpec", "net.neoforged.neoforge.common.ModConfigSpec")
             .replace("net.minecraftforge.api.distmarker", "net.neoforged.api.distmarker")
             .replace("net.minecraftforge.eventbus.api", "net.neoforged.bus.api")
             .replace("net.minecraftforge.fml", "net.neoforged.fml")
             .replace("net.minecraftforge", "net.neoforged.neoforge")
+            .replace("MinecraftForge", "NeoForge")
+            .replace("ForgeConfigSpec", "ModConfigSpec")
+            .replace("@Mod.EventBusSubscriber", "@EventBusSubscriber")
+            .replace("Mod.EventBusSubscriber.Bus.", "EventBusSubscriber.Bus.")
+            .let { relocated ->
+                if (relocated == "import net.neoforged.fml.common.Mod;") {
+                    "$relocated\nimport net.neoforged.fml.common.EventBusSubscriber;"
+                } else {
+                    relocated
+                }
+            }
     }
 }
 

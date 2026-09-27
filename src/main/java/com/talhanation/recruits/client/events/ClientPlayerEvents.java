@@ -5,15 +5,23 @@ import com.talhanation.recruits.client.gui.worldmap.storage.WorldMapStorageId;
 import com.talhanation.recruits.config.RecruitsClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.Level;
+//? if forge {
 import net.minecraftforge.event.TickEvent;
+//?} else {
+/*import net.neoforged.neoforge.client.event.ClientTickEvent;
+*///?}
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class ClientPlayerEvents {
     @SubscribeEvent
+    //? if forge {
     public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
+    //?} else {
+    /*public void onClientTick(ClientTickEvent.Post event) {
+    *///?}
         if (!RecruitsClientConfig.UpdateMapTiles.get()) return;
 
         updateMapTiles();

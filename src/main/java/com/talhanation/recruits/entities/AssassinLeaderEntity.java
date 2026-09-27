@@ -1,5 +1,7 @@
 package com.talhanation.recruits.entities;
 
+import dev.architectury.registry.menu.MenuRegistry;
+
 import com.talhanation.recruits.network.RecruitsNetwork;
 
 import com.talhanation.recruits.Main;
@@ -28,7 +30,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
@@ -113,7 +114,7 @@ public class AssassinLeaderEntity extends AbstractOrderAbleEntity {
         this.navigation.stop();
 
         if (player instanceof ServerPlayer) {
-            NetworkHooks.openScreen((ServerPlayer) player, new MenuProvider() {
+            MenuRegistry.openExtendedMenu((ServerPlayer) player, new MenuProvider() {
                 @Override
                 public Component getDisplayName() {
                     return getName();

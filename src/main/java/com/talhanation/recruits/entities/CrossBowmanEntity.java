@@ -7,6 +7,7 @@ import com.talhanation.recruits.entities.ai.RecruitRangedCrossbowAttackGoal;
 import com.talhanation.recruits.entities.ai.compat.RecruitRangedMusketAttackGoal;
 import com.talhanation.recruits.world.RecruitsPatrolSpawn;
 import com.talhanation.recruits.pathfinding.AsyncGroundPathNavigation;
+import com.talhanation.recruits.util.RegistryUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -27,7 +28,6 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -135,7 +135,7 @@ public class CrossBowmanEntity extends AbstractRecruitEntity implements Crossbow
         if(RecruitsServerConfig.RangedRecruitsNeedArrowsToShoot.get()){
             if(isMusketModLoaded && IWeapon.isMusketModWeapon(this.getMainHandItem())){
                 int i = this.getRandom().nextInt(32);
-                ItemStack arrows = ForgeRegistries.ITEMS.getDelegateOrThrow(ResourceLocation.tryParse("musketmod:cartridge")).get().getDefaultInstance();
+                ItemStack arrows = RegistryUtils.getItem("musketmod:cartridge").map(Item::getDefaultInstance).orElse(ItemStack.EMPTY);
                 arrows.setCount(14 + i);
                 this.inventory.setItem(6, arrows);
             }

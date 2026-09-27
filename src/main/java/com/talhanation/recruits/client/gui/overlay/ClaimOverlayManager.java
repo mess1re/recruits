@@ -12,7 +12,11 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
+//? if forge {
 import net.minecraftforge.event.TickEvent;
+//?} else {
+/*import net.neoforged.neoforge.client.event.ClientTickEvent;
+*///?}
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class ClaimOverlayManager {
@@ -45,7 +49,11 @@ public class ClaimOverlayManager {
     }
 
     @SubscribeEvent
+    //? if forge {
     public void onClientTick(TickEvent.ClientTickEvent event) {
+    //?} else {
+    /*public void onClientTick(ClientTickEvent event) {
+    *///?}
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null) return;
 

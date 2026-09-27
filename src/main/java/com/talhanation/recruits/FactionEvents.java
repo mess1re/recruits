@@ -1,17 +1,18 @@
 package com.talhanation.recruits;
 
 import com.talhanation.recruits.network.RecruitsNetwork;
+import dev.architectury.registry.menu.MenuRegistry;
 
 import com.talhanation.recruits.config.RecruitsServerConfig;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.inventory.*;
 import com.talhanation.recruits.network.*;
 import com.talhanation.recruits.util.DelayedExecutor;
+import com.talhanation.recruits.util.RegistryUtils;
 import com.talhanation.recruits.world.*;
 import com.talhanation.recruits.FactionEvent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -35,8 +36,6 @@ import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -490,9 +489,7 @@ public class FactionEvents {
     public static ItemStack getCurrency(){
         ItemStack currencyItemStack;
         String str = RecruitsServerConfig.RecruitCurrency.get();
-        Optional<Holder<Item>> holder = ForgeRegistries.ITEMS.getHolder(ResourceLocation.tryParse(str));
-
-        currencyItemStack = holder.map(itemHolder -> itemHolder.value().getDefaultInstance()).orElseGet(Items.EMERALD::getDefaultInstance);
+        currencyItemStack = RegistryUtils.getItem(str).map(Item::getDefaultInstance).orElseGet(Items.EMERALD::getDefaultInstance);
 
         return currencyItemStack;
     }
@@ -803,7 +800,7 @@ public class FactionEvents {
     }
     public static void openDisbandingScreen(Player player, UUID recruit) {
         if (player instanceof ServerPlayer) {
-            NetworkHooks.openScreen((ServerPlayer) player, new MenuProvider() {
+            MenuRegistry.openExtendedMenu((ServerPlayer) player, new MenuProvider() {
                 @Override
                 public Component getDisplayName() {
                     return Component.literal("disband_screen");
@@ -823,7 +820,7 @@ public class FactionEvents {
 
     public static void openTeamEditScreen(Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
-            NetworkHooks.openScreen(serverPlayer, new MenuProvider() {
+            MenuRegistry.openExtendedMenu(serverPlayer, new MenuProvider() {
 
                 @Override
                 public Component getDisplayName() {
