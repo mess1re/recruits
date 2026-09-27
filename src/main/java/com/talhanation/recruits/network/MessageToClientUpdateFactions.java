@@ -49,7 +49,7 @@ public class MessageToClientUpdateFactions implements Message<MessageToClientUpd
         this.nbt = buf.readNbt();
         this.editing = buf.readBoolean();
         this.managing = buf.readBoolean();
-        this.currency = buf.readItem();
+        this.currency = RecruitsNetworkCodecs.readItem(buf);
         this.factionCreationPrice = buf.readInt();
         this.factionMaxRecruitsPerPlayerConfigSetting = buf.readInt();
         return this;
@@ -60,7 +60,7 @@ public class MessageToClientUpdateFactions implements Message<MessageToClientUpd
         buf.writeNbt(this.nbt);
         buf.writeBoolean(this.editing);
         buf.writeBoolean(this.managing);
-        buf.writeItem(this.currency);
+        RecruitsNetworkCodecs.writeItem(buf, this.currency);
         buf.writeInt(this.factionCreationPrice);
         buf.writeInt(this.factionMaxRecruitsPerPlayerConfigSetting);
     }

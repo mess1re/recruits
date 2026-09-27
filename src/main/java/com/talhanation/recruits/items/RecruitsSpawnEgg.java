@@ -35,6 +35,7 @@ public class RecruitsSpawnEgg extends ForgeSpawnEggItem {
         super(entityType, primaryColor, secondaryColor, properties);
         this.entityType = entityType;
     }
+    //? if forge {
     @Override
     public @NotNull EntityType<?> getType(CompoundTag compound){
         if(compound != null && compound.contains("EntityTag", 10)) {
@@ -46,6 +47,16 @@ public class RecruitsSpawnEgg extends ForgeSpawnEggItem {
         }
         return this.entityType.get();
     }
+    //?}
+
+    public @NotNull EntityType<?> getRecruitsType(ItemStack stack) {
+        //? if forge {
+        return this.getType(stack.getTag());
+        //?} else {
+        /*CompoundTag entityData = RecruitsItemStacks.getEntityData(stack);
+        return EntityType.by(entityData).orElse(this.entityType.get());
+        *///?}
+    }
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
@@ -56,11 +67,10 @@ public class RecruitsSpawnEgg extends ForgeSpawnEggItem {
         else{
             ItemStack stack = context.getItemInHand();
             BlockPos pos = context.getClickedPos();
-            EntityType<?> entitytype = this.getType(stack.getTag());
+            EntityType<?> entitytype = this.getRecruitsType(stack);
             Entity entity = entitytype.create(world);
 
-
-            CompoundTag entityTag = stack.getTag();
+            CompoundTag entityTag = RecruitsItemStacks.getEntityData(stack);
             if(entity instanceof AbstractRecruitEntity recruit && entityTag != null && !entityTag.isEmpty()) {
 
                 fillRecruit(recruit, entityTag, pos);
@@ -79,7 +89,7 @@ public class RecruitsSpawnEgg extends ForgeSpawnEggItem {
     }
 
     public static void fillRecruit(AbstractRecruitEntity recruit, CompoundTag entityTag, BlockPos pos){
-        CompoundTag nbt = entityTag.getCompound("EntityTag");
+        CompoundTag nbt = entityTag;
 
         if(nbt.isEmpty()) return;
 
@@ -195,14 +205,14 @@ public class RecruitsSpawnEgg extends ForgeSpawnEggItem {
         }
 
         ListTag armorItems = nbt.getList("ArmorItems", 10);
-        for (int i = 0; i < recruit.armorItems.size(); ++i) {
+        for (int i = 0; i < armorItems.size(); ++i) {
             ItemStack armorItem = RecruitsItemStacks.parse(armorItems.getCompound(i), recruit.level().registryAccess());
-            int index = recruit.getInventorySlotIndex(Mob.getEquipmentSlotForItem(armorItem));
+            int index = recruit.getInventorySlotIndex(recruit.getEquipmentSlotForItem(armorItem));
             recruit.setItemSlot(recruit.getEquipmentSlotIndex(index), armorItem);
         }
 
         ListTag handItems = nbt.getList("HandItems", 10);
-        for (int i = 0; i < recruit.handItems.size(); ++i) {
+        for (int i = 0; i < handItems.size(); ++i) {
             int index = i == 0 ? 5 : 4; //5 = mainhand 4 = offhand
             recruit.setItemSlot(recruit.getEquipmentSlotIndex(index), RecruitsItemStacks.parse(handItems.getCompound(i), recruit.level().registryAccess()));
         }

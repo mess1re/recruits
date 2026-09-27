@@ -12,6 +12,7 @@ import com.talhanation.recruits.commands.PatrolSpawnCommand;
 import com.talhanation.recruits.commands.RecruitsAdminCommands;
 import com.talhanation.recruits.config.RecruitsClientConfig;
 import com.talhanation.recruits.config.RecruitsServerConfig;
+import com.talhanation.recruits.entities.AbstractChunkLoaderEntity;
 import com.talhanation.recruits.init.ModBlocks;
 import com.talhanation.recruits.init.ModEntityTypes;
 import com.talhanation.recruits.init.ModItems;
@@ -74,7 +75,9 @@ public class Main {
     *///?}
 
     private void initialize(IEventBus modEventBus) {
+        //? if forge {
         RecruitsClientConfig.loadConfig(RecruitsClientConfig.CLIENT, FMLPaths.CONFIGDIR.get().resolve("recruits-client.toml"));
+        //?}
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             modEventBus.addListener(Main.this::clientSetup);

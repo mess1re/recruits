@@ -90,7 +90,7 @@ public class MessageToClientUpdateClaims implements Message<MessageToClientUpdat
         this.chunkCost = buf.readInt();
         this.maxClaimChunks = buf.readInt();
         this.cascadeOfCost = buf.readBoolean();
-        this.currencyItemStack = buf.readItem();
+        this.currencyItemStack = RecruitsNetworkCodecs.readItem(buf);
         this.allowClaiming = buf.readBoolean();
         this.fogOfWarEnabled = buf.readBoolean();
         this.resetClaims = buf.readBoolean();
@@ -105,7 +105,7 @@ public class MessageToClientUpdateClaims implements Message<MessageToClientUpdat
         buf.writeInt(this.chunkCost);
         buf.writeInt(this.maxClaimChunks);
         buf.writeBoolean(this.cascadeOfCost);
-        buf.writeItemStack(this.currencyItemStack, false);
+        RecruitsNetworkCodecs.writeItem(buf, this.currencyItemStack);
         buf.writeBoolean(this.allowClaiming);
         buf.writeBoolean(this.fogOfWarEnabled);
         buf.writeBoolean(this.resetClaims);

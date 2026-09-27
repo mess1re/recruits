@@ -222,7 +222,7 @@ public class ModScreens {
      * It has a try/catch block because the Forge screen constructor fails silently.
      */
     private static <M extends AbstractContainerMenu, U extends Screen & MenuAccess<M>> void registerMenu(MenuType<? extends M> menuType, MenuScreens.ScreenConstructor<M, U> screenConstructor) {
-        MenuScreens.register(menuType, (MenuScreens.ScreenConstructor<M, U>) (menu, inventory, title) -> {
+        MenuRegistry.registerScreenFactory(menuType, (MenuRegistry.ScreenFactory<M, U>) (menu, inventory, title) -> {
             try {
                 return screenConstructor.create(menu, inventory, title);
             } catch (Exception e) {

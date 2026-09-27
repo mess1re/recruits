@@ -27,6 +27,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
+//? if neoforge {
+/*import net.minecraft.world.item.trading.ItemCost;
+*///?}
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.Team;
@@ -182,9 +185,7 @@ public class VillagerEvents {
             abstractRecruit.initSpawn();
             AbstractRecruitEntity.applyVariantFromVillager(abstractRecruit, villager);
 
-            for(ItemStack itemStack : villager.getInventory().items){
-                abstractRecruit.getInventory().addItem(itemStack);
-            }
+            copyVillagerInventory(villager, abstractRecruit);
 
             if(abstractRecruit instanceof ICompanion){
                 for(int i = 0; i < 4; i++){
@@ -214,9 +215,7 @@ public class VillagerEvents {
             AbstractRecruitEntity.applyVariantFromVillager(nobleEntity, villager);
             nobleEntity.setFollowState(0);
 
-            for(ItemStack itemStack : villager.getInventory().items){
-                nobleEntity.getInventory().addItem(itemStack);
-            }
+            copyVillagerInventory(villager, nobleEntity);
 
             Component name = villager.getCustomName();
             if(name  != null) nobleEntity.setCustomName(name);
@@ -258,9 +257,7 @@ public class VillagerEvents {
 
             abstractRecruit.setFollowState(1);
 
-            for(ItemStack itemStack : villager.getInventory().items){
-                abstractRecruit.getInventory().addItem(itemStack);
-            }
+            copyVillagerInventory(villager, abstractRecruit);
 
             abstractRecruit.setGroupUUID(group.getUUID());
 
@@ -277,6 +274,12 @@ public class VillagerEvents {
             villager.releasePoi(MemoryModuleType.HOME);
             villager.releasePoi(MemoryModuleType.MEETING_POINT);
             villager.discard();
+        }
+    }
+
+    private static void copyVillagerInventory(Villager villager, AbstractInventoryEntity recruit) {
+        for (int i = 0; i < villager.getInventory().getContainerSize(); i++) {
+            recruit.getInventory().addItem(villager.getInventory().getItem(i));
         }
     }
 
@@ -640,7 +643,11 @@ public class VillagerEvents {
 
         @Override
         public MerchantOffer getOffer(Entity entity, RandomSource random) {
+            //? if forge {
             return new MerchantOffer(new ItemStack(this.buyingItem, this.buyingAmount), new ItemStack(sellingItem, sellingAmount), maxUses, givenExp, priceMultiplier);
+            //?} else {
+            /*return new MerchantOffer(new ItemCost(this.buyingItem, this.buyingAmount), new ItemStack(sellingItem, sellingAmount), maxUses, givenExp, priceMultiplier);
+            *///?}
         }
     }
 }

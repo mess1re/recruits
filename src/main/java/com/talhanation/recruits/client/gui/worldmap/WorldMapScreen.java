@@ -215,7 +215,11 @@ public class WorldMapScreen extends Screen {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         camera.animate();
         refreshSelectedClaim();
+        //? if forge {
         renderBackground(guiGraphics);
+        //?} else {
+        /*renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
+        *///?}
 
         guiGraphics.enableScissor(0, 0, width, height);
 
@@ -309,9 +313,15 @@ public class WorldMapScreen extends Screen {
     }
 
     @Override
+    //? if forge {
     public void renderBackground(GuiGraphics guiGraphics) {
         guiGraphics.fill(0, 0, width, height, DARK_GRAY_BG);
     }
+    //?} else {
+    /*public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        guiGraphics.fill(0, 0, width, height, DARK_GRAY_BG);
+    }
+    *///?}
 
     // -------------------------------------------------------------------------
     // Waypoint creation
@@ -611,6 +621,7 @@ public class WorldMapScreen extends Screen {
     }
 
     @Override
+    //? if forge {
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         if (routeNamePopup.isVisible() || routeEditPopup.isVisible() || waypointEditPopup.isVisible())
             return true;
@@ -621,6 +632,18 @@ public class WorldMapScreen extends Screen {
         camera.zoomAt(mouseX, mouseY, delta);
         return true;
     }
+    //?} else {
+    /*public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if (routeNamePopup.isVisible() || routeEditPopup.isVisible() || waypointEditPopup.isVisible())
+            return true;
+        if (settingsPanel.isMouseBlocking(mouseX, mouseY, width, height)) return true;
+        if (claimInfoMenu.isVisible()) claimInfoMenu.close();
+        if (contextMenu.isVisible()) contextMenu.close();
+
+        camera.zoomAt(mouseX, mouseY, verticalAmount);
+        return true;
+    }
+    *///?}
 
     @Override
     public void mouseMoved(double mouseX, double mouseY) {
@@ -673,8 +696,8 @@ public class WorldMapScreen extends Screen {
                 case GLFW.GLFW_KEY_DOWN, GLFW.GLFW_KEY_S -> camera.panByScreenDelta(0.0, -moveSpeed);
                 case GLFW.GLFW_KEY_LEFT, GLFW.GLFW_KEY_A -> camera.panByScreenDelta(moveSpeed, 0.0);
                 case GLFW.GLFW_KEY_RIGHT, GLFW.GLFW_KEY_D -> camera.panByScreenDelta(-moveSpeed, 0.0);
-                case GLFW.GLFW_KEY_EQUAL -> mouseScrolled(width / 2.0, height / 2.0, 1);
-                case GLFW.GLFW_KEY_MINUS -> mouseScrolled(width / 2.0, height / 2.0, -1);
+                case GLFW.GLFW_KEY_EQUAL -> camera.zoomAt(width / 2.0, height / 2.0, 1);
+                case GLFW.GLFW_KEY_MINUS -> camera.zoomAt(width / 2.0, height / 2.0, -1);
                 case GLFW.GLFW_KEY_C -> centerOnPlayer();
                 case GLFW.GLFW_KEY_R -> resetZoom();
             }

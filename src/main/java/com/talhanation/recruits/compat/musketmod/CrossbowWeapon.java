@@ -39,9 +39,13 @@ public class CrossbowWeapon implements IWeapon {
 
     @Override
     public int getWeaponLoadTime() {
+        //? if forge {
         ItemStack weapon = this.getWeapon().getDefaultInstance();
         int quickChargeLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.QUICK_CHARGE, weapon);
         return 40 - quickChargeLevel * 4;
+        //?} else {
+        /*return 40;
+        *///?}
     }
 
     @Override
@@ -55,7 +59,11 @@ public class CrossbowWeapon implements IWeapon {
     }
     @Override
     public AbstractArrow getProjectileArrow(LivingEntity shooter) {
+        //? if forge {
         return new Arrow(shooter.getCommandSenderWorld(), shooter);
+        //?} else {
+        /*return new Arrow(shooter.getCommandSenderWorld(), shooter, Items.ARROW.getDefaultInstance(), shooter.getMainHandItem());
+        *///?}
     }
 
     public boolean isLoaded(ItemStack itemStack) {
@@ -108,7 +116,11 @@ public class CrossbowWeapon implements IWeapon {
     
     @Override
     public SoundEvent getLoadSound() {
+        //? if forge {
         return SoundEvents.CROSSBOW_LOADING_END;
+        //?} else {
+        /*return SoundEvents.CROSSBOW_LOADING_END.value();
+        *///?}
     }
 
     @Override
@@ -134,7 +146,8 @@ public class CrossbowWeapon implements IWeapon {
     @Override
     public void performRangedAttackIWeapon(AbstractRecruitEntity shooter, double x, double y, double z, float projectileSpeed) {
         AbstractArrow projectileEntity = this.getProjectileArrow(shooter);
-		
+
+        //? if forge {
         int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PIERCING, shooter.getMainHandItem());
         if (i > 0) {
             projectileEntity.setPierceLevel((byte)i);
@@ -144,6 +157,7 @@ public class CrossbowWeapon implements IWeapon {
         if (k > 0) {
             //TODO:
         }
+        //?}
 
         this.shootArrow(shooter, projectileEntity, x, y, z);
 

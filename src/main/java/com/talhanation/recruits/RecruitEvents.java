@@ -285,7 +285,7 @@ public class RecruitEvents {
         Entity impactEntity = ((EntityHitResult) rayTrace).getEntity();
         String encode = impactEntity.getEncodeId();
         if (encode != null && encode.contains("corpse:corpse")) {
-            event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
+            skipProjectileImpact(event);
             return;
         }
 
@@ -296,7 +296,7 @@ public class RecruitEvents {
         if (projectile instanceof AbstractArrow arrow && arrow.getPierceLevel() > 0) {
 
             if (owner instanceof LivingEntity livingOwner && !canAttack(livingOwner, impactLiving)) {
-                event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
+                skipProjectileImpact(event);
                 canceledProjectiles.add(projectile);
                 return;
             }
@@ -309,21 +309,21 @@ public class RecruitEvents {
                 if (passenger instanceof AbstractRecruitEntity passengerRecruit) {
                     if (!canAttack(recruit, passengerRecruit)) {
 
-                        event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
+                        skipProjectileImpact(event);
                         return;
                     }
                 }
                 else if (passenger instanceof Player player) {
                     if (!canAttack(recruit, player)) {
 
-                        event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
+                        skipProjectileImpact(event);
                         return;
                     }
                 }
             }
 
             if (!canAttack(recruit, impactLiving)) {
-                event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
+                skipProjectileImpact(event);
                 return;
             }
             else {
@@ -334,7 +334,7 @@ public class RecruitEvents {
 
         if (owner instanceof AbstractIllager illager && !RecruitsServerConfig.PillagerFriendlyFire.get()) {
             if (illager.isAlliedTo(impactLiving)) {
-                event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
+                skipProjectileImpact(event);
                 canceledProjectiles.add(projectile);
                 return;
             }
@@ -342,10 +342,18 @@ public class RecruitEvents {
 
         if (owner instanceof Player player) {
             if (!canHarmTeam(player, impactLiving)) {
-                event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
+                skipProjectileImpact(event);
                 return;
             }
         }
+    }
+
+    private static void skipProjectileImpact(ProjectileImpactEvent event) {
+        //? if forge {
+        event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
+        //?} else {
+        /*event.setCanceled(true);
+        *///?}
     }
 
     @SubscribeEvent
@@ -676,7 +684,12 @@ public class RecruitEvents {
         Iterator<AbstractArrow> iterator = trackedArrows.iterator();
         while (iterator.hasNext()) {
             AbstractArrow arrow = iterator.next();
-            if (arrow.pickup == AbstractArrow.Pickup.DISALLOWED && arrow.inGroundTime > 300) {
+            //? if forge {
+            boolean expired = arrow.inGroundTime > 300;
+            //?} else {
+            /*boolean expired = arrow.tickCount > 300;
+            *///?}
+            if (arrow.pickup == AbstractArrow.Pickup.DISALLOWED && expired) {
                 arrow.discard();
                 iterator.remove();
             }

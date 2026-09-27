@@ -2,10 +2,12 @@ package com.talhanation.recruits.entities.ai;
 
 import com.talhanation.recruits.config.RecruitsServerConfig;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
+import com.talhanation.recruits.util.RecruitsItemStacks;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.ItemStack;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 public class RecruitEatGoal extends Goal {
 
@@ -74,10 +76,10 @@ public class RecruitEatGoal extends Goal {
         Main.LOGGER.debug("Start--------------:");
         */
 
-        recruit.heal(Objects.requireNonNull(foodStack.getItem().getFoodProperties(foodStack, recruit)).getSaturationModifier() * 1);
+        recruit.heal(RecruitsItemStacks.saturation(foodStack, recruit));
         if (!recruit.isSaturated()){
-            float saturation = Objects.requireNonNull(foodStack.getItem().getFoodProperties(foodStack, recruit)).getSaturationModifier();
-            float nutrition = Objects.requireNonNull(foodStack.getItem().getFoodProperties(foodStack, recruit)).getNutrition() * 5;
+            float saturation = RecruitsItemStacks.saturation(foodStack, recruit);
+            float nutrition = RecruitsItemStacks.nutrition(foodStack, recruit) * 5;
 
             float currentHunger = recruit.getHunger();
             float newHunger = currentHunger + saturation + nutrition;
@@ -100,8 +102,8 @@ public class RecruitEatGoal extends Goal {
     }
 
     private boolean hasFoodInInv(){
-        return recruit.getInventory().items
-                .stream()
+        return IntStream.range(0, recruit.getInventory().getContainerSize())
+                .mapToObj(recruit.getInventory()::getItem)
                 .anyMatch(item -> recruit.canEatItemStack(item));
     }
 

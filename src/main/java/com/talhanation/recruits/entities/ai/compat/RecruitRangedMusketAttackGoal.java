@@ -274,9 +274,8 @@ public class RecruitRangedMusketAttackGoal extends Goal {
         }
     }
     private void consumeAmmo() {
-        List<ItemStack> items = this.crossBowman.getInventory().items;
-
-        for (ItemStack stack : items) {
+        for (int i = 0; i < this.crossBowman.getInventory().getContainerSize(); i++) {
+            ItemStack stack = this.crossBowman.getInventory().getItem(i);
             if (stack.getDescriptionId().equals("item.musketmod.cartridge")) {
                 stack.shrink(1);
                 break;
@@ -286,7 +285,7 @@ public class RecruitRangedMusketAttackGoal extends Goal {
 
     private boolean canLoad(){
         if(RecruitsServerConfig.RangedRecruitsNeedArrowsToShoot.get())
-            return this.crossBowman.getInventory().items.stream().anyMatch(itemStack -> itemStack.getDescriptionId().equals("item.musketmod.cartridge"));
+            return this.crossBowman.getInventory().hasAnyMatching(itemStack -> itemStack.getDescriptionId().equals("item.musketmod.cartridge"));
         else
             return true;
     }

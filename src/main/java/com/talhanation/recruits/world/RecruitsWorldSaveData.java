@@ -21,10 +21,16 @@ public class RecruitsWorldSaveData extends SavedData {
     }
 
     public static RecruitsWorldSaveData get(ServerLevel level) {
+        //? if forge {
         return level.getDataStorage().computeIfAbsent(
                 RecruitsWorldSaveData::load,
                 RecruitsWorldSaveData::new,
                 FILE_ID);
+        //?} else {
+        /*return level.getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(RecruitsWorldSaveData::new, RecruitsWorldSaveData::load),
+                FILE_ID);
+        *///?}
     }
 
     public static RecruitsWorldSaveData load(CompoundTag nbt) {

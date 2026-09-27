@@ -42,7 +42,7 @@ public class AsyncGroundPathNavigation extends AsyncPathNavigation {
     }
 
     protected boolean canUpdatePath() {
-        return this.mob.onGround() || this.isInLiquid() || this.mob.isPassenger();
+        return this.mob.onGround() || this.mob.isInWaterOrBubble() || this.mob.isInLava() || this.mob.isPassenger();
     }
 
     protected @NotNull Vec3 getTempMobPos() {

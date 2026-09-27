@@ -155,7 +155,13 @@ public class PillagerEvents {
             Level level = itemEntity.getCommandSenderWorld();
             if (itemStack.getItem() instanceof BannerItem) {
 
-                if (itemEntity.isOnFire() && ItemStack.matches(itemStack, Raid.getLeaderBannerInstance())) {
+                //? if forge {
+                boolean isLeaderBanner = ItemStack.matches(itemStack, Raid.getLeaderBannerInstance());
+                //?} else {
+                /*boolean isLeaderBanner = ItemStack.matches(itemStack, Raid.getLeaderBannerInstance(
+                        level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.BANNER_PATTERN)));
+                *///?}
+                if (itemEntity.isOnFire() && isLeaderBanner) {
                     Player player = level.getNearestPlayer(itemEntity, 16D);
                     if (player != null) {
                         MobEffectInstance effectinstance1 = player.getEffect(MobEffects.BAD_OMEN);

@@ -1,6 +1,8 @@
 package com.talhanation.recruits.client.render.layer;
 
+//? if forge {
 import com.mojang.authlib.GameProfile;
+//?}
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.EntityModel;
@@ -15,6 +17,10 @@ import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.core.Direction;
+//? if neoforge {
+/*import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.ResolvableProfile;
+*///?}
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -70,6 +76,7 @@ public class VillagerRecruitCustomHeadLayer<T extends LivingEntity, M extends En
                 poseStack.scale(f2, -f2, -f2);
                 poseStack.translate(0.0D, 0.0625D, 0.0D);
 
+                //? if forge {
                 GameProfile gameprofile = null;
                 if (itemstack.hasTag()) {
                     CompoundTag compoundtag = itemstack.getTag();
@@ -77,13 +84,16 @@ public class VillagerRecruitCustomHeadLayer<T extends LivingEntity, M extends En
                         gameprofile = NbtUtils.readGameProfile(compoundtag.getCompound("SkullOwner"));
                     }
                 }
+                //?} else {
+                /*ResolvableProfile gameprofile = itemstack.get(DataComponents.PROFILE);
+                *///?}
 
                 poseStack.translate(-0.5D, 0.0D, -0.5D);
                 SkullBlock.Type skullblock$type = ((AbstractSkullBlock) ((BlockItem) item).getBlock()).getType();
                 SkullModelBase skullmodelbase = this.skullModels.get(skullblock$type);
                 RenderType rendertype = SkullBlockRenderer.getRenderType(skullblock$type, gameprofile);
                 SkullBlockRenderer.renderSkull((Direction) null, 180.0F, p_116735_, poseStack, bufferSource, p_116733_, skullmodelbase, rendertype);
-            } else if (!(item instanceof ArmorItem) || ((ArmorItem) item).getEquipmentSlot() != EquipmentSlot.HEAD) {
+            } else if (!(item instanceof ArmorItem) || !itemstack.canEquip(EquipmentSlot.HEAD, entity)) {
                 translateToHead(poseStack, flag);
                 this.itemInHandRenderer.renderItem(entity, itemstack, ItemDisplayContext.HEAD, false, poseStack, bufferSource, p_116733_);
             }

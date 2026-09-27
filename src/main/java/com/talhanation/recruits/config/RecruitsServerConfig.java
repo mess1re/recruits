@@ -841,7 +841,7 @@ public class RecruitsServerConfig {
 
         SERVER = BUILDER.build();
     }
-
+    //? if forge {
     public static void loadConfig(ForgeConfigSpec spec, Path path) {
         CommentedFileConfig configData = CommentedFileConfig.builder(path)
                 .sync()
@@ -851,5 +851,6 @@ public class RecruitsServerConfig {
         configData.load();
         spec.setConfig(configData);
     }
+    //?}
 }
 

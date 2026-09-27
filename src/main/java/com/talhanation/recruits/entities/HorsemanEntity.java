@@ -23,6 +23,10 @@ import net.minecraft.world.entity.animal.horse.Markings;
 import net.minecraft.world.entity.animal.horse.Variant;
 import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.item.ItemEntity;
+//? if neoforge {
+/*import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+*///?}
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import com.talhanation.recruits.util.RecruitsAttributes;
@@ -127,7 +131,11 @@ public class HorsemanEntity extends RecruitShieldmanEntity {
                     Camel camel = new Camel(EntityType.CAMEL, this.getCommandSenderWorld());
                     camel.setPos(this.getX(), this.getY(), this.getZ());
                     camel.setTamed(true);
+                    //? if forge {
                     camel.equipSaddle(null);
+                    //?} else {
+                    /*camel.equipSaddle(new ItemStack(Items.SADDLE), null);
+                    *///?}
                     this.startRiding(camel);
                     this.getCommandSenderWorld().addFreshEntity(camel);
                     this.setHadHorse(true);
@@ -136,11 +144,19 @@ public class HorsemanEntity extends RecruitShieldmanEntity {
                     Horse horse = new Horse(EntityType.HORSE, this.getCommandSenderWorld());
                     horse.setPos(this.getX(), this.getY(), this.getZ());
                     horse.setTamed(true);
+                    //? if forge {
                     horse.equipSaddle(null);
+                    //?} else {
+                    /*horse.equipSaddle(new ItemStack(Items.SADDLE), null);
+                    *///?}
 
                     Variant variant = Util.getRandom(Variant.values(), this.random);
                     Markings markings = Util.getRandom(Markings.values(), this.random);
+                    //? if forge {
                     horse.setVariantAndMarkings(variant, markings);
+                    //?} else {
+                    /*horse.setVariant(variant);
+                    *///?}
 
                     this.startRiding(horse);
                     this.getCommandSenderWorld().addFreshEntity(horse);

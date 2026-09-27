@@ -168,8 +168,7 @@ public class SmallShips {
                         rotationSpeed = Math.max(rotationSpeed - rotAcceleration / 8, -maxRotSp);
                     }
                 }
-                boat.deltaRotation = rotationSpeed;
-                boat.setYRot(boat.getYRot() + boat.deltaRotation);
+                boat.setYRot(boat.getYRot() + rotationSpeed);
                 setRotSpeed.invoke(ship, rotationSpeed);
             }
         } catch (Exception e) {
@@ -309,8 +308,7 @@ public class SmallShips {
 
                 //ship.setRotSpeed(rotationSpeed);
 
-                boat.deltaRotation = rotationSpeed;
-                boat.setYRot(boat.getYRot() + boat.deltaRotation);
+                boat.setYRot(boat.getYRot() + rotationSpeed);
 
                 shipClassSetRotSpeed.invoke(ship, rotationSpeed);
 

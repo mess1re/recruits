@@ -65,9 +65,14 @@ val relocateLoaderNamespace = tasks.register<Sync>("relocateLoaderNamespace") {
             .replace("BlockPathTypes", "PathType")
             .replace("ToolActions", "ItemAbilities")
             .replace("ForgeSpawnEggItem", "DeferredSpawnEggItem")
+            .replace("BlockBehaviour.Properties.copy(", "BlockBehaviour.Properties.ofFullCopy(")
+            .replace("net.neoforged.neoforge.event.ForgeEventFactory.getMobGriefingEvent(", "net.neoforged.neoforge.event.EventHooks.canEntityGrief(")
             .replace("protected void defineSynchedData()", "protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder)")
             .replace("super.defineSynchedData();", "super.defineSynchedData(builder);")
             .replace("this.entityData.define(", "builder.define(")
+            .replace(", @Nullable CompoundTag nbt)", ")")
+            .replace(", data, nbt)", ", data)")
+            .replace(", spawnData, nbt)", ", spawnData)")
             .replace("IS_CONIFEROUS", "IS_CONIFEROUS_TREE")
             .replace("IS_SPARSE_OVERWORLD", "IS_SPARSE_VEGETATION_OVERWORLD")
             .replace(Regex("""new ResourceLocation\(([^,()]+),\s*([^()]+)\)"""), "ResourceLocation.fromNamespaceAndPath($1, $2)")
@@ -78,6 +83,13 @@ val relocateLoaderNamespace = tasks.register<Sync>("relocateLoaderNamespace") {
             .replace("Mod.EventBusSubscriber.Bus.", "EventBusSubscriber.Bus.")
             .replace("import net.neoforged.bus.api.Cancelable;", "")
             .replace("@Cancelable", "")
+            .let { relocated ->
+                if ("finalizeSpawn(" in relocated) {
+                    relocated.replace(", null, null);", ", null);")
+                } else {
+                    relocated
+                }
+            }
             .let { relocated ->
                 if (relocated == "import net.neoforged.fml.common.Mod;") {
                     "$relocated\nimport net.neoforged.fml.common.EventBusSubscriber;"
@@ -95,7 +107,26 @@ val relocateLoaderNamespace = tasks.register<Sync>("relocateLoaderNamespace") {
                 .replace(".vertex(", ".addVertex(")
                 .replace(".uv(", ".setUv(")
                 .replace(".color(", ".setColor(")
+                .replace(".overlayCoords(", ".setOverlay(")
+                .replace(".uv2(", ".setLight(")
+                .replace(".normal(", ".setNormal(")
                 .replace(".endVertex()", "")
+        }
+    }
+    filesMatching("com/talhanation/recruits/client/render/layer/*.java") {
+        filter { line: String ->
+            line.replace(", 1.0F, 1.0F, 1.0F, 1.0F);", ", -1);")
+        }
+    }
+    filesMatching("com/talhanation/recruits/world/*SaveData.java") {
+        filter { line: String ->
+            line
+                .replace("load(CompoundTag nbt)", "load(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries)")
+                .replace("save(CompoundTag nbt)", "save(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries)")
+                .replace(
+                    Regex("""computeIfAbsent\((\w+)::load, \1::new, ([^)]+)\)"""),
+                    "computeIfAbsent(new SavedData.Factory<>($1::new, $1::load), $2)"
+                )
         }
     }
 }
@@ -141,6 +172,10 @@ sourceSets.main {
 java {
     withSourcesJar()
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
+tasks.named<Jar>("sourcesJar") {
+    dependsOn(relocateLoaderNamespace)
 }
 
 tasks.withType<JavaCompile>().configureEach {

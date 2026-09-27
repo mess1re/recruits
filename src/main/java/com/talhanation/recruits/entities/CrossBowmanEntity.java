@@ -175,10 +175,12 @@ public class CrossBowmanEntity extends AbstractRecruitEntity implements Crossbow
     }
 
     //Pillager
+    //? if forge {
     @Override
     public void shootCrossbowProjectile(@NotNull LivingEntity target, @NotNull ItemStack stack, @NotNull Projectile projectile, float f) {
         this.shootCrossbowProjectile(this, target, projectile, f, 1.6F);
     }
+    //?}
 
     private boolean getChargingCrossbow() {
         return this.entityData.get(DATA_IS_CHARGING_CROSSBOW);

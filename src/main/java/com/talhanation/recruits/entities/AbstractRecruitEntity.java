@@ -155,12 +155,16 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         this.xpReward = 6;
         this.navigation = this.createNavigation(world);
         this.targetingConditions = TargetingConditions.forCombat().ignoreInvisibilityTesting().ignoreLineOfSight().selector(this::shouldAttack);
-        //? if forge {
-        this.setMaxUpStep(1F);
-        //?} else {
-        /*this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(1.0D);
-        *///?}
+        this.setRecruitStepHeight(1F);
         this.setMaxFallDistance(1);
+    }
+
+    public void setRecruitStepHeight(float height) {
+        //? if forge {
+        this.setMaxUpStep(height);
+        //?} else {
+        /*this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(height);
+        *///?}
     }
 
     ///////////////////////////////////NAVIGATION/////////////////////////////////////////

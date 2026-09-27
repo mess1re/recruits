@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.talhanation.recruits.ClaimEvents;
 import com.talhanation.recruits.RecruitEvents;
@@ -14,6 +15,7 @@ import com.talhanation.recruits.config.RecruitsServerConfig;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.entities.VillagerNobleEntity;
 import com.talhanation.recruits.items.RecruitsSpawnEgg;
+import com.talhanation.recruits.util.RecruitsItemStacks;
 import com.talhanation.recruits.world.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -59,13 +61,13 @@ public class RecruitsAdminCommands {
                             ServerLevel level = conetext.getSource().getLevel();
 
 
-                            return tpToOwner(level, ScoreHolderArgument.getNamesWithDefaultWildcard(conetext, "Owner"));
+                            return tpToOwner(level, getScoreHolderNames(conetext, "Owner"));
                         })))
                 .then(Commands.literal("unitsManager")
                         .then(Commands.literal("getUnitsCount")
                                 .then(Commands.argument("Player", ScoreHolderArgument.scoreHolders()).suggests(ScoreHolderArgument.SUGGEST_SCORE_HOLDERS)
                                         .executes((context) -> {
-                                            String playerName = ScoreHolderArgument.getName(context, "Player");
+                                            String playerName = getScoreHolderName(context, "Player");
                                             ServerPlayer player = context.getSource().getLevel().getServer().getPlayerList().getPlayerByName(playerName);
 
                                             if(player == null) {
@@ -83,7 +85,7 @@ public class RecruitsAdminCommands {
                                 .then(Commands.argument("Player", ScoreHolderArgument.scoreHolders()).suggests(ScoreHolderArgument.SUGGEST_SCORE_HOLDERS)
                                         .then(Commands.argument("Amount", IntegerArgumentType.integer(0))
                                                 .executes((context) -> {
-                                                    String playerName = ScoreHolderArgument.getName(context, "Player");
+                                                    String playerName = getScoreHolderName(context, "Player");
                                                     ServerPlayer player = context.getSource().getLevel().getServer().getPlayerList().getPlayerByName(playerName);
 
                                                     if(player == null) {
@@ -152,7 +154,7 @@ public class RecruitsAdminCommands {
                                                     PlayerTeam playerTeam = TeamArgument.getTeam(context, "Faction");
                                                     RecruitsFaction faction = FactionEvents.recruitsFactionManager.getFactionByStringID(playerTeam.getName());
 
-                                                    String playerName = ScoreHolderArgument.getName(context, "Player");
+                                                    String playerName = getScoreHolderName(context, "Player");
                                                     ServerPlayer player = context.getSource().getLevel().getServer().getPlayerList().getPlayerByName(playerName);
 
                                                     if(faction == null) {
@@ -449,7 +451,7 @@ public class RecruitsAdminCommands {
                                                 return 0;
                                             }
 
-                                            Collection<String> ownerNames = ScoreHolderArgument.getNamesWithDefaultWildcard(ctx, "owner");
+                                            Collection<String> ownerNames = getScoreHolderNames(ctx, "owner");
                                             String ownerName = ownerNames.stream().findFirst().orElse(null);
 
                                             if (ownerName == null) {
@@ -591,12 +593,12 @@ public class RecruitsAdminCommands {
 
                                             if(handItem.getItem() instanceof RecruitsSpawnEgg recruitsSpawnEgg){
                                                 BlockPos pos = player.getOnPos();
-                                                EntityType<?> entitytype = recruitsSpawnEgg.getType(handItem.getTag());
+                                                EntityType<?> entitytype = recruitsSpawnEgg.getRecruitsType(handItem);
                                                 List<AbstractRecruitEntity> recruitEntities = new ArrayList<>();
 
                                                 for(int i = 0; i < amount; i++){
                                                     Entity entity = entitytype.create(serverLevel);
-                                                    CompoundTag entityTag = handItem.getTag();
+                                                    CompoundTag entityTag = RecruitsItemStacks.getEntityData(handItem);
 
                                                     if(entity instanceof AbstractRecruitEntity recruit && entityTag != null) {
                                                         RecruitsSpawnEgg.fillRecruit(recruit, entityTag, pos);
@@ -724,6 +726,24 @@ public class RecruitsAdminCommands {
                 )
         );
         dispatcher.register(literalBuilder);
+    }
+
+    private static String getScoreHolderName(CommandContext<CommandSourceStack> context, String argument) throws CommandSyntaxException {
+        //? if forge {
+        return ScoreHolderArgument.getName(context, argument);
+        //?} else {
+        /*return ScoreHolderArgument.getName(context, argument).getScoreboardName();
+        *///?}
+    }
+
+    private static Collection<String> getScoreHolderNames(CommandContext<CommandSourceStack> context, String argument) throws CommandSyntaxException {
+        //? if forge {
+        return ScoreHolderArgument.getNamesWithDefaultWildcard(context, argument);
+        //?} else {
+        /*return ScoreHolderArgument.getNamesWithDefaultWildcard(context, argument).stream()
+                .map(holder -> holder.getScoreboardName())
+                .toList();
+        *///?}
     }
 
     private static int tpToOwner(ServerLevel level, Collection<String> names) {

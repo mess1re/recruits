@@ -34,16 +34,16 @@ public class MessageToClientUpdateLeaderScreen implements Message<MessageToClien
 
     @Override
     public MessageToClientUpdateLeaderScreen fromBytes(FriendlyByteBuf buf) {
-        this.waypoints = buf.readList(FriendlyByteBuf::readBlockPos);
-        this.waypointItems = buf.readList(FriendlyByteBuf::readItem);
+        this.waypoints = buf.readList(buffer -> buffer.readBlockPos());
+        this.waypointItems = buf.readList(RecruitsNetworkCodecs::readItem);
         this.size = buf.readInt();
         return this;
     }
 
     @Override
     public void toBytes(FriendlyByteBuf buf) {
-        buf.writeCollection(waypoints, FriendlyByteBuf::writeBlockPos);
-        buf.writeCollection(waypointItems, FriendlyByteBuf::writeItem);
+        buf.writeCollection(waypoints, (buffer, waypoint) -> buffer.writeBlockPos(waypoint));
+        buf.writeCollection(waypointItems, RecruitsNetworkCodecs::writeItem);
         buf.writeInt(this.size);
     }
 }

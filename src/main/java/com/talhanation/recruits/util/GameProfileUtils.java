@@ -14,13 +14,25 @@ public class GameProfileUtils {
     public static ResourceLocation getSkin(UUID uuid) {
         ClientPacketListener connection = mc.getConnection();
         if (connection == null) {
+            //? if forge {
             return DefaultPlayerSkin.getDefaultSkin(uuid);
+            //?} else {
+            /*return DefaultPlayerSkin.get(uuid).texture();
+            *///?}
         }
         PlayerInfo playerInfo = connection.getPlayerInfo(uuid);
         if (playerInfo == null) {
+            //? if forge {
             return DefaultPlayerSkin.getDefaultSkin(uuid);
+            //?} else {
+            /*return DefaultPlayerSkin.get(uuid).texture();
+            *///?}
         }
+        //? if forge {
         return playerInfo.getSkinLocation();
+        //?} else {
+        /*return playerInfo.getSkin().texture();
+        *///?}
     }
 
 }

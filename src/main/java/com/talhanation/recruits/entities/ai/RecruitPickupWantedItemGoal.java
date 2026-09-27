@@ -50,7 +50,7 @@ public class RecruitPickupWantedItemGoal extends Goal {
                         recruit.getBoundingBox().inflate(16.0D, 3.0D, 16.0D),
                         (item) -> recruit.getAllowedItems().test(item) &&
                                 recruit.distanceTo(itemEntity) < 25 &&
-                                ((itemEntity.getItem().isEdible() && recruit.getHunger() < 30) ||
+                                ((recruit.canEatItemStack(itemEntity.getItem()) && recruit.getHunger() < 30) ||
                                         (recruit.wantsToPickUp(itemEntity.getItem())))
                 ).forEach((item) -> {
                     this.itemEntityList.add(itemEntity);
@@ -84,10 +84,10 @@ public class RecruitPickupWantedItemGoal extends Goal {
             case MOVE -> {
                 if (itemEntity != null) {
                     recruit.getNavigation().moveTo(itemEntity, 1F);
-                    recruit.setMaxUpStep(1.25F);
+                    recruit.setRecruitStepHeight(1.25F);
                     if (recruit.distanceTo(itemEntity) < 3F) {
                         this.state = PICKUP;
-                        recruit.setMaxUpStep(1F);
+                        recruit.setRecruitStepHeight(1F);
 
                     }
                 } else state = SELECT;

@@ -10,11 +10,13 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.util.Objects;
+import java.util.List;
 import java.util.UUID;
 
 public class MessageWriteSpawnEgg implements Message<MessageWriteSpawnEgg> {
@@ -43,13 +45,8 @@ public class MessageWriteSpawnEgg implements Message<MessageWriteSpawnEgg> {
             CompoundTag entityTag = new CompoundTag();
             entityTag = this.fillRecruitsInfo(entityTag, recruitEntity);
 
-
-
-            CompoundTag itemTag = new CompoundTag();
-            itemTag.put("EntityTag", entityTag);
-
             if (itemStack != null && !itemStack.isEmpty() && player.getMainHandItem().isEmpty()) {
-                itemStack.setTag(itemTag);
+                RecruitsItemStacks.setEntityData(itemStack, entityTag);
                 player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
             }
         });
@@ -134,7 +131,8 @@ public class MessageWriteSpawnEgg implements Message<MessageWriteSpawnEgg> {
         entityTag.put("Items", listnbt);
 
         ListTag listtag = new ListTag();
-        for (ItemStack itemstack : recruitEntity.armorItems) {
+        for (EquipmentSlot slot : List.of(EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD)) {
+            ItemStack itemstack = recruitEntity.getItemBySlot(slot);
             CompoundTag compoundtag = new CompoundTag();
             if (!itemstack.isEmpty()) {
                 RecruitsItemStacks.saveInto(itemstack, compoundtag, recruitEntity.level().registryAccess());
@@ -146,7 +144,8 @@ public class MessageWriteSpawnEgg implements Message<MessageWriteSpawnEgg> {
         entityTag.put("ArmorItems", listtag);
         ListTag listtag1 = new ListTag();
 
-        for (ItemStack itemstack1 : recruitEntity.handItems) {
+        for (EquipmentSlot slot : List.of(EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND)) {
+            ItemStack itemstack1 = recruitEntity.getItemBySlot(slot);
             CompoundTag compoundtag1 = new CompoundTag();
             if (!itemstack1.isEmpty()) {
                 RecruitsItemStacks.saveInto(itemstack1, compoundtag1, recruitEntity.level().registryAccess());

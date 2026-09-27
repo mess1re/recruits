@@ -68,8 +68,8 @@ public class MessagePatrolLeaderSetRoute implements Message<MessagePatrolLeaderS
         this.recruit     = buf.readUUID();
         boolean hasRoute = buf.readBoolean();
         this.routeId     = hasRoute ? buf.readUUID() : null;
-        this.waypoints   = buf.readList(FriendlyByteBuf::readBlockPos);
-        this.waitSeconds = buf.readList(FriendlyByteBuf::readVarInt);
+        this.waypoints   = buf.readList(buffer -> buffer.readBlockPos());
+        this.waitSeconds = buf.readList(buffer -> buffer.readVarInt());
         return this;
     }
 
@@ -78,7 +78,7 @@ public class MessagePatrolLeaderSetRoute implements Message<MessagePatrolLeaderS
         buf.writeUUID(this.recruit);
         buf.writeBoolean(this.routeId != null);
         if (this.routeId != null) buf.writeUUID(this.routeId);
-        buf.writeCollection(this.waypoints, FriendlyByteBuf::writeBlockPos);
-        buf.writeCollection(this.waitSeconds, FriendlyByteBuf::writeVarInt);
+        buf.writeCollection(this.waypoints, (buffer, waypoint) -> buffer.writeBlockPos(waypoint));
+        buf.writeCollection(this.waitSeconds, (buffer, wait) -> buffer.writeVarInt(wait));
     }
 }

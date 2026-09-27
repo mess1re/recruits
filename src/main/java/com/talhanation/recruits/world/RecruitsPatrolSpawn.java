@@ -21,6 +21,7 @@ import net.minecraft.world.entity.SpawnPlacements.Type;
 /*import net.minecraft.world.entity.SpawnPlacements;
 *///?}
 import net.minecraft.world.entity.animal.horse.Horse;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.animal.horse.Llama;
 import net.minecraft.world.entity.animal.horse.Mule;
 import net.minecraft.world.entity.npc.Villager;
@@ -403,7 +404,11 @@ public class RecruitsPatrolSpawn {
         horse.finalizeSpawn(world, world.getCurrentDifficultyAt(upPos), MobSpawnType.PATROL, null, null);
         horse.setPersistenceRequired();
         horse.setTamed(true);
+        //? if forge {
         horse.equipSaddle(null);
+        //?} else {
+        /*horse.equipSaddle(new ItemStack(Items.SADDLE), null);
+        *///?}
         horse.setLeashedTo(villager, true);
         world.addFreshEntity(horse);
     }
@@ -426,7 +431,9 @@ public class RecruitsPatrolSpawn {
         llama.setTamed(true);
         llama.setChest(true);
         llama.getPersistentData().putInt("Strength", 5);
+        //? if forge {
         llama.createInventory();
+        //?}
         llama.setLeashedTo(villager, true);
         llama.getPersistentData().putBoolean("Caravan", true);
         fillLlamaInventory(llama);
@@ -447,9 +454,9 @@ public class RecruitsPatrolSpawn {
             new ItemStack(Items.OAK_WOOD), new ItemStack(Items.BRICK)
         };
         for (int i = 0; i < 4; i++) {
-            ItemStack s = foods[random.nextInt(foods.length)].copy();   s.setCount(random.nextInt(64)); llama.inventory.addItem(s);
-            ItemStack g = goods[random.nextInt(goods.length)].copy();   g.setCount(random.nextInt(64)); llama.inventory.addItem(g);
-            ItemStack b = building[random.nextInt(building.length)].copy(); b.setCount(random.nextInt(64)); llama.inventory.addItem(b);
+            ItemStack s = foods[random.nextInt(foods.length)].copy();   s.setCount(random.nextInt(64)); horseInventory(llama).addItem(s);
+            ItemStack g = goods[random.nextInt(goods.length)].copy();   g.setCount(random.nextInt(64)); horseInventory(llama).addItem(g);
+            ItemStack b = building[random.nextInt(building.length)].copy(); b.setCount(random.nextInt(64)); horseInventory(llama).addItem(b);
         }
     }
 
@@ -460,7 +467,9 @@ public class RecruitsPatrolSpawn {
         mule.setPersistenceRequired();
         mule.setTamed(true);
         mule.setChest(true);
+        //? if forge {
         mule.createInventory();
+        //?}
         mule.setLeashedTo(owner, true);
         mule.getPersistentData().putBoolean("Caravan", true);
         fillMuleInventory(mule);
@@ -472,10 +481,18 @@ public class RecruitsPatrolSpawn {
         ItemStack[] metal    = { new ItemStack(Items.COAL), new ItemStack(Items.IRON_INGOT), new ItemStack(Items.COPPER_INGOT), new ItemStack(Items.CHAIN), new ItemStack(Items.CLAY) };
         ItemStack[] building = { new ItemStack(Items.STONE), new ItemStack(Items.WHITE_WOOL), new ItemStack(Items.OAK_WOOD), new ItemStack(Items.BRICK) };
         ItemStack[] misc     = { new ItemStack(Items.SAND), new ItemStack(Items.SANDSTONE), new ItemStack(Items.GLASS), new ItemStack(Items.BARREL) };
-        for (int i = 0; i < 4; i++) { ItemStack s = foods[random.nextInt(foods.length)].copy();    s.setCount(random.nextInt(64)); mule.inventory.setItem(16 - i, s); }
-        for (int i = 0; i < 4; i++) { ItemStack s = metal[random.nextInt(metal.length)].copy();    s.setCount(random.nextInt(64)); mule.inventory.setItem(12 - i, s); }
-        for (int i = 0; i < 4; i++) { ItemStack s = building[random.nextInt(building.length)].copy(); s.setCount(random.nextInt(64)); mule.inventory.setItem(8 - i, s); }
-        for (int i = 0; i < 3; i++) { ItemStack s = misc[random.nextInt(misc.length)].copy();      s.setCount(random.nextInt(64)); mule.inventory.setItem(4 - i, s); }
+        for (int i = 0; i < 4; i++) { ItemStack s = foods[random.nextInt(foods.length)].copy();    s.setCount(random.nextInt(64)); horseInventory(mule).setItem(16 - i, s); }
+        for (int i = 0; i < 4; i++) { ItemStack s = metal[random.nextInt(metal.length)].copy();    s.setCount(random.nextInt(64)); horseInventory(mule).setItem(12 - i, s); }
+        for (int i = 0; i < 4; i++) { ItemStack s = building[random.nextInt(building.length)].copy(); s.setCount(random.nextInt(64)); horseInventory(mule).setItem(8 - i, s); }
+        for (int i = 0; i < 3; i++) { ItemStack s = misc[random.nextInt(misc.length)].copy();      s.setCount(random.nextInt(64)); horseInventory(mule).setItem(4 - i, s); }
+    }
+
+    private static net.minecraft.world.SimpleContainer horseInventory(AbstractHorse horse) {
+        //? if forge {
+        return horse.inventory;
+        //?} else {
+        /*return (net.minecraft.world.SimpleContainer) horse.getInventory();
+        *///?}
     }
 
     // -------------------------------------------------------------------------
