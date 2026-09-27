@@ -160,6 +160,7 @@ public class ScrollDropDownMenu<T> extends AbstractWidget {
     }
 
     @Override
+    //? if forge {
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         if(!visible) return false;
 
@@ -170,6 +171,18 @@ public class ScrollDropDownMenu<T> extends AbstractWidget {
         }
         return false;
     }
+    //?} else {
+    /*public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if(!visible) return false;
+
+        if (isOpen) {
+            scrollOffset -= (int) verticalAmount;
+            scrollOffset = Math.max(0, Math.min(scrollOffset, options.size() - maxVisibleOptions));
+            return true;
+        }
+        return false;
+    }
+    *///?}
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {

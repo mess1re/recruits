@@ -210,7 +210,11 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
     }
 
     protected float getStandingEyeHeight(Pose pos, EntityDimensions size) {
+        //? if forge {
         return size.height * 0.9F;
+        //?} else {
+        /*return size.height() * 0.9F;
+        *///?}
     }
 
     public int getMaxHeadXRot() {

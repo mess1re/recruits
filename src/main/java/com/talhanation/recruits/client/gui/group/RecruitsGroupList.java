@@ -24,9 +24,11 @@ public class RecruitsGroupList extends ListScreenListBase<RecruitsGroupEntry> {
         this.screen = screen;
         this.entries = Lists.newArrayList();
         this.filter = "";
+        //? if forge {
         setRenderBackground(false);
         setRenderTopAndBottom(false);
         setRenderSelection(true);
+        //?}
 
         if(blackList != null){
             this.blackList.addAll(blackList);

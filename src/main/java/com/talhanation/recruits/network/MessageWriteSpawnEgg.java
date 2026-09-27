@@ -3,6 +3,7 @@ package com.talhanation.recruits.network;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.events.RecruitsOnWriteSpawnEggEvent;
 import com.talhanation.recruits.init.ModItems;
+import com.talhanation.recruits.util.RecruitsItemStacks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -126,7 +127,7 @@ public class MessageWriteSpawnEgg implements Message<MessageWriteSpawnEgg> {
             if (!itemstack.isEmpty()) {
                 CompoundTag compoundnbt = new CompoundTag();
                 compoundnbt.putByte("Slot", (byte) i);
-                itemstack.save(compoundnbt);
+                RecruitsItemStacks.saveInto(itemstack, compoundnbt, recruitEntity.level().registryAccess());
                 listnbt.add(compoundnbt);
             }
         }
@@ -136,7 +137,7 @@ public class MessageWriteSpawnEgg implements Message<MessageWriteSpawnEgg> {
         for (ItemStack itemstack : recruitEntity.armorItems) {
             CompoundTag compoundtag = new CompoundTag();
             if (!itemstack.isEmpty()) {
-                itemstack.save(compoundtag);
+                RecruitsItemStacks.saveInto(itemstack, compoundtag, recruitEntity.level().registryAccess());
             }
 
             listtag.add(compoundtag);
@@ -148,7 +149,7 @@ public class MessageWriteSpawnEgg implements Message<MessageWriteSpawnEgg> {
         for (ItemStack itemstack1 : recruitEntity.handItems) {
             CompoundTag compoundtag1 = new CompoundTag();
             if (!itemstack1.isEmpty()) {
-                itemstack1.save(compoundtag1);
+                RecruitsItemStacks.saveInto(itemstack1, compoundtag1, recruitEntity.level().registryAccess());
             }
 
             listtag1.add(compoundtag1);

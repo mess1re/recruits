@@ -230,7 +230,9 @@ public class EditOrAddGroupScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+        //? if forge {
         this.renderBackground(guiGraphics);
+        //?}
         this.renderBackground(guiGraphics, mouseX, mouseY, delta);
         super.render(guiGraphics, mouseX, mouseY, delta);
         this.renderForeground(guiGraphics, mouseX, mouseY, delta);

@@ -159,7 +159,7 @@ public class SiegeWeaponBallistaController implements ISiegeController {
                     this.currentNode = path.getNextNode();
                 }
                 catch (IndexOutOfBoundsException e) {
-                    this.currentNode = path.nodes.isEmpty() ? null : path.nodes.get(path.nodes.size() - 1);
+                    this.currentNode = path.getNodeCount() == 0 ? null : path.getNode(path.getNodeCount() - 1);
                 }
             }
         }
@@ -174,7 +174,7 @@ public class SiegeWeaponBallistaController implements ISiegeController {
                         this.currentNode = path.getNextNode();
                     }
                     catch (IndexOutOfBoundsException e) {
-                        this.currentNode = path.nodes.isEmpty() ? null : path.nodes.get(path.nodes.size() - 1);
+                        this.currentNode = path.getNodeCount() == 0 ? null : path.getNode(path.getNodeCount() - 1);
                     }
                 }
             }

@@ -10,6 +10,7 @@ import com.talhanation.recruits.network.*;
 import com.talhanation.recruits.util.DelayedExecutor;
 import com.talhanation.recruits.util.RecruitsEventBus;
 import com.talhanation.recruits.util.RegistryUtils;
+import com.talhanation.recruits.util.RecruitsItemStacks;
 import com.talhanation.recruits.world.*;
 import com.talhanation.recruits.FactionEvent;
 import net.minecraft.ChatFormatting;
@@ -123,7 +124,7 @@ public class FactionEvents {
         PlayerTeam team = server.getScoreboard().getPlayerTeam(teamName);
         int cost = RecruitsServerConfig.FactionCreationCost.get();
         if(banner == null) banner = Items.BROWN_BANNER.getDefaultInstance();
-        CompoundTag nbt = banner.serializeNBT();
+        CompoundTag nbt = RecruitsItemStacks.save(banner, serverPlayer.level().registryAccess());
 
         if (team != null) {
             serverPlayer.sendSystemMessage(Component.translatable("chat.recruits.team_creation.team_exists").withStyle(ChatFormatting.RED));
@@ -159,7 +160,7 @@ public class FactionEvents {
             //TeamCommand
             if (menu) doPayment(serverPlayer, cost);
 
-            recruitsFactionManager.addTeam(teamName, displayName, serverPlayer.getUUID(), serverPlayer.getScoreboardName(), banner.serializeNBT(), colorByte, newTeam.getColor());
+            recruitsFactionManager.addTeam(teamName, displayName, serverPlayer.getUUID(), serverPlayer.getScoreboardName(), nbt, colorByte, newTeam.getColor());
             addPlayerToData(level, teamName, 1, playerName);
             RecruitsFaction createdFactionForMember = recruitsFactionManager.getFactionByStringID(teamName);
             if (createdFactionForMember != null) createdFactionForMember.addMember(serverPlayer.getUUID(), playerName);
@@ -712,7 +713,7 @@ public class FactionEvents {
                         newTeam.setAllowFriendlyFire(RecruitsServerConfig.GlobalTeamSetting.get() && RecruitsServerConfig.GlobalTeamFriendlyFireSetting.get());
                         newTeam.setSeeFriendlyInvisibles(RecruitsServerConfig.GlobalTeamSetting.get() && RecruitsServerConfig.GlobalTeamSeeFriendlyInvisibleSetting.get());
 
-                        recruitsFactionManager.addTeam(teamName, teamName, new UUID(0,0),"none", banner.serializeNBT(), colorByte, newTeam.getColor());
+                        recruitsFactionManager.addTeam(teamName, teamName, new UUID(0,0),"none", RecruitsItemStacks.save(banner, server.registryAccess()), colorByte, newTeam.getColor());
 
                         Main.LOGGER.info("The new Team " + teamName + " has been created by console.");
 

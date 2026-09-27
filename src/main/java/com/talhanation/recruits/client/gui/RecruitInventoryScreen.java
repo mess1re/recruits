@@ -393,10 +393,17 @@ public class RecruitInventoryScreen extends ScreenBase<RecruitInventoryMenu> {
         return super.mouseClicked(mouseX, mouseY, button);
     }
     @Override
+    //? if forge {
     public boolean mouseScrolled(double x, double y, double d) {
         if(groupSelectionDropDownMenu != null) groupSelectionDropDownMenu.mouseScrolled(x,y,d);
         return super.mouseScrolled(x, y, d);
     }
+    //?} else {
+    /*public boolean mouseScrolled(double x, double y, double horizontalAmount, double verticalAmount) {
+        if(groupSelectionDropDownMenu != null) groupSelectionDropDownMenu.mouseScrolled(x, y, horizontalAmount, verticalAmount);
+        return super.mouseScrolled(x, y, horizontalAmount, verticalAmount);
+    }
+    *///?}
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
@@ -540,6 +547,10 @@ public class RecruitInventoryScreen extends ScreenBase<RecruitInventoryMenu> {
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
 
+        //? if forge {
         InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, i + 50, j + 82, 30, (float)(i + 50) - mouseX, (float)(j + 75 - 50) - mouseY, this.recruit);
+        //?} else {
+        /*InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, i + 25, j + 12, i + 75, j + 82, 30, 0.0625F, mouseX, mouseY, this.recruit);
+        *///?}
     }
 }

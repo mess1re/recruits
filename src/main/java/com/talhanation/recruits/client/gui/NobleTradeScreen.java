@@ -94,11 +94,17 @@ public class NobleTradeScreen extends RecruitsScreenBase {
         this.group = ClientManager.getSelectedGroup();
 
         this.tradeList = new TradeList(Minecraft.getInstance(), listWidth, listHeight, listTop, listBottom, itemHeight, itemWidth);
+        //? if forge {
         this.tradeList.setRenderBackground(false);
         this.tradeList.setRenderTopAndBottom(false);
+        //?}
 
+        //? if forge {
         this.tradeList.setLeftPos(listLeft);
         this.tradeList.setRenderSelection(false);
+        //?} else {
+        /*this.tradeList.setX(listLeft);
+        *///?}
 
         this.addRenderableWidget(this.tradeList);
 
@@ -232,10 +238,17 @@ public class NobleTradeScreen extends RecruitsScreenBase {
         return super.mouseClicked(mouseX, mouseY, button);
     }
     @Override
+    //? if forge {
     public boolean mouseScrolled(double x, double y, double d) {
         if(groupSelectionDropDownMenu != null) groupSelectionDropDownMenu.mouseScrolled(x,y,d);
         return super.mouseScrolled(x, y, d);
     }
+    //?} else {
+    /*public boolean mouseScrolled(double x, double y, double horizontalAmount, double verticalAmount) {
+        if(groupSelectionDropDownMenu != null) groupSelectionDropDownMenu.mouseScrolled(x, y, horizontalAmount, verticalAmount);
+        return super.mouseScrolled(x, y, horizontalAmount, verticalAmount);
+    }
+    *///?}
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
@@ -320,7 +333,11 @@ public class NobleTradeScreen extends RecruitsScreenBase {
     private class TradeList extends ObjectSelectionList<TradeList.TradeEntry> {
         public int itemWidth;
         public TradeList(Minecraft mc, int width, int height, int top, int bottom, int itemHeight, int itemWidth) {
+            //? if forge {
             super(mc, width, height, top, bottom, itemHeight);
+            //?} else {
+            /*super(mc, width, bottom - top, top, itemHeight);
+            *///?}
             this.itemWidth = itemWidth;
         }
 
@@ -375,7 +392,11 @@ public class NobleTradeScreen extends RecruitsScreenBase {
                 guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
                 RenderSystem.enableBlend();
                 RenderSystem.enableDepthTest();
+                //? if forge {
                 guiGraphics.blitNineSliced(AbstractButton.WIDGETS_LOCATION, rowLeft, top, rowWidth, entryHeight, 20, 4, 200, 20, 0, textureY);
+                //?} else {
+                /*guiGraphics.fill(rowLeft, top, rowLeft + rowWidth, top + entryHeight, selected ? 0x80909090 : 0x80404040);
+                *///?}
                 guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
                 guiGraphics.drawString(font, trade.title, x, y, -2039584, false);

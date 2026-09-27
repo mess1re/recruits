@@ -3,6 +3,7 @@ package com.talhanation.recruits.items;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.RecruitEvents;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
+import com.talhanation.recruits.util.RecruitsItemStacks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -189,20 +190,21 @@ public class RecruitsSpawnEgg extends ForgeSpawnEggItem {
             CompoundTag compoundnbt = listnbt.getCompound(i);
             int j = compoundnbt.getByte("Slot") & 255;
             if (j < recruit.inventory.getContainerSize()) {
-                recruit.inventory.setItem(j, ItemStack.of(compoundnbt));
+                recruit.inventory.setItem(j, RecruitsItemStacks.parse(compoundnbt, recruit.level().registryAccess()));
             }
         }
 
         ListTag armorItems = nbt.getList("ArmorItems", 10);
         for (int i = 0; i < recruit.armorItems.size(); ++i) {
-            int index = recruit.getInventorySlotIndex(Mob.getEquipmentSlotForItem(ItemStack.of(armorItems.getCompound(i))));
-            recruit.setItemSlot(recruit.getEquipmentSlotIndex(index), ItemStack.of(armorItems.getCompound(i)));
+            ItemStack armorItem = RecruitsItemStacks.parse(armorItems.getCompound(i), recruit.level().registryAccess());
+            int index = recruit.getInventorySlotIndex(Mob.getEquipmentSlotForItem(armorItem));
+            recruit.setItemSlot(recruit.getEquipmentSlotIndex(index), armorItem);
         }
 
         ListTag handItems = nbt.getList("HandItems", 10);
         for (int i = 0; i < recruit.handItems.size(); ++i) {
             int index = i == 0 ? 5 : 4; //5 = mainhand 4 = offhand
-            recruit.setItemSlot(recruit.getEquipmentSlotIndex(index), ItemStack.of(handItems.getCompound(i)));
+            recruit.setItemSlot(recruit.getEquipmentSlotIndex(index), RecruitsItemStacks.parse(handItems.getCompound(i), recruit.level().registryAccess()));
         }
 
         recruit.setPos(pos.getX() + 0.5, pos.getY() + 1 , pos.getZ() + 0.5);

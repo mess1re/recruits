@@ -22,8 +22,16 @@ public class RecruitsCategoryButton extends ExtendedButton {
     }
 
     @Override
+    //? if forge {
     public void render(GuiGraphics guiGraphics, int p_93658_, int p_93659_, float p_93660_) {
+    //?} else {
+    /*public void renderWidget(GuiGraphics guiGraphics, int p_93658_, int p_93659_, float p_93660_) {
+    *///?}
+        //? if forge {
         super.render(guiGraphics, p_93658_, p_93659_, p_93660_);
+        //?} else {
+        /*super.renderWidget(guiGraphics, p_93658_, p_93659_, p_93660_);
+        *///?}
         guiGraphics.renderFakeItem(renderItem, this.x, this.y);
     }
 

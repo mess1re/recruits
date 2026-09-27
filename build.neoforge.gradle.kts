@@ -72,6 +72,8 @@ val relocateLoaderNamespace = tasks.register<Sync>("relocateLoaderNamespace") {
             .replace("IS_SPARSE_OVERWORLD", "IS_SPARSE_VEGETATION_OVERWORLD")
             .replace(Regex("""new ResourceLocation\(([^,()]+),\s*([^()]+)\)"""), "ResourceLocation.fromNamespaceAndPath($1, $2)")
             .replace(Regex("""new ResourceLocation\(([^()]+)\)"""), "ResourceLocation.parse($1)")
+            .replace(Regex("""(?:this\.)?(?:textField\w*|searchBox|descriptionBox|editBox|groupNameField|nameField|waitField)\.tick\(\);"""), "{}")
+            .replace(Regex("""populateDefaultEquipmentEnchantments\((randomsource|random), difficultyInstance\)"""), "populateDefaultEquipmentEnchantments(world, $1, difficultyInstance)")
             .replace("@Mod.EventBusSubscriber", "@EventBusSubscriber")
             .replace("Mod.EventBusSubscriber.Bus.", "EventBusSubscriber.Bus.")
             .replace("import net.neoforged.bus.api.Cancelable;", "")
@@ -83,6 +85,18 @@ val relocateLoaderNamespace = tasks.register<Sync>("relocateLoaderNamespace") {
                     relocated
                 }
             }
+    }
+    filesMatching("com/talhanation/recruits/client/gui/worldmap/**/*.java") {
+        filter { line: String ->
+            line
+                .replace("Tesselator.getInstance().getBuilder()", "null")
+                .replace("buffer.begin(", "buffer = Tesselator.getInstance().begin(")
+                .replace("buffer.end()", "buffer.buildOrThrow()")
+                .replace(".vertex(", ".addVertex(")
+                .replace(".uv(", ".setUv(")
+                .replace(".color(", ".setColor(")
+                .replace(".endVertex()", "")
+        }
     }
 }
 

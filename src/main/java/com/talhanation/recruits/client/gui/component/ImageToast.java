@@ -13,6 +13,9 @@ import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public class ImageToast implements Toast {
+    //? if neoforge {
+    /*private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("toast/system");
+    *///?}
     @Nullable
     protected final ResourceLocation image;
     private final Component title;
@@ -29,7 +32,11 @@ public class ImageToast implements Toast {
 
     @Override
     public Visibility render(GuiGraphics guiGraphics, ToastComponent toastComponent, long deltaTime) {
+        //? if forge {
         guiGraphics.blit(TEXTURE, 0, 0, 0, 0, this.width(), this.height());
+        //?} else {
+        /*guiGraphics.blitSprite(BACKGROUND_SPRITE, 0, 0, this.width(), this.height());
+        *///?}
 
         if (image != null) {
             guiGraphics.blit(this.image, 5, 5, 0, 0, 21, 21, 21, 21);

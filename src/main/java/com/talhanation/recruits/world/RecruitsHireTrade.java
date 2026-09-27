@@ -47,7 +47,11 @@ public class RecruitsHireTrade {
 
     public static RecruitsHireTrade fromNbt(CompoundTag tag) {
         int cost = tag.getInt("cost");
+        //? if forge {
         ResourceLocation recruitType = new ResourceLocation(tag.getString("recruitType"));
+        //?} else {
+        /*ResourceLocation recruitType = ResourceLocation.parse(tag.getString("recruitType"));
+        *///?}
         int maxUses = tag.getInt("maxUses");
         int uses = tag.getInt("uses");
 

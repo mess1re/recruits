@@ -151,6 +151,7 @@ public class BowmanEntity extends AbstractRecruitEntity implements IRangedRecrui
 
             ItemStack itemstack = this.getProjectile(this.getItemInHand(InteractionHand.MAIN_HAND));
 
+            //? if forge {
             AbstractArrow arrow = ProjectileUtil.getMobArrow(this, itemstack, v);
             arrow = ((net.minecraft.world.item.BowItem) this.getMainHandItem().getItem()).customArrow(arrow);
 
@@ -162,6 +163,10 @@ public class BowmanEntity extends AbstractRecruitEntity implements IRangedRecrui
 
             int fireLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, itemstack);
             if (fireLevel > 0) arrow.setSecondsOnFire(100);
+            //?} else {
+            /*AbstractArrow arrow = ProjectileUtil.getMobArrow(this, itemstack, v, this.getMainHandItem());
+            arrow.setBaseDamage(arrow.getBaseDamage() + 0.5D + this.arrowDamageModifier());
+            *///?}
 
             double distance = this.distanceToSqr(target.getX(), target.getY(), target.getZ());
             double heightDiff = target.getY() - this.getY();
@@ -180,7 +185,13 @@ public class BowmanEntity extends AbstractRecruitEntity implements IRangedRecrui
             arrow.shoot(d0, d1 + d3 * angle, d2, force, accuracy);
 
             if(RecruitsServerConfig.RangedRecruitsNeedArrowsToShoot.get()){
+                //? if forge {
                 int k = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, this.getMainHandItem());
+                //?} else {
+                /*int k = EnchantmentHelper.getItemEnchantmentLevel(
+                        this.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT).getOrThrow(Enchantments.INFINITY),
+                        this.getMainHandItem());
+                *///?}
                 if (k == 0) {
                     this.consumeArrow();
                     arrow.pickup = AbstractArrow.Pickup.ALLOWED;
@@ -204,6 +215,7 @@ public class BowmanEntity extends AbstractRecruitEntity implements IRangedRecrui
         if (this.getMainHandItem().getItem() instanceof BowItem) {
             ItemStack itemstack = this.getProjectile(this.getItemInHand(InteractionHand.MAIN_HAND));
 
+            //? if forge {
             AbstractArrow arrow = ProjectileUtil.getMobArrow(this, itemstack, v);
             arrow = ((net.minecraft.world.item.BowItem) this.getMainHandItem().getItem()).customArrow(arrow);
 
@@ -215,6 +227,9 @@ public class BowmanEntity extends AbstractRecruitEntity implements IRangedRecrui
 
             int fireLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, itemstack);
             if (fireLevel > 0) arrow.setSecondsOnFire(100);
+            //?} else {
+            /*AbstractArrow arrow = ProjectileUtil.getMobArrow(this, itemstack, v, this.getMainHandItem());
+            *///?}
 
             double d0 = x - this.getX();
             double d1 = y - this.getY();

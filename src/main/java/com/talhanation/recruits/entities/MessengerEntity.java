@@ -505,7 +505,11 @@ public class MessengerEntity extends AbstractChunkLoaderEntity implements ICompa
     }
 
     public void playHornSound() {
+        //? if forge {
         this.playSound(SoundEvents.GOAT_HORN_SOUND_VARIANTS.get(1).get(), 20F, 0.8F + 0.4F * this.getCommandSenderWorld().random.nextFloat());
+        //?} else {
+        /*this.playSound(SoundEvents.GOAT_HORN_SOUND_VARIANTS.get(1).value(), 20F, 0.8F + 0.4F * this.getCommandSenderWorld().random.nextFloat());
+        *///?}
     }
 
     public void arriveAtTargetPlayer(ServerPlayer target){

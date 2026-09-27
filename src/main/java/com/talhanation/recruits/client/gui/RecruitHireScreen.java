@@ -103,10 +103,17 @@ public class RecruitHireScreen extends ScreenBase<RecruitHireMenu> {
         return super.mouseClicked(mouseX, mouseY, button);
     }
     @Override
+    //? if forge {
     public boolean mouseScrolled(double x, double y, double d) {
         if(groupSelectionDropDownMenu != null) groupSelectionDropDownMenu.mouseScrolled(x,y,d);
         return super.mouseScrolled(x, y, d);
     }
+    //?} else {
+    /*public boolean mouseScrolled(double x, double y, double horizontalAmount, double verticalAmount) {
+        if(groupSelectionDropDownMenu != null) groupSelectionDropDownMenu.mouseScrolled(x, y, horizontalAmount, verticalAmount);
+        return super.mouseScrolled(x, y, horizontalAmount, verticalAmount);
+    }
+    *///?}
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -175,8 +182,13 @@ public class RecruitHireScreen extends ScreenBase<RecruitHireMenu> {
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
 
+        //? if forge {
         InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,i + 30, j + 60, 15, (float)(i + 50) - mouseX, (float)(j + 75 - 50) - mouseY, this.recruit);
         if(recruit.getVehicle() instanceof AbstractHorse horse) InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, i + 30, j + 72, 15, (float)(i + 50) - mouseX, (float)(j + 75 - 50) - mouseY, horse);
+        //?} else {
+        /*InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, i + 10, j + 20, i + 50, j + 60, 15, 0.0625F, mouseX, mouseY, this.recruit);
+        if(recruit.getVehicle() instanceof AbstractHorse horse) InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, i + 10, j + 32, i + 50, j + 72, 15, 0.0625F, mouseX, mouseY, horse);
+        *///?}
     }
 
 }

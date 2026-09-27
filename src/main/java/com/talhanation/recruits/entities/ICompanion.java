@@ -42,7 +42,11 @@ public interface ICompanion {
     boolean isAtMission();
     default void applyRecruitValues(AbstractRecruitEntity recruit){
         //ATTRIBUTES
+        //? if forge {
         this.get().getAttributes().assignValues(recruit.getAttributes());
+        //?} else {
+        /*this.get().getAttributes().assignAllValues(recruit.getAttributes());
+        *///?}
 
         this.get().setHunger(recruit.getHunger());
         this.get().setVariant(recruit.getVariant());
