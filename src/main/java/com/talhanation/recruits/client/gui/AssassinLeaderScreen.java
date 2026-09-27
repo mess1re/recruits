@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.entities.AssassinLeaderEntity;
@@ -56,7 +58,7 @@ public class AssassinLeaderScreen extends ScreenBase<AssassinLeaderMenu> {
             this.count = assassinLeaderEntity.getCount();
             if (this.count != 0) {
                 this.count--;
-                Main.SIMPLE_CHANNEL.sendToServer(new MessageAssassinCount(this.count, assassinLeaderEntity.getUUID()));
+                RecruitsNetwork.sendToServer(new MessageAssassinCount(this.count, assassinLeaderEntity.getUUID()));
             }
         }));
 
@@ -64,7 +66,7 @@ public class AssassinLeaderScreen extends ScreenBase<AssassinLeaderMenu> {
             this.count = assassinLeaderEntity.getCount();
             if (this.count != assassinLeaderEntity.getMaxAssassinCount()) {
                 this.count++;
-                Main.SIMPLE_CHANNEL.sendToServer(new MessageAssassinCount(this.count, assassinLeaderEntity.getUUID()));
+                RecruitsNetwork.sendToServer(new MessageAssassinCount(this.count, assassinLeaderEntity.getUUID()));
             }
         }));
 
@@ -72,7 +74,7 @@ public class AssassinLeaderScreen extends ScreenBase<AssassinLeaderMenu> {
         addRenderableWidget(new Button(leftPos + 77 + 25, topPos + 4, 50, 12, Component.literal("Assassinate"), button -> {
             int assassinateCost = assassinLeaderEntity.calculateAssassinateCosts(assassinLeaderEntity.getAssassinCosts(), this.count);
             //if(AssassinEvents.playerHasEnoughEmeralds(playerInventory.player, assassinateCost))
-                Main.SIMPLE_CHANNEL.sendToServer(new MessageAssassinate(textField.getValue(), this.count, assassinateCost));
+                RecruitsNetwork.sendToServer(new MessageAssassinate(textField.getValue(), this.count, assassinateCost));
             //else
                 playerInventory.player.sendSystemMessage(Component.literal(assassinLeaderEntity.getName() + ": You dont have enough Emeralds"));
         onClose();

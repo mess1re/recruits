@@ -4,12 +4,10 @@ import com.talhanation.recruits.client.ClientManager;
 import com.talhanation.recruits.client.gui.worldmap.claim.WorldMapClaimIndex;
 import com.talhanation.recruits.network.codec.ClaimNetworkCodec;
 import com.talhanation.recruits.world.RecruitsClaim;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,13 +56,13 @@ public class MessageToClientUpdateClaims implements Message<MessageToClientUpdat
     }
 
     @Override
-    public Dist getExecutingSide() {
-        return Dist.CLIENT;
+    public MessageSide getExecutingSide() {
+        return MessageSide.CLIENT;
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void executeClientSide(NetworkEvent.Context context) {
+    public void executeClientSide(MessageContext context) {
         if (resetClaims) {
             ClientManager.recruitsClaims = new ArrayList<>(this.claims);
             ClientManager.activeSiegeClaims.clear();

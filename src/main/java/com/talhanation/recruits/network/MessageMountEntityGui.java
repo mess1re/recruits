@@ -6,7 +6,6 @@ import com.talhanation.recruits.config.RecruitsServerConfig;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.entities.CaptainEntity;
 import com.talhanation.recruits.entities.SiegeEngineerEntity;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -14,9 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.extensions.IForgeEntity;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.*;
 import java.util.function.Function;
@@ -33,12 +30,12 @@ public class MessageMountEntityGui implements Message<MessageMountEntityGui> {
         this.back = back;
     }
 
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public MessageSide getExecutingSide() {
+        return MessageSide.SERVER;
     }
 
     @SuppressWarnings({"all"})
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(MessageContext context) {
         ServerPlayer player = Objects.requireNonNull(context.getSender());
 
         player.getCommandSenderWorld().getEntitiesOfClass(

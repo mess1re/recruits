@@ -1,4 +1,6 @@
 package com.talhanation.recruits.entities;
+
+import com.talhanation.recruits.network.RecruitsNetwork;
 //ezgi&talha kantar
 
 import com.talhanation.recruits.*;
@@ -72,7 +74,6 @@ import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -1278,7 +1279,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
             }
             else if(this.isOwned() && this.getTeam() != null && !player.getUUID().equals(this.getOwnerUUID()) &&
                     FactionEvents.recruitsFactionManager.getFactionByStringID(this.getTeam().getName()).getTeamLeaderUUID().equals(player.getUUID())){
-                Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new MessageToClientOpenTakeOverScreen(this.getUUID()));
+                RecruitsNetwork.sendToPlayer(() -> (ServerPlayer) player, new MessageToClientOpenTakeOverScreen(this.getUUID()));
             }
             else if (!this.isOwned() && !isPlayerTarget && this.canBeHired()) {
                 this.openHireGUI(player);
@@ -1901,7 +1902,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
                 }
             }, packetBuffer -> {packetBuffer.writeUUID(getUUID());});
         } else {
-            Main.SIMPLE_CHANNEL.sendToServer(new MessageRecruitGui(player, this.getUUID()));
+            RecruitsNetwork.sendToServer(new MessageRecruitGui(player, this.getUUID()));
         }
     }
 
@@ -1919,7 +1920,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
                 }
             }, packetBuffer -> {packetBuffer.writeUUID(getUUID());});
         } else {
-            Main.SIMPLE_CHANNEL.sendToServer(new MessageDebugScreen(player, this.getUUID()));
+            RecruitsNetwork.sendToServer(new MessageDebugScreen(player, this.getUUID()));
         }
     }
 
@@ -2080,7 +2081,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
             Team ownerTeam = player.getTeam();
             String stringId = ownerTeam != null ? ownerTeam.getName() : "";
             boolean canHire = RecruitEvents.recruitsPlayerUnitManager.canPlayerRecruit(stringId, player.getUUID());
-            Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> (ServerPlayer) player), new MessageToClientUpdateHireState(canHire));
+            RecruitsNetwork.sendToPlayer(()-> (ServerPlayer) player, new MessageToClientUpdateHireState(canHire));
             NetworkHooks.openScreen((ServerPlayer) player, new MenuProvider() {
                 @Override
                 public @NotNull Component getDisplayName() {
@@ -2093,7 +2094,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
                 }
             }, packetBuffer -> {packetBuffer.writeUUID(getUUID());});
         } else {
-            Main.SIMPLE_CHANNEL.sendToServer(new MessageHireGui(player, this.getUUID()));
+            RecruitsNetwork.sendToServer(new MessageHireGui(player, this.getUUID()));
         }
     }
 

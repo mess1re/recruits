@@ -1,5 +1,7 @@
 package com.talhanation.recruits.entities;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.compat.smallships.SmallShips;
 import com.talhanation.recruits.entities.ai.controller.IAttackController;
@@ -37,7 +39,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -854,11 +855,11 @@ public abstract class AbstractLeaderEntity extends AbstractChunkLoaderEntity imp
                 }
             }, packetBuffer -> {packetBuffer.writeUUID(this.getUUID());});
         } else {
-            Main.SIMPLE_CHANNEL.sendToServer(new MessageOpenSpecialScreen(player, this.getUUID()));
+            RecruitsNetwork.sendToServer(new MessageOpenSpecialScreen(player, this.getUUID()));
         }
 
         if (player instanceof ServerPlayer) {
-            Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new MessageToClientUpdateLeaderScreen(this.WAYPOINTS, this.WAYPOINT_ITEMS, this.army.getTotalUnits()));
+            RecruitsNetwork.sendToPlayer(() -> (ServerPlayer) player, new MessageToClientUpdateLeaderScreen(this.WAYPOINTS, this.WAYPOINT_ITEMS, this.army.getTotalUnits()));
         }
     }
 }

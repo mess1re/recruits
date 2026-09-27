@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.inventory.PromoteContainer;
@@ -132,7 +134,7 @@ public class PromoteScreen extends ScreenBase<PromoteContainer> {
                             name = recruit.getName().getString();
                         }
 
-                        Main.SIMPLE_CHANNEL.sendToServer(new MessagePromoteRecruit(this.recruit.getUUID(), professionID, name));
+                        RecruitsNetwork.sendToServer(new MessagePromoteRecruit(this.recruit.getUUID(), professionID, name));
                         onClose();
                     }
                 }

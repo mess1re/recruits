@@ -2,11 +2,8 @@ package com.talhanation.recruits.network;
 
 import com.talhanation.recruits.FactionEvents;
 import com.talhanation.recruits.world.RecruitsFaction;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
 
 
 public class MessageSaveTeamSettings implements Message<MessageSaveTeamSettings> {
@@ -24,12 +21,12 @@ public class MessageSaveTeamSettings implements Message<MessageSaveTeamSettings>
     }
 
     @Override
-    public Dist getExecutingSide()  {
-        return Dist.DEDICATED_SERVER;
+    public MessageSide getExecutingSide()  {
+        return MessageSide.SERVER;
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(MessageContext context) {
         RecruitsFaction editedTeam = RecruitsFaction.fromNBT(nbt);
         FactionEvents.modifyTeam(context.getSender().server.overworld(), stringID, editedTeam, context.getSender(), cost);
     }

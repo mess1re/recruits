@@ -1,5 +1,7 @@
 package com.talhanation.recruits.entities;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.config.RecruitsServerConfig;
 import com.talhanation.recruits.inventory.AssassinLeaderMenu;
@@ -124,7 +126,7 @@ public class AssassinLeaderEntity extends AbstractOrderAbleEntity {
                 }
             }, packetBuffer -> {packetBuffer.writeUUID(getUUID());});
         } else {
-            Main.SIMPLE_CHANNEL.sendToServer(new MessageAssassinGui(player, this.getUUID()));
+            RecruitsNetwork.sendToServer(new MessageAssassinGui(player, this.getUUID()));
         }
     }
     @Override

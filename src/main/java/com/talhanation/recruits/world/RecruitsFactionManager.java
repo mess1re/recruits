@@ -1,5 +1,7 @@
 package com.talhanation.recruits.world;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.FactionEvents;
 import com.talhanation.recruits.config.RecruitsServerConfig;
@@ -16,7 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.Team;
-import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -164,7 +165,7 @@ public class RecruitsFactionManager {
             }
         }
 
-        Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> serverPlayer),
+        RecruitsNetwork.sendToPlayer(()-> serverPlayer,
                 new MessageToClientUpdateOnlinePlayers(playerInfoList));
     }
 
@@ -213,7 +214,7 @@ public class RecruitsFactionManager {
             faction.getMembers().forEach(member -> member.setOnline(onlineNames.contains(member.getName())));
         }
 
-        Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> serverPlayer),
+        RecruitsNetwork.sendToPlayer(()-> serverPlayer,
                 new MessageToClientUpdateOwnFaction(faction));
     }
 
@@ -225,7 +226,7 @@ public class RecruitsFactionManager {
             factionID = player.getTeam().getName();
         }
 
-        Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> (ServerPlayer) player),
+        RecruitsNetwork.sendToPlayer(()-> (ServerPlayer) player,
                 new MessageToClientUpdateFactions(this.getFactions().stream().toList(),
                         factionID,
                         RecruitsServerConfig.ShouldFactionEditingBeAllowed.get(),
@@ -258,7 +259,7 @@ public class RecruitsFactionManager {
         }
 
         for(ServerPlayer serverPlayer : serverLevel.getServer().getPlayerList().getPlayers()){
-            Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> serverPlayer),
+            RecruitsNetwork.sendToPlayer(()-> serverPlayer,
                     new MessageToClientUpdateOnlinePlayers(playerInfoList));
         }
     }

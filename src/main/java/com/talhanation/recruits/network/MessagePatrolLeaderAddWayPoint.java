@@ -3,7 +3,6 @@ package com.talhanation.recruits.network;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.entities.AbstractLeaderEntity;
 import com.talhanation.recruits.entities.CaptainEntity;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -13,10 +12,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -37,11 +33,11 @@ public class MessagePatrolLeaderAddWayPoint implements Message<MessagePatrolLead
         this.z = z;
     }
 
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public MessageSide getExecutingSide() {
+        return MessageSide.SERVER;
     }
 
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(MessageContext context) {
         ServerPlayer player = Objects.requireNonNull(context.getSender());
         player.getCommandSenderWorld().getEntitiesOfClass(
                 AbstractLeaderEntity.class,
@@ -61,7 +57,7 @@ public class MessagePatrolLeaderAddWayPoint implements Message<MessagePatrolLead
             player.sendSystemMessage(TEXT_NOT_WATER_WAYPOINT(captain.getName().getString()));
         } else {
             leaderEntity.addWaypoint(pos);
-            Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new MessageToClientUpdateLeaderScreen(leaderEntity.WAYPOINTS, leaderEntity.WAYPOINT_ITEMS, leaderEntity.getArmySize()));
+            RecruitsNetwork.sendToPlayer(() -> (ServerPlayer) player, new MessageToClientUpdateLeaderScreen(leaderEntity.WAYPOINTS, leaderEntity.WAYPOINT_ITEMS, leaderEntity.getArmySize()));
         }
     }
 

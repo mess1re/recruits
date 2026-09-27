@@ -1,5 +1,7 @@
 package com.talhanation.recruits;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.config.RecruitsServerConfig;
 import com.talhanation.recruits.entities.ai.controller.SmallShipsController;
 import com.talhanation.recruits.entities.ai.controller.siegeengineer.SiegeWeaponCatapultController;
@@ -450,7 +452,7 @@ public class CommandEvents {
                 }
             }, packetBuffer -> {packetBuffer.writeUUID(player.getUUID());});
         } else {
-            Main.SIMPLE_CHANNEL.sendToServer(new MessageCommandScreen(player));
+            RecruitsNetwork.sendToServer(new MessageCommandScreen(player));
         }
     }
     @SubscribeEvent
@@ -644,7 +646,7 @@ public class CommandEvents {
 
                 if(player.getTeam() != null){
                     if(player.getCommandSenderWorld().isClientSide){
-                        Main.SIMPLE_CHANNEL.sendToServer(new MessageAddRecruitToTeam(player.getTeam().getName(), 1));
+                        RecruitsNetwork.sendToServer(new MessageAddRecruitToTeam(player.getTeam().getName(), 1));
                     }
                     else {
                         ServerPlayer serverPlayer = (ServerPlayer) player;

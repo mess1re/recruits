@@ -3,12 +3,9 @@ package com.talhanation.recruits.network;
 import com.talhanation.recruits.RecruitEvents;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.world.RecruitsGroup;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -26,11 +23,11 @@ public class MessageGroup implements Message<MessageGroup> {
         this.recruitUUID = recruitUUID;
     }
 
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public MessageSide getExecutingSide() {
+        return MessageSide.SERVER;
     }
 
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(MessageContext context) {
         ServerPlayer player = Objects.requireNonNull(context.getSender());
         player.getCommandSenderWorld().getEntitiesOfClass(
                 AbstractRecruitEntity.class,

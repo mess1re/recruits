@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.gui.group.RecruitsGroupListScreen;
@@ -62,13 +64,13 @@ public class RecruitMoreScreen extends RecruitsScreenBase {
                     if(this.recruit != null) {
                         if(this.recruit.getTeam() != null) {
                             minecraft.setScreen(new ConfirmScreen(DISBAND, TOOLTIP_KEEP_TEAM,
-                                    () -> Main.SIMPLE_CHANNEL.sendToServer(new MessageDisband(this.recruit.getUUID(), true)),
-                                    () -> Main.SIMPLE_CHANNEL.sendToServer(new MessageDisband(this.recruit.getUUID(), false)),
+                                    () -> RecruitsNetwork.sendToServer(new MessageDisband(this.recruit.getUUID(), true)),
+                                    () -> RecruitsNetwork.sendToServer(new MessageDisband(this.recruit.getUUID(), false)),
                                     () -> minecraft.setScreen(RecruitMoreScreen.this)
                             ));
                         }
                         else
-                            Main.SIMPLE_CHANNEL.sendToServer(new MessageDisband(this.recruit.getUUID(), false));
+                            RecruitsNetwork.sendToServer(new MessageDisband(this.recruit.getUUID(), false));
                     }
                 }
         );
@@ -80,7 +82,7 @@ public class RecruitMoreScreen extends RecruitsScreenBase {
                 if(recruit != null) {
                     minecraft.setScreen(new SelectPlayerScreen(this, player, ASSIGN_TO_PLAYER, ASSIGN_TO_PLAYER, TOOLTIP_ASSIGN_GROUP_TO_PLAYER, false, PlayersList.FilterType.NONE,
                         (playerInfo) -> {
-                            Main.SIMPLE_CHANNEL.sendToServer(new MessageAssignRecruitToPlayer(this.recruit.getUUID(), playerInfo.getUUID()));
+                            RecruitsNetwork.sendToServer(new MessageAssignRecruitToPlayer(this.recruit.getUUID(), playerInfo.getUUID()));
                             onClose();
                         })
                     );

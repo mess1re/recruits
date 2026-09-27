@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui.diplomacy;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.ClientManager;
@@ -62,7 +64,7 @@ public class EmbargoAddScreen extends RecruitsScreenBase {
                         false, PlayersList.FilterType.NONE,
                         (playerInfo) -> {
                             if (playerInfo != null) {
-                                Main.SIMPLE_CHANNEL.sendToServer(new MessageAddEmbargo(playerInfo.getUUID()));
+                                RecruitsNetwork.sendToServer(new MessageAddEmbargo(playerInfo.getUUID()));
                             }
                             minecraft.setScreen(embargoScreen);
                         }
@@ -77,7 +79,7 @@ public class EmbargoAddScreen extends RecruitsScreenBase {
                         SELECT_FACTION_TITLE, SELECT_FACTION_BUTTON, SELECT_FACTION_TOOLTIP,
                         (faction) -> {
                             if (faction != null) {
-                                Main.SIMPLE_CHANNEL.sendToServer(
+                                RecruitsNetwork.sendToServer(
                                         new MessageAddEmbargoFaction(faction.getStringID())
                                 );
                             }

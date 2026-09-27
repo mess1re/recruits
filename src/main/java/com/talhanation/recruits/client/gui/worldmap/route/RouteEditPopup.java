@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui.worldmap.route;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.ClientManager;
 import com.talhanation.recruits.client.gui.player.PlayersList;
@@ -99,7 +101,7 @@ public class RouteEditPopup {
                 false,
                 PlayersList.FilterType.NONE,
                 (playerInfo) -> {
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageTransferRoute(playerInfo.getUUID(), route));
+                    RecruitsNetwork.sendToServer(new MessageTransferRoute(playerInfo.getUUID(), route));
                     Minecraft.getInstance().setScreen(parent);
                 });
         Minecraft.getInstance().setScreen(transferScreen);

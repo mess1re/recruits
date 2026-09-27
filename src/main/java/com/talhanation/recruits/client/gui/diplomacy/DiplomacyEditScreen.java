@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui.diplomacy;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.ClientManager;
@@ -139,7 +141,7 @@ public class DiplomacyEditScreen extends RecruitsScreenBase {
     }
 
     private void changeDiplomacyStatus(RecruitsDiplomacyManager.DiplomacyStatus status, RecruitsFaction otherTeam) {
-        Main.SIMPLE_CHANNEL.sendToServer(new MessageChangeDiplomacyStatus(ClientManager.ownFaction, otherTeam, status));
+        RecruitsNetwork.sendToServer(new MessageChangeDiplomacyStatus(ClientManager.ownFaction, otherTeam, status));
     }
 
     @Override

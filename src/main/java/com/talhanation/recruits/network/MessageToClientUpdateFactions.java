@@ -2,12 +2,9 @@ package com.talhanation.recruits.network;
 
 import com.talhanation.recruits.client.ClientManager;
 import com.talhanation.recruits.world.RecruitsFaction;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.List;
 
@@ -33,12 +30,12 @@ public class MessageToClientUpdateFactions implements Message<MessageToClientUpd
     }
 
     @Override
-    public Dist getExecutingSide() {
-        return Dist.CLIENT;
+    public MessageSide getExecutingSide() {
+        return MessageSide.CLIENT;
     }
 
     @Override
-    public void executeClientSide(NetworkEvent.Context context) {
+    public void executeClientSide(MessageContext context) {
         ClientManager.factions = RecruitsFaction.getListFromNBT(nbt);
         ClientManager.isFactionEditingAllowed = editing;
         ClientManager.isFactionManagingAllowed = managing;

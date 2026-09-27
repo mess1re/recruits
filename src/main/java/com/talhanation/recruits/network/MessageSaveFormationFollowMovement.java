@@ -2,11 +2,8 @@ package com.talhanation.recruits.network;
 
 import com.talhanation.recruits.CommandEvents;
 import com.talhanation.recruits.world.RecruitsGroup;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,11 +24,11 @@ public class MessageSaveFormationFollowMovement implements Message<MessageSaveFo
         this.formation = formation;
     }
 
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public MessageSide getExecutingSide() {
+        return MessageSide.SERVER;
     }
 
-    public void executeServerSide(NetworkEvent.Context context){
+    public void executeServerSide(MessageContext context){
         CommandEvents.saveFormation(context.getSender(), formation);
         CommandEvents.saveUUIDList(context.getSender(), "ActiveGroups", RecruitsGroup.uuidListFromNbt(groups));
     }

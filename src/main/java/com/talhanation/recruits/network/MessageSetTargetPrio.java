@@ -2,10 +2,7 @@ package com.talhanation.recruits.network;
 
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.entities.IHasTargetPriority;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,11 +20,11 @@ public class MessageSetTargetPrio implements Message<MessageSetTargetPrio> {
         this.state = state;
     }
 
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public MessageSide getExecutingSide() {
+        return MessageSide.SERVER;
     }
 
-    public void executeServerSide(NetworkEvent.Context context){
+    public void executeServerSide(MessageContext context){
         List<AbstractRecruitEntity> list = Objects.requireNonNull(context.getSender()).getCommandSenderWorld().getEntitiesOfClass(AbstractRecruitEntity.class, context.getSender().getBoundingBox().inflate(16D));
         for (AbstractRecruitEntity recruitEntity : list){
 

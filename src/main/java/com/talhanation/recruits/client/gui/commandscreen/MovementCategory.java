@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui.commandscreen;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.ClientManager;
 import com.talhanation.recruits.client.gui.CommandScreen;
@@ -118,7 +120,7 @@ public class MovementCategory implements ICommandCategory {
                             if (!group.isDisabled()) activeGroups.add(group.getUUID());
                         }
 
-                        Main.SIMPLE_CHANNEL.sendToServer(new MessageSaveFormationFollowMovement(player.getUUID(), activeGroups, CommandScreen.formation.getIndex()));
+                        RecruitsNetwork.sendToServer(new MessageSaveFormationFollowMovement(player.getUUID(), activeGroups, CommandScreen.formation.getIndex()));
                     } else {
                         screen.sendMovementCommandToServer(1);
                     }

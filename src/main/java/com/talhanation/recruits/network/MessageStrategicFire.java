@@ -2,11 +2,8 @@ package com.talhanation.recruits.network;
 
 import com.talhanation.recruits.CommandEvents;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,11 +24,11 @@ public class MessageStrategicFire implements Message<MessageStrategicFire> {
         this.should = should;
     }
 
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public MessageSide getExecutingSide() {
+        return MessageSide.SERVER;
     }
 
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(MessageContext context) {
         ServerPlayer serverPlayer = Objects.requireNonNull(context.getSender());
         serverPlayer.getCommandSenderWorld().getEntitiesOfClass(
                 AbstractRecruitEntity.class,

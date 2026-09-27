@@ -18,7 +18,6 @@ import com.talhanation.recruits.init.ModItems;
 import com.talhanation.recruits.init.ModScreens;
 import com.talhanation.recruits.init.*;
 import com.talhanation.recruits.network.*;
-import de.maxhenkel.corelib.CommonRegistry;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -34,14 +33,12 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(Main.MOD_ID)
 public class Main {
     public static final String MOD_ID = "recruits";
-    public static SimpleChannel SIMPLE_CHANNEL;
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
     public static boolean isMusketModLoaded;
     public static boolean isSmallShipsLoaded;
@@ -97,8 +94,6 @@ public class Main {
         MinecraftForge.EVENT_BUS.register(new UpdateChecker());
         MinecraftForge.EVENT_BUS.register(new ClaimEvents());
         MinecraftForge.EVENT_BUS.register(this);
-
-        SIMPLE_CHANNEL = CommonRegistry.registerChannel(Main.MOD_ID, "default");
 
         Class[] messages = {
                 MessageAggro.class,
@@ -208,13 +203,13 @@ public class Main {
                 MessageRemoveEmbargo.class,
                 MessageToClientUpdateEmbargoes.class,
                 MessageAddEmbargoFaction.class,
-                MessageToClientWorldMapIdentity.class
+                MessageToClientWorldMapIdentity.class,
+                MessageDebugScreen.class,
+                MessageToClientUpdateMessengerScreen.class
         };
 
 
-        for (int i = 0; i < messages.length; i++){
-            CommonRegistry.registerMessage(SIMPLE_CHANNEL, i, messages[i]);
-        }
+        RecruitsNetwork.register(messages);
 
 
         isMusketModLoaded = ModList.get().isLoaded("musketmod");//MusketMod

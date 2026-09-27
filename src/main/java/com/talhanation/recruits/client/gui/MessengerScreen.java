@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.gui.player.PlayersList;
@@ -77,7 +79,7 @@ public class MessengerScreen extends RecruitsScreenBase {
 
         Button sendButton = addRenderableWidget(new ExtendedButton(guiLeft + 33, guiTop + ySize - 52 , 128, 20, BUTTON_SEND_MESSENGER,
                 button -> {
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageSendMessenger(messenger.getUUID(), playerInfo, textFieldMessage.getValue(), true));
+                    RecruitsNetwork.sendToServer(new MessageSendMessenger(messenger.getUUID(), playerInfo, textFieldMessage.getValue(), true));
                     this.onClose();
                 }
         ));
@@ -88,7 +90,7 @@ public class MessengerScreen extends RecruitsScreenBase {
             this.selectedPlayerWidget = new SelectedPlayerWidget(font, guiLeft + 33, guiTop + ySize - 235, 128, 20, Component.literal("x"), // Button label
                     () -> {
                         playerInfo = null;
-                        Main.SIMPLE_CHANNEL.sendToServer(new MessageSendMessenger(messenger.getUUID(), playerInfo, textFieldMessage.getValue(), false));
+                        RecruitsNetwork.sendToServer(new MessageSendMessenger(messenger.getUUID(), playerInfo, textFieldMessage.getValue(), false));
                         this.selectedPlayerWidget.setPlayer(null, null);
                         this.setButtons();
                     }
@@ -101,7 +103,7 @@ public class MessengerScreen extends RecruitsScreenBase {
         {
             Button selectPlayerButton = addRenderableWidget(new ExtendedButton(guiLeft + 33, guiTop + ySize - 235, 128, 20, SelectPlayerScreen.TITLE,
                     button -> {
-                        Main.SIMPLE_CHANNEL.sendToServer(new MessageSendMessenger(messenger.getUUID(), playerInfo, textFieldMessage.getValue(), false));
+                        RecruitsNetwork.sendToServer(new MessageSendMessenger(messenger.getUUID(), playerInfo, textFieldMessage.getValue(), false));
                         minecraft.setScreen(new SelectPlayerScreen(this, player, SelectPlayerScreen.TITLE, SelectPlayerScreen.BUTTON_SELECT, SelectPlayerScreen.BUTTON_SELECT_TOOLTIP, false, PlayersList.FilterType.NONE,
                                 (playerInfo) -> {
                                     MessengerScreen.playerInfo = playerInfo;
@@ -117,7 +119,7 @@ public class MessengerScreen extends RecruitsScreenBase {
 
     public void onClose(){
         super.onClose();
-        Main.SIMPLE_CHANNEL.sendToServer(new MessageSendMessenger(messenger.getUUID(), playerInfo, textFieldMessage.getValue(), false));
+        RecruitsNetwork.sendToServer(new MessageSendMessenger(messenger.getUUID(), playerInfo, textFieldMessage.getValue(), false));
     }
 
     @Override

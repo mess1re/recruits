@@ -1,5 +1,7 @@
 package com.talhanation.recruits;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.compat.musketmod.IWeapon;
 import com.talhanation.recruits.config.RecruitsServerConfig;
 import com.talhanation.recruits.pathfinding.AsyncPathProcessor;
@@ -117,7 +119,7 @@ public class RecruitEvents {
                 packetBuffer.writeUUID(recruit.getUUID());
             });
         } else {
-            Main.SIMPLE_CHANNEL.sendToServer(new MessageOpenPromoteScreen(player, recruit.getUUID()));
+            RecruitsNetwork.sendToServer(new MessageOpenPromoteScreen(player, recruit.getUUID()));
         }
     }
 

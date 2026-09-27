@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui.faction;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.FactionEvents;
 import com.talhanation.recruits.Main;
@@ -59,7 +61,7 @@ public class FactionManageScreen extends RecruitsScreenBase {
                     (playerInfo) -> {
                         if(recruitsFaction.canAddPlayer()){
                             recruitsFaction.removeJoinRequest(playerInfo.getName());
-                            Main.SIMPLE_CHANNEL.sendToServer(new MessageAddPlayerToTeam(recruitsFaction.getStringID(), playerInfo.getName()));
+                            RecruitsNetwork.sendToServer(new MessageAddPlayerToTeam(recruitsFaction.getStringID(), playerInfo.getName()));
                         }
                     }
                 ));
@@ -70,7 +72,7 @@ public class FactionManageScreen extends RecruitsScreenBase {
             btn -> {
                 minecraft.setScreen(new SelectPlayerScreen(this, player, TOOLTIP_REMOVE_PLAYER,  REMOVE_PLAYER, Component.literal(""), false, PlayersList.FilterType.SAME_TEAM,
                     (playerInfo) -> {
-                        Main.SIMPLE_CHANNEL.sendToServer(new MessageRemoveFromTeam(playerInfo.getName()));
+                        RecruitsNetwork.sendToServer(new MessageRemoveFromTeam(playerInfo.getName()));
                     }
                 ));
             }

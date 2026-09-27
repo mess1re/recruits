@@ -22,7 +22,6 @@ val forgeRange = project.property("mod.forge_range") as String
 val loaderRange = project.property("mod.loader_range") as String
 val packFormat = project.property("mod.pack_format") as String
 val architecturyVersion = project.property("deps.architectury") as String
-val corelibVersion = project.property("deps.corelib") as String
 
 group = modGroup
 version = "$modVersion+${sc.current.version}"
@@ -34,7 +33,6 @@ base {
 repositories {
     mavenCentral()
     maven("https://maven.architectury.dev/") { name = "Architectury" }
-    maven("https://maven.maxhenkel.de/repository/public") { name = "henkelmax.public" }
     maven("https://www.cursemaven.com") {
         name = "CurseMaven"
         content { includeGroup("curse.maven") }
@@ -43,13 +41,6 @@ repositories {
 
 dependencies {
     implementation("dev.architectury:architectury-forge:$architecturyVersion")
-
-    // Temporary bridge until the CoreLib networking and menu helpers have local,
-    // loader-neutral replacements. Jar-in-Jar preserves the current standalone
-    // distribution model without leaking CoreLib onto consumers' compile classpaths.
-    implementation("de.maxhenkel.corelib:corelib:$corelibVersion:api")
-    runtimeOnly("de.maxhenkel.corelib:corelib:$corelibVersion")
-    jarJar("de.maxhenkel.corelib:corelib:[$corelibVersion]")
 
     implementation("curse.maven:corpse-316582:5157034")
     implementation("curse.maven:epic-knights-armor-and-weapons-509041:5254836")

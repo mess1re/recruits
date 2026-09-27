@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.gui.faction.SelectFactionScreen;
@@ -125,7 +127,7 @@ public class MessengerTreatyScreen extends RecruitsScreenBase {
                                 selectedFaction.getTeamLeaderName(),
                                 selectedFaction
                         );
-                        Main.SIMPLE_CHANNEL.sendToServer(new MessageSendTreaty(messenger.getUUID(), leaderInfo, durationHours, true));
+                        RecruitsNetwork.sendToServer(new MessageSendTreaty(messenger.getUUID(), leaderInfo, durationHours, true));
                         this.onClose();
                     }
                 }

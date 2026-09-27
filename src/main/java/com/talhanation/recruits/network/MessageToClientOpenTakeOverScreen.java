@@ -2,14 +2,12 @@ package com.talhanation.recruits.network;
 
 import com.talhanation.recruits.client.gui.faction.TakeOverScreen;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
 public class MessageToClientOpenTakeOverScreen implements Message<MessageToClientOpenTakeOverScreen> {
@@ -25,13 +23,13 @@ public class MessageToClientOpenTakeOverScreen implements Message<MessageToClien
     }
 
     @Override
-    public Dist getExecutingSide() {
-        return Dist.CLIENT;
+    public MessageSide getExecutingSide() {
+        return MessageSide.CLIENT;
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void executeClientSide(NetworkEvent.Context context) {
+    public void executeClientSide(MessageContext context) {
         Player player = Minecraft.getInstance().player;
         player.getCommandSenderWorld().getEntitiesOfClass(AbstractRecruitEntity.class, player.getBoundingBox()
                         .inflate(16.0D), v -> v

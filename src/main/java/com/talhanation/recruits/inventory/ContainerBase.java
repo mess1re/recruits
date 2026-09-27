@@ -14,7 +14,7 @@ public abstract class ContainerBase extends AbstractContainerMenu {
 
     @Nullable
     protected Container inventory;
-    protected final Container playerInventory;
+    protected Container playerInventory;
 
     protected ContainerBase(MenuType<?> containerType, int id, Container playerInventory, Container inventory) {
         super(containerType, id);

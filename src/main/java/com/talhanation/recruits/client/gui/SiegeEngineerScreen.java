@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.gui.widgets.BlackShowingTextField;
@@ -118,7 +120,7 @@ public class SiegeEngineerScreen extends RecruitsScreenBase {
     }
 
     private void sendUpdate() {
-        Main.SIMPLE_CHANNEL.sendToServer(new MessageSetTargetPrio(siegeEngineer.getUUID(), this.prioIndex));
+        RecruitsNetwork.sendToServer(new MessageSetTargetPrio(siegeEngineer.getUUID(), this.prioIndex));
         setButtons();
     }
 

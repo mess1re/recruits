@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui.faction;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
@@ -144,7 +146,7 @@ public class FactionInspectionScreen extends ListScreenBase implements IPlayerSe
             button -> {
                 if(isTeamLeader){
                     if(deleteActive){
-                        Main.SIMPLE_CHANNEL.sendToServer(new MessageLeaveTeam());
+                        RecruitsNetwork.sendToServer(new MessageLeaveTeam());
                         ClientManager.ownFaction = null;
                         minecraft.setScreen(new FactionMainScreen(player));
                         return;
@@ -156,8 +158,8 @@ public class FactionInspectionScreen extends ListScreenBase implements IPlayerSe
                                 team.setTeamLeaderID(playerInfo.getUUID());
                                 team.setTeamLeaderName(playerInfo.getName());
 
-                                Main.SIMPLE_CHANNEL.sendToServer(new MessageSaveTeamSettings(team, 0));
-                                Main.SIMPLE_CHANNEL.sendToServer(new MessageLeaveTeam());
+                                RecruitsNetwork.sendToServer(new MessageSaveTeamSettings(team, 0));
+                                RecruitsNetwork.sendToServer(new MessageLeaveTeam());
                                 ClientManager.ownFaction = null;
                                 onClose();
                             }
@@ -166,7 +168,7 @@ public class FactionInspectionScreen extends ListScreenBase implements IPlayerSe
 
                 }
                 else {
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageLeaveTeam());
+                    RecruitsNetwork.sendToServer(new MessageLeaveTeam());
                     ClientManager.ownFaction = null;
                     onClose();
                 }

@@ -1,5 +1,7 @@
 package com.talhanation.recruits.entities;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 
 import com.talhanation.recruits.FactionEvents;
 import com.talhanation.recruits.Main;
@@ -44,7 +46,6 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -222,9 +223,9 @@ public class MessengerEntity extends AbstractChunkLoaderEntity implements ICompa
                 RecruitsFaction faction = FactionEvents.recruitsFactionManager.getFactionByStringID(team);
                 RecruitsPlayerInfo ownerPlayerInfo = new RecruitsPlayerInfo(this.getOwnerUUID(), this.getOwnerName(), faction);
 
-                Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new MessageToClientOpenTreatyAnswerScreen(MessengerEntity.this, this.getTreatyDurationHours(), ownerPlayerInfo));
+                RecruitsNetwork.sendToPlayer(() -> serverPlayer, new MessageToClientOpenTreatyAnswerScreen(MessengerEntity.this, this.getTreatyDurationHours(), ownerPlayerInfo));
             } else {
-                Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new MessageToClientOpenMessengerAnswerScreen(MessengerEntity.this, this.getMessage(), this.getTargetPlayerInfo()));
+                RecruitsNetwork.sendToPlayer(() -> serverPlayer, new MessageToClientOpenMessengerAnswerScreen(MessengerEntity.this, this.getMessage(), this.getTargetPlayerInfo()));
             }
             this.targetPlayerOpened = true;
         }
@@ -522,7 +523,7 @@ public class MessengerEntity extends AbstractChunkLoaderEntity implements ICompa
             if(ownerTeam != null) target.sendSystemMessage(MESSENGER_ARRIVED_TEAM(this.getOwnerName(), ownerTeam.getDisplayName().getString()));
         }
 
-        Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> target), new MessageToClientSetToast(1, this.getOwnerName()));
+        RecruitsNetwork.sendToPlayer(()-> target, new MessageToClientSetToast(1, this.getOwnerName()));
     }
 
     private MutableComponent PLAYER_NOT_FOUND(){

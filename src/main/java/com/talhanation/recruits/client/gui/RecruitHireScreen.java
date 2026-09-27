@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.ClientManager;
@@ -79,7 +81,7 @@ public class RecruitHireScreen extends ScreenBase<RecruitHireMenu> {
     private ExtendedButton createHireButton() {
         return addRenderableWidget(new ExtendedButton(leftPos + 7, topPos + 100, 80, 20, TEXT_HIRE,
                 button -> {
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageHire(player.getUUID(), recruit.getUUID(), group.getUUID()));
+                    RecruitsNetwork.sendToServer(new MessageHire(player.getUUID(), recruit.getUUID(), group.getUUID()));
                     this.onClose();
         }));
     }

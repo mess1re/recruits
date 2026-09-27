@@ -5,12 +5,10 @@ import com.talhanation.recruits.client.api.ClientClaimEvent;
 import com.talhanation.recruits.client.gui.worldmap.claim.WorldMapClaimIndex;
 import com.talhanation.recruits.network.codec.ClaimNetworkCodec;
 import com.talhanation.recruits.world.RecruitsClaim;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.network.NetworkEvent;
 
 public class MessageToClientUpdateClaim implements Message<MessageToClientUpdateClaim> {
     private RecruitsClaim claim;
@@ -23,13 +21,13 @@ public class MessageToClientUpdateClaim implements Message<MessageToClientUpdate
     }
 
     @Override
-    public Dist getExecutingSide() {
-        return Dist.CLIENT;
+    public MessageSide getExecutingSide() {
+        return MessageSide.CLIENT;
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void executeClientSide(NetworkEvent.Context context) {
+    public void executeClientSide(MessageContext context) {
         this.updateOrAddClaim(claim);
     }
 

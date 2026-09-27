@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui.faction;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.ClientManager;
@@ -96,7 +98,7 @@ public class RecruitsFactionListScreen extends ListScreenBase implements IFactio
                 button -> {
                     RecruitsToastManager.setTeamToastForPlayer(RecruitsToastManager.Images.LETTER, TOAST_SENT_JOIN_REQUEST_TITLE, TOAST_TO(selected.getTeamDisplayName()), selected);
 
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageSendJoinRequestTeam(parent.getMinecraft().player.getUUID(), selected.getStringID()));
+                    RecruitsNetwork.sendToServer(new MessageSendJoinRequestTeam(parent.getMinecraft().player.getUUID(), selected.getStringID()));
                 });
         sendJoinRequestButton.active = false;
 

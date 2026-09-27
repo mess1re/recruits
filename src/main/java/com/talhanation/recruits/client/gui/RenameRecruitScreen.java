@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
@@ -54,7 +56,7 @@ public class RenameRecruitScreen extends Screen {
                 if (!newName.isEmpty()) {
                     recruit.setCustomName(Component.literal(newName));
 
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageDebugGui(99, recruit.getUUID(), newName));
+                    RecruitsNetwork.sendToServer(new MessageDebugGui(99, recruit.getUUID(), newName));
 
                     this.minecraft.setScreen(this.parent);
                 }

@@ -2,11 +2,8 @@ package com.talhanation.recruits.network;
 
 import com.talhanation.recruits.client.ClientManager;
 import com.talhanation.recruits.world.RecruitsTreatyManager;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.Map;
 
@@ -22,12 +19,12 @@ public class MessageToClientUpdateTreaties implements Message<MessageToClientUpd
     }
 
     @Override
-    public Dist getExecutingSide() {
-        return Dist.CLIENT;
+    public MessageSide getExecutingSide() {
+        return MessageSide.CLIENT;
     }
 
     @Override
-    public void executeClientSide(NetworkEvent.Context context) {
+    public void executeClientSide(MessageContext context) {
         ClientManager.treaties = RecruitsTreatyManager.mapFromNbt(nbt);
     }
 

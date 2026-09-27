@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui.faction;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.FactionEvents;
@@ -338,7 +340,7 @@ public class FactionEditScreen extends ScreenBase<TeamEditMenu> {
             saveButton = new ExtendedButton(guiLeft + 30, guiTop + imageHeight - 102, 162, 20, CREATE,
                 btn -> {
                     String text = textFieldTeamName.getValue().strip();
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageCreateTeam(this.getCorrectFormatStringID(text), this.getCorrectFormatName(text), banner, teamColor, unitColors.indexOf(unitColor)));
+                    RecruitsNetwork.sendToServer(new MessageCreateTeam(this.getCorrectFormatStringID(text), this.getCorrectFormatName(text), banner, teamColor, unitColors.indexOf(unitColor)));
                     leaderInfo = null;
                     minecraft.setScreen(new FactionInspectionScreen(new FactionMainScreen(player), player));
                 }
@@ -367,7 +369,7 @@ public class FactionEditScreen extends ScreenBase<TeamEditMenu> {
                     ownFaction.setUnitColor((byte) unitColors.indexOf(unitColor));
                     ownFaction.setMaxNPCsPerPlayer(maxRecruitsPerPlayer);
 
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageSaveTeamSettings(ownFaction, totalCost));
+                    RecruitsNetwork.sendToServer(new MessageSaveTeamSettings(ownFaction, totalCost));
 
                     minecraft.setScreen(new FactionInspectionScreen(new FactionMainScreen(player), player));
                 }

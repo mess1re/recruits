@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.ClientManager;
 import com.talhanation.recruits.client.events.ClientEvent;
@@ -173,7 +175,7 @@ public class CommandScreen extends ScreenBase<CommandMenu> {
     public void sendFaceCommandToServer() {
         if(!ClientManager.groups.isEmpty()){
             for(RecruitsGroup group : getActiveGroups()){
-                Main.SIMPLE_CHANNEL.sendToServer(new MessageFaceCommand(player.getUUID(), group.getUUID(), formation.getIndex(), tightFormation, holdFormation));
+                RecruitsNetwork.sendToServer(new MessageFaceCommand(player.getUUID(), group.getUUID(), formation.getIndex(), tightFormation, holdFormation));
             }
         }
     }
@@ -220,11 +222,11 @@ public class CommandScreen extends ScreenBase<CommandMenu> {
 
     public void sendMovementCommandToServer(int state) {
         if(state != 1){
-            Main.SIMPLE_CHANNEL.sendToServer(new MessageSaveFormationFollowMovement(player.getUUID(), new ArrayList<>(), -1));
+            RecruitsNetwork.sendToServer(new MessageSaveFormationFollowMovement(player.getUUID(), new ArrayList<>(), -1));
         }
         if(!ClientManager.groups.isEmpty()){
             for(RecruitsGroup group : getActiveGroups()){
-                Main.SIMPLE_CHANNEL.sendToServer(new MessageMovement(player.getUUID(), state, group.getUUID(), formation.getIndex(), tightFormation, holdFormation));
+                RecruitsNetwork.sendToServer(new MessageMovement(player.getUUID(), state, group.getUUID(), formation.getIndex(), tightFormation, holdFormation));
             }
         }
     }

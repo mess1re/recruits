@@ -8,7 +8,6 @@ import com.talhanation.recruits.network.codec.ClaimNetworkCodec;
 import com.talhanation.recruits.world.RecruitsClaim;
 import com.talhanation.recruits.world.RecruitsFaction;
 import com.talhanation.recruits.world.RecruitsPlayerInfo;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,9 +15,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -42,11 +38,11 @@ public class MessageUpdateClaim implements Message<MessageUpdateClaim> {
         this.claim = claim;
     }
 
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public MessageSide getExecutingSide() {
+        return MessageSide.SERVER;
     }
 
-    public void executeServerSide(NetworkEvent.Context context){
+    public void executeServerSide(MessageContext context){
         ServerPlayer sender = context.getSender();
         RecruitsClaim updatedClaim = this.claim;
         if (updatedClaim == null || sender == null) return;
@@ -436,8 +432,7 @@ public class MessageUpdateClaim implements Message<MessageUpdateClaim> {
             reply.isRemoved = true;
         }
 
-        Main.SIMPLE_CHANNEL.send(
-                PacketDistributor.PLAYER.with(() -> sender),
+        RecruitsNetwork.sendToPlayer(() -> sender,
                 new MessageToClientUpdateClaim(reply));
     }
 

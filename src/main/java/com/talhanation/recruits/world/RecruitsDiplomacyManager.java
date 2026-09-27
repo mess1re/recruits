@@ -1,5 +1,7 @@
 package com.talhanation.recruits.world;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.DiplomacyEvent;
 import com.talhanation.recruits.FactionEvents;
 import com.talhanation.recruits.Main;
@@ -11,7 +13,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.*;
 
@@ -96,11 +97,11 @@ public class RecruitsDiplomacyManager {
         if(team != null && otherTeam != null){
             List<ServerPlayer> playersInTeam = FactionEvents.recruitsFactionManager.getPlayersInTeam(team.getStringID(), level);
             for (ServerPlayer player : playersInTeam) {
-                Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> player), new MessageToClientSetDiplomaticToast(relation.getByteValue(), otherTeam));
+                RecruitsNetwork.sendToPlayer(()-> player, new MessageToClientSetDiplomaticToast(relation.getByteValue(), otherTeam));
             }
             List<ServerPlayer> playersInTeam2 = FactionEvents.recruitsFactionManager.getPlayersInTeam(otherTeam.getStringID(), level);
             for (ServerPlayer player : playersInTeam2) {
-                Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> player), new MessageToClientSetDiplomaticToast(relation.getByteValue() + 4, team));
+                RecruitsNetwork.sendToPlayer(()-> player, new MessageToClientSetDiplomaticToast(relation.getByteValue() + 4, team));
             }
         }
     }
@@ -131,14 +132,14 @@ public class RecruitsDiplomacyManager {
 
     public void broadcastDiplomacyMapToPlayer(Player player) {
         if (player == null) return;
-        Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> (ServerPlayer) player),
+        RecruitsNetwork.sendToPlayer(()-> (ServerPlayer) player,
                 new MessageToClientUpdateDiplomacyList(diplomacyMap));
     }
 
     public void broadcastDiplomacyMapToAll(ServerLevel serverLevel) {
         if (serverLevel == null) return;
         for(ServerPlayer serverPlayer : serverLevel.players()){
-            Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> serverPlayer),
+            RecruitsNetwork.sendToPlayer(()-> serverPlayer,
                     new MessageToClientUpdateDiplomacyList(diplomacyMap));
         }
     }
@@ -164,7 +165,7 @@ public class RecruitsDiplomacyManager {
         if (declaringFaction != null) {
             ServerPlayer embargoedPlayer = level.getServer().getPlayerList().getPlayer(embargoedPlayerUUID);
             if (embargoedPlayer != null) {
-                Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(() -> embargoedPlayer),
+                RecruitsNetwork.sendToPlayer(() -> embargoedPlayer,
                         new MessageToClientSetDiplomaticToast(30, declaringFaction));
             }
         }
@@ -190,7 +191,7 @@ public class RecruitsDiplomacyManager {
         if (declaringFaction != null) {
             ServerPlayer embargoedPlayer = level.getServer().getPlayerList().getPlayer(embargoedPlayerUUID);
             if (embargoedPlayer != null) {
-                Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(() -> embargoedPlayer),
+                RecruitsNetwork.sendToPlayer(() -> embargoedPlayer,
                         new MessageToClientSetDiplomaticToast(31, declaringFaction));
             }
         }
@@ -216,14 +217,14 @@ public class RecruitsDiplomacyManager {
 
     public void broadcastEmbargoesToPlayer(Player player) {
         if (player == null) return;
-        Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> (ServerPlayer) player),
+        RecruitsNetwork.sendToPlayer(()-> (ServerPlayer) player,
                 new MessageToClientUpdateEmbargoes(embargoMap));
     }
 
     public void broadcastEmbargoesToAll(ServerLevel serverLevel) {
         if (serverLevel == null) return;
         for(ServerPlayer serverPlayer : serverLevel.players()){
-            Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> serverPlayer),
+            RecruitsNetwork.sendToPlayer(()-> serverPlayer,
                     new MessageToClientUpdateEmbargoes(embargoMap));
         }
     }

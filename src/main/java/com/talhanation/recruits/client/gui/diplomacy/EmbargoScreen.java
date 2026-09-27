@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui.diplomacy;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.ClientManager;
 import com.talhanation.recruits.client.gui.player.PlayersList;
@@ -52,7 +54,7 @@ public class EmbargoScreen extends SelectPlayerScreen {
         if (selected == null) {
             minecraft.setScreen(new EmbargoAddScreen(this, player));
         } else {
-            Main.SIMPLE_CHANNEL.sendToServer(new MessageRemoveEmbargo(selected.getUUID()));
+            RecruitsNetwork.sendToServer(new MessageRemoveEmbargo(selected.getUUID()));
             playerList.setFocused(null);
             playerList.updateEntryList();
             selected = null;

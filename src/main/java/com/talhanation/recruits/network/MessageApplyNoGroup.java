@@ -1,13 +1,10 @@
 package com.talhanation.recruits.network;
 
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.*;
 
@@ -24,11 +21,11 @@ public class MessageApplyNoGroup implements Message<MessageApplyNoGroup> {
         this.groupID = groupID;
     }
 
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public MessageSide getExecutingSide() {
+        return MessageSide.SERVER;
     }
 
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(MessageContext context) {
         ServerPlayer player = Objects.requireNonNull(context.getSender());
         List<AbstractRecruitEntity> recruitList = new ArrayList<>();
 

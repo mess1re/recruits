@@ -1,5 +1,7 @@
 package com.talhanation.recruits;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.config.RecruitsServerConfig;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.entities.VillagerNobleEntity;
@@ -42,7 +44,6 @@ import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +86,7 @@ public class ClaimEvents {
 
         if(event.getEntity() instanceof ServerPlayer player){
             ServerLevel overworld = player.getServer().overworld();
-            Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
+            RecruitsNetwork.sendToPlayer(() -> player,
                     new MessageToClientWorldMapIdentity(RecruitsWorldSaveData.get(overworld).getWorldId()));
             recruitsClaimManager.sendClaimsTo(player);
         }

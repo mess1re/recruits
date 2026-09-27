@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.events;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.CommandEvents;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.gui.worldmap.WorldMapScreen;
@@ -52,7 +54,7 @@ public class KeyEvents {
 
             Entity target = ClientEvent.getEntityByLooking();
             if(target instanceof AbstractRecruitEntity recruitEntity){
-                Main.SIMPLE_CHANNEL.sendToServer(new MessageWriteSpawnEgg(recruitEntity.getUUID()));
+                RecruitsNetwork.sendToServer(new MessageWriteSpawnEgg(recruitEntity.getUUID()));
                 event.setCanceled(true);
             }
         }

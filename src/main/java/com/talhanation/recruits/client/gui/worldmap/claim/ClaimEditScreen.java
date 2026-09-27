@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui.worldmap.claim;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.gui.RecruitsScreenBase;
@@ -149,7 +151,7 @@ public class ClaimEditScreen extends RecruitsScreenBase {
                     this.claim.setBlockPlacementAllowed(this.allowBlockPlacing);
                     this.claim.setBlockBreakingAllowed(this.allowBlockBreaking);
 
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageUpdateClaim(this.claim));
+                    RecruitsNetwork.sendToServer(new MessageUpdateClaim(this.claim));
 
                     this.minecraft.setScreen(this.parent);
                 });
@@ -160,7 +162,7 @@ public class ClaimEditScreen extends RecruitsScreenBase {
         deleteButton = new ExtendedButton(x - 75 + 35, y + 112, 70, 20, BUTTON_DELETE,
                 button -> {
                     ClientManager.recruitsClaims.remove(this.claim);
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageDeleteClaim(this.claim));
+                    RecruitsNetwork.sendToServer(new MessageDeleteClaim(this.claim));
 
                     this.minecraft.setScreen(this.parent);
                 });

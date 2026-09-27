@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui.faction;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.gui.RecruitMoreScreen;
@@ -46,7 +48,7 @@ public class TakeOverScreen extends RecruitsScreenBase {
 
         Button takeOwnerShip = addRenderableWidget(new ExtendedButton(guiLeft + 32, guiTop + ySize - 120 - 7, 130, 20, TAKE_OWNERSHIP,
             btn -> {
-                 Main.SIMPLE_CHANNEL.sendToServer(new MessageAssignRecruitToPlayer(this.recruit.getUUID(), this.player.getUUID()));
+                 RecruitsNetwork.sendToServer(new MessageAssignRecruitToPlayer(this.recruit.getUUID(), this.player.getUUID()));
                  this.recruit.openGUI(player);
             }
         ));

@@ -1,12 +1,9 @@
 package com.talhanation.recruits.network;
 
 import com.talhanation.recruits.client.gui.PatrolLeaderScreen;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.List;
 
@@ -26,12 +23,12 @@ public class MessageToClientUpdateLeaderScreen implements Message<MessageToClien
     }
 
     @Override
-    public Dist getExecutingSide() {
-        return Dist.CLIENT;
+    public MessageSide getExecutingSide() {
+        return MessageSide.CLIENT;
     }
 
     @Override
-    public void executeClientSide(NetworkEvent.Context context) {
+    public void executeClientSide(MessageContext context) {
 
     }
 

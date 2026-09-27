@@ -1,14 +1,11 @@
 package com.talhanation.recruits.network;
 
 import com.talhanation.recruits.FactionEvents;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
 
 public class MessageCreateTeam implements Message<MessageCreateTeam> {
 
@@ -29,11 +26,11 @@ public class MessageCreateTeam implements Message<MessageCreateTeam> {
         this.index = index;
     }
 
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public MessageSide getExecutingSide() {
+        return MessageSide.SERVER;
     }
 
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(MessageContext context) {
         ServerPlayer player = context.getSender();
         ServerLevel world = player.serverLevel();
         FactionEvents.createTeam(true, context.getSender(), world, this.teamName, this.displayName, player.getName().getString(), this.banner, this.color, (byte) index);

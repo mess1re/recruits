@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.gui.component.RecruitsMultiLineEditBox;
@@ -57,7 +59,7 @@ public class MessengerAnswerScreen extends RecruitsScreenBase {
     private void setOKButton() {
         Button sendButton = addRenderableWidget(new ExtendedButton(guiLeft + 33, guiTop + ySize - 50, 128, 20, BUTTON_OK,
                 button -> {
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageAnswerMessenger(messenger.getUUID()));
+                    RecruitsNetwork.sendToServer(new MessageAnswerMessenger(messenger.getUUID()));
 
                     onClose();
                 }

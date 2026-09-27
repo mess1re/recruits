@@ -1,5 +1,7 @@
 package com.talhanation.recruits.entities;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 
 import com.talhanation.recruits.FactionEvents;
 import com.talhanation.recruits.Main;
@@ -35,7 +37,6 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -196,8 +197,8 @@ public class VillagerNobleEntity extends AbstractRecruitEntity implements ICanTr
         String stringID = player.getTeam() != null ? player.getTeam().getName() : "";
 
         boolean canHire = RecruitEvents.recruitsPlayerUnitManager.canPlayerRecruit(stringID, player.getUUID());
-        Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> (ServerPlayer) player), new MessageToClientUpdateHireState(canHire));
-        Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new MessageToClientOpenNobleTradeScreen(this.getUUID()));
+        RecruitsNetwork.sendToPlayer(()-> (ServerPlayer) player, new MessageToClientUpdateHireState(canHire));
+        RecruitsNetwork.sendToPlayer(() -> (ServerPlayer) player, new MessageToClientOpenNobleTradeScreen(this.getUUID()));
     }
     public void addXpLevel(int level){
         super.addXpLevel(level);

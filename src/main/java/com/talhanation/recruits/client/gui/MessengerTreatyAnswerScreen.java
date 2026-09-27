@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.gui.component.RecruitsMultiLineEditBox;
@@ -92,14 +94,14 @@ public class MessengerTreatyAnswerScreen extends RecruitsScreenBase {
         int buttonY = guiTop + 135;
         addRenderableWidget(new ExtendedButton(guiLeft + 10, buttonY, 80, 20, BUTTON_ACCEPT,
                 button -> {
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageAnswerTreaty(messenger.getUUID(), true));
+                    RecruitsNetwork.sendToServer(new MessageAnswerTreaty(messenger.getUUID(), true));
                     onClose();
                 }
         ));
 
         addRenderableWidget(new ExtendedButton(guiLeft + 105, buttonY, 80, 20, BUTTON_DECLINE,
                 button -> {
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageAnswerTreaty(messenger.getUUID(), false));
+                    RecruitsNetwork.sendToServer(new MessageAnswerTreaty(messenger.getUUID(), false));
                     onClose();
                 }
         ));

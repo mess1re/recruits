@@ -4,13 +4,10 @@ import com.talhanation.recruits.CommandEvents;
 import com.talhanation.recruits.RecruitEvents;
 import com.talhanation.recruits.world.RecruitsGroup;
 import com.talhanation.recruits.world.RecruitsGroupsManager;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
 
 
 public class MessageUpdateGroup implements Message<MessageUpdateGroup> {
@@ -25,11 +22,11 @@ public class MessageUpdateGroup implements Message<MessageUpdateGroup> {
         this.groupNBT = group.toNBT();
     }
 
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public MessageSide getExecutingSide() {
+        return MessageSide.SERVER;
     }
 
-    public void executeServerSide(NetworkEvent.Context context){
+    public void executeServerSide(MessageContext context){
         RecruitsGroup updatedGroup = RecruitsGroup.fromNBT(this.groupNBT);
         ServerPlayer serverPLayer = context.getSender();
 

@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui.worldmap.ui;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.ClientManager;
 import com.talhanation.recruits.client.gui.diplomacy.DiplomacyEditScreen;
@@ -133,7 +135,7 @@ public class WorldMapContextMenu {
                         screen.selectedClaim().removeChunk(screen.selectedChunk());
                         WorldMapClaimIndex.invalidate();
                         screen.clearSelectedChunk();
-                        Main.SIMPLE_CHANNEL.sendToServer(new MessageUpdateClaim(screen.selectedClaim()));
+                        RecruitsNetwork.sendToServer(new MessageUpdateClaim(screen.selectedClaim()));
                     }
                 }
         );
@@ -152,7 +154,7 @@ public class WorldMapContextMenu {
                         screen.selectedClaim().removeChunk(screen.selectedChunk());
                         WorldMapClaimIndex.invalidate();
                         screen.clearSelectedChunk();
-                        Main.SIMPLE_CHANNEL.sendToServer(new MessageUpdateClaim(screen.selectedClaim()));
+                        RecruitsNetwork.sendToServer(new MessageUpdateClaim(screen.selectedClaim()));
                     }
                 },
                 TAG_ADMIN
@@ -163,7 +165,7 @@ public class WorldMapContextMenu {
                 (screen) -> {
                     screen.selectedClaim().isRemoved = true;
                     WorldMapClaimIndex.invalidate();
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageUpdateClaim(screen.selectedClaim()));
+                    RecruitsNetwork.sendToServer(new MessageUpdateClaim(screen.selectedClaim()));
                     screen.clearSelectedClaim();
                 },
                 TAG_ADMIN
@@ -171,7 +173,7 @@ public class WorldMapContextMenu {
 
         addEntry(TEXT_TELEPORT_ADMIN,
                 worldMapScreen::isPlayerAdminAndCreative,
-                (screen) -> Main.SIMPLE_CHANNEL.sendToServer(new MessageTeleportPlayer(screen.getClickedBlockPos())),
+                (screen) -> RecruitsNetwork.sendToServer(new MessageTeleportPlayer(screen.getClickedBlockPos())),
                 TAG_ADMIN
         );
     }

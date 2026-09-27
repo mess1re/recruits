@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.gui.component.ActivateableButton;
@@ -45,7 +47,7 @@ public class ScoutScreen extends RecruitsScreenBase {
         checkBoxScouting = new RecruitsCheckBox(guiLeft + 32, guiTop + ySize - 120 - 7, 130, 20, SCOUTING, this.scouting,
         (bool) -> {
                 this.scouting = bool;
-                Main.SIMPLE_CHANNEL.sendToServer(new MessageScoutTask(scout.getUUID(), scouting ? 1 : 0));
+                RecruitsNetwork.sendToServer(new MessageScoutTask(scout.getUUID(), scouting ? 1 : 0));
             }
         );
         checkBoxScouting.setTooltip(Tooltip.create(TOOLTIP_SCOUTING));

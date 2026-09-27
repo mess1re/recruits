@@ -1,5 +1,7 @@
 package com.talhanation.recruits.world;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.ClaimEvent;
 import com.talhanation.recruits.FactionEvents;
 import com.talhanation.recruits.Main;
@@ -10,7 +12,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -164,7 +165,7 @@ public class RecruitsClaimManager {
         if (claim == null || players == null || players.isEmpty()) return;
 
         for (ServerPlayer player : players) {
-            Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
+            RecruitsNetwork.sendToPlayer(() -> player,
                     new MessageToClientUpdateClaim(claim));
         }
     }
@@ -173,7 +174,7 @@ public class RecruitsClaimManager {
         if (level == null || claim == null) return;
 
         for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
-            Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
+            RecruitsNetwork.sendToPlayer(() -> player,
                     new MessageToClientUpdateClaim(claim));
         }
     }
@@ -212,7 +213,7 @@ public class RecruitsClaimManager {
 
     private void sendClaimBatch(
             ServerPlayer player, List<RecruitsClaim> claims, boolean resetClaims, boolean syncComplete) {
-        Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
+        RecruitsNetwork.sendToPlayer(() -> player,
                 new MessageToClientUpdateClaims(
                         claims,
                         RecruitsServerConfig.ClaimingCost.get(),

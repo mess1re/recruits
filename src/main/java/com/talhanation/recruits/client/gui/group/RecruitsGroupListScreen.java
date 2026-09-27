@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui.group;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.ClientManager;
@@ -116,8 +118,8 @@ public class RecruitsGroupListScreen extends ListScreenBase implements IGroupSel
                 ClientManager.groups.removeIf(predicate -> selected.getUUID().equals(predicate.getUUID()));
 
                 selected.removed = true;
-                Main.SIMPLE_CHANNEL.sendToServer(new MessageApplyNoGroup(player.getUUID(), selected.getUUID()));
-                Main.SIMPLE_CHANNEL.sendToServer(new MessageUpdateGroup(selected));
+                RecruitsNetwork.sendToServer(new MessageApplyNoGroup(player.getUUID(), selected.getUUID()));
+                RecruitsNetwork.sendToServer(new MessageUpdateGroup(selected));
                 this.selected = null;
 
                 this.init();

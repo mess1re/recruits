@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui.commandscreen;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.gui.CommandScreen;
 import com.talhanation.recruits.client.gui.group.RecruitsCommandButton;
@@ -63,8 +65,8 @@ public class OtherCategory implements ICommandCategory {
                     if (screen.rayEntity != null && !groups.isEmpty()) {
                         for(RecruitsGroup group : groups) {
                             if (!group.isDisabled()) {
-                                Main.SIMPLE_CHANNEL.sendToServer(new MessageProtectEntity(player.getUUID(), screen.rayEntity.getUUID(), group.getUUID()));
-                                Main.SIMPLE_CHANNEL.sendToServer(new MessageMovement(player.getUUID(), 5, group.getUUID(), CommandScreen.formation.getIndex(), CommandScreen.tightFormation, CommandScreen.holdFormation));
+                                RecruitsNetwork.sendToServer(new MessageProtectEntity(player.getUUID(), screen.rayEntity.getUUID(), group.getUUID()));
+                                RecruitsNetwork.sendToServer(new MessageMovement(player.getUUID(), 5, group.getUUID(), CommandScreen.formation.getIndex(), CommandScreen.tightFormation, CommandScreen.holdFormation));
                             }
                         }
                         screen.sendCommandInChat(5);
@@ -80,7 +82,7 @@ public class OtherCategory implements ICommandCategory {
                     if (screen.rayEntity != null && !groups.isEmpty()) {
                         for (RecruitsGroup group : groups) {
                             if (!group.isDisabled()) {
-                                Main.SIMPLE_CHANNEL.sendToServer(new MessageMountEntity(player.getUUID(), screen.rayEntity.getUUID(), group.getUUID()));
+                                RecruitsNetwork.sendToServer(new MessageMountEntity(player.getUUID(), screen.rayEntity.getUUID(), group.getUUID()));
                             }
                         }
                         screen.sendCommandInChat(99);
@@ -104,7 +106,7 @@ public class OtherCategory implements ICommandCategory {
                     if (!groups.isEmpty()) {
                         for (RecruitsGroup group : groups) {
                             if (!group.isDisabled()) {
-                                Main.SIMPLE_CHANNEL.sendToServer(new MessageBackToMountEntity(player.getUUID(), group.getUUID()));
+                                RecruitsNetwork.sendToServer(new MessageBackToMountEntity(player.getUUID(), group.getUUID()));
                             }
                         }
                         screen.sendCommandInChat(91);
@@ -120,7 +122,7 @@ public class OtherCategory implements ICommandCategory {
                     if (!groups.isEmpty()) {
                         for (RecruitsGroup group : groups) {
                             if (!group.isDisabled()) {
-                                Main.SIMPLE_CHANNEL.sendToServer(new MessageDismount(player.getUUID(), group.getUUID()));
+                                RecruitsNetwork.sendToServer(new MessageDismount(player.getUUID(), group.getUUID()));
                             }
                         }
                         screen.sendCommandInChat(98);
@@ -136,9 +138,9 @@ public class OtherCategory implements ICommandCategory {
                     if (!groups.isEmpty()) {
                         for (RecruitsGroup group : groups) {
                             if (!group.isDisabled() && screen.rayEntity != null) {
-                                Main.SIMPLE_CHANNEL.sendToServer(new MessageUpkeepEntity(player.getUUID(), screen.rayEntity.getUUID(), group.getUUID()));
+                                RecruitsNetwork.sendToServer(new MessageUpkeepEntity(player.getUUID(), screen.rayEntity.getUUID(), group.getUUID()));
                             } else if (!group.isDisabled() && screen.rayBlockPos != null)
-                                Main.SIMPLE_CHANNEL.sendToServer(new MessageUpkeepPos(player.getUUID(), group.getUUID(), screen.rayBlockPos));
+                                RecruitsNetwork.sendToServer(new MessageUpkeepPos(player.getUUID(), group.getUUID(), screen.rayBlockPos));
                         }
                         screen.sendCommandInChat(92);
                     }
@@ -153,7 +155,7 @@ public class OtherCategory implements ICommandCategory {
                     if (!groups.isEmpty()) {
                         for (RecruitsGroup group : groups) {
                             if (!group.isDisabled()) {
-                                Main.SIMPLE_CHANNEL.sendToServer(new MessageClearUpkeep(player.getUUID(), group.getUUID()));
+                                RecruitsNetwork.sendToServer(new MessageClearUpkeep(player.getUUID(), group.getUUID()));
                             }
                         }
                         screen.sendCommandInChat(93);
@@ -169,7 +171,7 @@ public class OtherCategory implements ICommandCategory {
                     if (!groups.isEmpty()) {
                         for (RecruitsGroup group : groups) {
                             if (!group.isDisabled()) {
-                                Main.SIMPLE_CHANNEL.sendToServer(new MessageRest(player.getUUID(), group.getUUID(), true));
+                                RecruitsNetwork.sendToServer(new MessageRest(player.getUUID(), group.getUUID(), true));
                             }
                         }
                         screen.sendCommandInChat(88);

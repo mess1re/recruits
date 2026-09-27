@@ -1,5 +1,7 @@
 package com.talhanation.recruits.client.gui;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.client.ClientManager;
@@ -105,13 +107,13 @@ public class NobleTradeScreen extends RecruitsScreenBase {
                 if(ClientManager.configValueNobleNeedsVillagers){
                     if (selection != null && villagerList != null && !villagerList.isEmpty()) {
                         Villager villager = villagerList.get(0);
-                        Main.SIMPLE_CHANNEL.sendToServer(new MessageHireFromNobleVillager(villagerNoble.getUUID(), villager.getUUID(), selection, group, true, false));
+                        RecruitsNetwork.sendToServer(new MessageHireFromNobleVillager(villagerNoble.getUUID(), villager.getUUID(), selection, group, true, false));
 
                         this.selection.uses -= 1;
                     }
                 }
                 else {
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageHireFromNobleVillager(villagerNoble.getUUID(), UUID.randomUUID(), selection, group, false, false));
+                    RecruitsNetwork.sendToServer(new MessageHireFromNobleVillager(villagerNoble.getUUID(), UUID.randomUUID(), selection, group, false, false));
                     this.selection.uses -= 1;
                 }
             }
@@ -277,7 +279,7 @@ public class NobleTradeScreen extends RecruitsScreenBase {
     @Override
     public void onClose() {
         super.onClose();
-        Main.SIMPLE_CHANNEL.sendToServer(new MessageHireFromNobleVillager(villagerNoble.getUUID(), UUID.randomUUID(), selection, group, false, true));
+        RecruitsNetwork.sendToServer(new MessageHireFromNobleVillager(villagerNoble.getUUID(), UUID.randomUUID(), selection, group, false, true));
     }
 
     private void updateHireButtonState() {

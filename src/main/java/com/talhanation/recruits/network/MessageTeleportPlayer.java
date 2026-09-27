@@ -1,13 +1,10 @@
 package com.talhanation.recruits.network;
 
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
 
 public class MessageTeleportPlayer implements Message<MessageTeleportPlayer> {
 
@@ -20,12 +17,12 @@ public class MessageTeleportPlayer implements Message<MessageTeleportPlayer> {
     }
 
     @Override
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public MessageSide getExecutingSide() {
+        return MessageSide.SERVER;
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(MessageContext context) {
         ServerPlayer player = context.getSender();
 
         if (player == null || this.pos == null) return;

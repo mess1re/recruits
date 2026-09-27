@@ -3,11 +3,8 @@ package com.talhanation.recruits.network;
 import com.talhanation.recruits.FactionEvents;
 import com.talhanation.recruits.world.RecruitsDiplomacyManager;
 import com.talhanation.recruits.world.RecruitsFaction;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
 
 
 public class MessageChangeDiplomacyStatus implements Message<MessageChangeDiplomacyStatus> {
@@ -24,11 +21,11 @@ public class MessageChangeDiplomacyStatus implements Message<MessageChangeDiplom
         this.otherTeam = otherTeam.getStringID();
     }
 
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public MessageSide getExecutingSide() {
+        return MessageSide.SERVER;
     }
 
-    public void executeServerSide(NetworkEvent.Context context){
+    public void executeServerSide(MessageContext context){
         RecruitsDiplomacyManager.DiplomacyStatus status = RecruitsDiplomacyManager.DiplomacyStatus.fromByte(this.status);
 
         FactionEvents.recruitsDiplomacyManager.setRelation(ownTeam, otherTeam, status, (ServerLevel) context.getSender().getCommandSenderWorld());

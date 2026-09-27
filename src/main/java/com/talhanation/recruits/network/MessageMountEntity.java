@@ -5,12 +5,9 @@ import com.talhanation.recruits.compat.siegeweapons.SiegeWeapon;
 import com.talhanation.recruits.compat.smallships.SmallShips;
 import com.talhanation.recruits.config.RecruitsServerConfig;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,11 +28,11 @@ public class MessageMountEntity implements Message<MessageMountEntity> {
         this.group = group;
     }
 
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public MessageSide getExecutingSide() {
+        return MessageSide.SERVER;
     }
 
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(MessageContext context) {
         ServerPlayer player = Objects.requireNonNull(context.getSender());
         List<Entity> entityList = player.getCommandSenderWorld().getEntitiesOfClass(
                 Entity.class,

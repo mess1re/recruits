@@ -1,5 +1,7 @@
 package com.talhanation.recruits;
 
+import com.talhanation.recruits.network.RecruitsNetwork;
+
 import com.talhanation.recruits.config.RecruitsServerConfig;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.inventory.*;
@@ -34,7 +36,6 @@ import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -298,12 +299,12 @@ public class FactionEvents {
     public static void notifyFactionMembers(ServerLevel level, RecruitsFaction recruitsFaction, int id, String notification){
         List<ServerPlayer> playersInTeam = FactionEvents.recruitsFactionManager.getPlayersInTeam(recruitsFaction.getStringID(), level);
         for (ServerPlayer teamPlayer : playersInTeam) {
-            Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> teamPlayer), new MessageToClientSetDiplomaticToast(id, recruitsFaction, notification));
+            RecruitsNetwork.sendToPlayer(()-> teamPlayer, new MessageToClientSetDiplomaticToast(id, recruitsFaction, notification));
         }
     }
 
     public static void notifyPlayer(ServerLevel level, RecruitsPlayerInfo playerInfo, int id, String notification){
-        Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) level.getPlayerByUUID(playerInfo.getUUID())), new MessageToClientSetToast(id, notification));
+        RecruitsNetwork.sendToPlayer(() -> (ServerPlayer) level.getPlayerByUUID(playerInfo.getUUID()), new MessageToClientSetToast(id, notification));
     }
 
     public static void removeTeam(ServerLevel level, String teamName){
@@ -369,7 +370,7 @@ public class FactionEvents {
 
             serverSideUpdateTeam(level);
 
-            Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> playerToAdd), new MessageToClientSetDiplomaticToast(8, recruitsFaction));
+            RecruitsNetwork.sendToPlayer(()-> playerToAdd, new MessageToClientSetDiplomaticToast(8, recruitsFaction));
 
             notifyFactionMembers(level, recruitsFaction, 9, playerToAdd.getName().getString());
 
@@ -438,7 +439,7 @@ public class FactionEvents {
 
         if(recruitsFaction != null){
             if(recruitsFaction.addPlayerAsJoinRequest(player.getName().getString())){
-                Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> recruitsFactionManager.getTeamLeader(recruitsFaction, level)), new MessageToClientSetDiplomaticToast(7, recruitsFaction, player.getName().getString()));
+                RecruitsNetwork.sendToPlayer(()-> recruitsFactionManager.getTeamLeader(recruitsFaction, level), new MessageToClientSetDiplomaticToast(7, recruitsFaction, player.getName().getString()));
                 recruitsFactionManager.broadcastFactionsToAll(level);
             }
         }
@@ -577,7 +578,7 @@ public class FactionEvents {
                     }
                     recruit.disband(oldOwner, true, true);
 
-                    Main.SIMPLE_CHANNEL.send(PacketDistributor.PLAYER.with(()-> newOwner), new MessageToClientSetToast(0, oldOwner.getName().getString()));
+                    RecruitsNetwork.sendToPlayer(()-> newOwner, new MessageToClientSetToast(0, oldOwner.getName().getString()));
 
                     recruit.hire(newOwner, null, true);
 
@@ -816,7 +817,7 @@ public class FactionEvents {
                 packetBuffer.writeUUID(recruit);
             });
         } else {
-            Main.SIMPLE_CHANNEL.sendToServer(new MessageOpenDisbandScreen(player, recruit));
+            RecruitsNetwork.sendToServer(new MessageOpenDisbandScreen(player, recruit));
         }
     }
 
@@ -838,7 +839,7 @@ public class FactionEvents {
             });
         }
         else {
-            Main.SIMPLE_CHANNEL.sendToServer(new MessageOpenTeamEditScreen(player));
+            RecruitsNetwork.sendToServer(new MessageOpenTeamEditScreen(player));
         }
     }
 }

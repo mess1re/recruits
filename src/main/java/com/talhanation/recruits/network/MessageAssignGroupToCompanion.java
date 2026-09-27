@@ -6,13 +6,10 @@ import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.entities.ICompanion;
 import com.talhanation.recruits.util.NPCArmy;
 import com.talhanation.recruits.world.RecruitsGroup;
-import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,11 +26,11 @@ public class MessageAssignGroupToCompanion implements Message<MessageAssignGroup
         this.companionUUID = companionUUID;
     }
 
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public MessageSide getExecutingSide() {
+        return MessageSide.SERVER;
     }
 
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(MessageContext context) {
         ServerPlayer serverPlayer =  context.getSender();
         ServerLevel serverLevel =  serverPlayer.serverLevel();
 
