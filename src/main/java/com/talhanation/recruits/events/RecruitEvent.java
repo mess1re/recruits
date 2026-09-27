@@ -40,7 +40,7 @@ public abstract class RecruitEvent extends Event {
      * <p>Der zugehörige Spieler ist immer gesetzt.</p>
      */
     @Cancelable
-    public static class Hired extends RecruitEvent {
+    public static class Hired extends RecruitEvent implements RecruitsCancellableEvent {
         private final Player player;
 
         public Hired(AbstractRecruitEntity recruit, Player player) {
@@ -61,7 +61,7 @@ public abstract class RecruitEvent extends Event {
      * @see AbstractRecruitEntity#disband(Player, boolean, boolean)
      */
     @Cancelable
-    public static class Dismissed extends RecruitEvent {
+    public static class Dismissed extends RecruitEvent implements RecruitsCancellableEvent {
 
         @Nullable
         private final Player player;
@@ -115,7 +115,7 @@ public abstract class RecruitEvent extends Event {
      * @see RecruitEvents#promoteRecruit(AbstractRecruitEntity, int, String, net.minecraft.server.level.ServerPlayer)
      */
     @Cancelable
-    public static class Promoted extends RecruitEvent {
+    public static class Promoted extends RecruitEvent implements RecruitsCancellableEvent {
         private final int newProfession;
         private final String newName;
         private final net.minecraft.server.level.ServerPlayer promotingPlayer;

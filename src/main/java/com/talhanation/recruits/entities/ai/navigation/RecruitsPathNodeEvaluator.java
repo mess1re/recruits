@@ -30,6 +30,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.pathfinder.*;
 import org.jetbrains.annotations.NotNull;
 
+//? if forge {
 public class RecruitsPathNodeEvaluator extends NodeEvaluator {
 
     private int x;
@@ -619,3 +620,55 @@ public class RecruitsPathNodeEvaluator extends NodeEvaluator {
         return p_77623_.is(BlockTags.FIRE) || p_77623_.is(Blocks.LAVA) || p_77623_.is(Blocks.MAGMA_BLOCK) || CampfireBlock.isLitCampfire(p_77623_) || p_77623_.is(Blocks.LAVA_CAULDRON);
     }
 }
+//?} else {
+/*public class RecruitsPathNodeEvaluator extends WalkNodeEvaluator {
+
+    public void setTarget(int x, int y, int z) {
+    }
+
+    @Override
+    public void prepare(PathNavigationRegion region, Mob mob) {
+        super.prepare(region, mob);
+        mob.setPathfindingMalus(PathType.WATER, 128.0F);
+        mob.setPathfindingMalus(PathType.WATER_BORDER, 128.0F);
+        mob.setPathfindingMalus(PathType.TRAPDOOR, -1.0F);
+        mob.setPathfindingMalus(PathType.DAMAGE_FIRE, 32.0F);
+        mob.setPathfindingMalus(PathType.DAMAGE_CAUTIOUS, 32.0F);
+        mob.setPathfindingMalus(PathType.DANGER_POWDER_SNOW, -1.0F);
+        mob.setPathfindingMalus(PathType.DOOR_WOOD_CLOSED, 0.0F);
+        mob.setPathfindingMalus(PathType.FENCE, -1.0F);
+        mob.setPathfindingMalus(PathType.LAVA, -1.0F);
+        mob.setPathfindingMalus(PathType.LEAVES, -1.0F);
+    }
+
+    @Override
+    protected @NotNull Node getNode(int x, int y, int z) {
+        Node node = super.getNode(x, y, z);
+        PathType pathType = this.getCachedPathType(x, y, z);
+        float malus = this.mob.getPathfindingMalus(pathType);
+
+        if (malus >= 0.0F) {
+            node.type = pathType;
+            node.costMalus = Math.max(node.costMalus, malus);
+
+            BlockPos pos = new BlockPos(x, y, z);
+            BlockPos aboveEntity = pos.above(this.mob.isVehicle() ? 2 : 1);
+            for (Direction direction : Direction.Plane.HORIZONTAL) {
+                BlockState belowNeighbor = this.currentContext.getBlockState(pos.relative(direction).below());
+                if (!belowNeighbor.is(Blocks.DIRT_PATH)) {
+                    node.costMalus += 2.0F;
+                    continue;
+                }
+
+                BlockState aboveLeavesCheck = this.currentContext.getBlockState(aboveEntity.relative(direction, 2));
+                if (aboveLeavesCheck.is(BlockTags.LEAVES)) {
+                    node.costMalus = -1.0F;
+                    break;
+                }
+            }
+        }
+
+        return node;
+    }
+}
+*///?}

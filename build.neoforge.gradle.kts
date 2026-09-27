@@ -62,8 +62,11 @@ val relocateLoaderNamespace = tasks.register<Sync>("relocateLoaderNamespace") {
             .replace("net.minecraftforge", "net.neoforged.neoforge")
             .replace("MinecraftForge", "NeoForge")
             .replace("ForgeConfigSpec", "ModConfigSpec")
+            .replace("BlockPathTypes", "PathType")
             .replace("@Mod.EventBusSubscriber", "@EventBusSubscriber")
             .replace("Mod.EventBusSubscriber.Bus.", "EventBusSubscriber.Bus.")
+            .replace("import net.neoforged.bus.api.Cancelable;", "")
+            .replace("@Cancelable", "")
             .let { relocated ->
                 if (relocated == "import net.neoforged.fml.common.Mod;") {
                     "$relocated\nimport net.neoforged.fml.common.EventBusSubscriber;"

@@ -25,7 +25,7 @@ import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraftforge.common.ForgeMod;
+import com.talhanation.recruits.util.RecruitsAttributes;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -80,11 +80,11 @@ public class HorsemanEntity extends RecruitShieldmanEntity {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.35D)
-                .add(ForgeMod.SWIM_SPEED.get(), 0.3D)
+                .add(RecruitsAttributes.swimSpeed(), 0.3D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.05D)
                 .add(Attributes.ATTACK_DAMAGE, 1.0D)
                 .add(Attributes.FOLLOW_RANGE, 64.0D)
-                .add(ForgeMod.ENTITY_REACH.get(), 0D)
+                .add(RecruitsAttributes.entityReach(), 0D)
                 .add(Attributes.ATTACK_SPEED);
 
     }

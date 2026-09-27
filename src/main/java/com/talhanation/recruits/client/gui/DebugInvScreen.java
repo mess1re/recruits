@@ -24,7 +24,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import net.minecraftforge.client.gui.widget.ExtendedButton;
-import net.minecraftforge.common.ForgeMod;
+import com.talhanation.recruits.util.RecruitsAttributes;
 import org.lwjgl.glfw.GLFW;
 
 
@@ -272,7 +272,7 @@ public class DebugInvScreen extends ScreenBase<DebugInvMenu> {
         int maxHealth = Mth.ceil(recruit.getMaxHealth());
         int moral = Mth.ceil(recruit.getMorale());
 
-        double attackReach = recruit.getAttributeValue(ForgeMod.ENTITY_REACH.get());
+        double attackReach = recruit.getAttributeValue(RecruitsAttributes.entityReach());
         double attackSpeed = recruit.getAttributeValue(Attributes.ATTACK_SPEED);
         double attackDamage = recruit.getAttackDamage();
         DecimalFormat decimalformat = new DecimalFormat("##.#");

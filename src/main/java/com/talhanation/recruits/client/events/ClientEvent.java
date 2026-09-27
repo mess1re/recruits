@@ -21,7 +21,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
+//? if forge {
 import net.minecraftforge.client.event.TextureStitchEvent;
+//?} else {
+/*import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
+*///?}
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -93,7 +97,11 @@ public class ClientEvent {
     }
 
     @SubscribeEvent
+    //? if forge {
     public static void textureStitchCompleted(TextureStitchEvent.Post event) {
+    //?} else {
+    /*public static void textureStitchCompleted(TextureAtlasStitchedEvent event) {
+    *///?}
         if (TextureAtlas.LOCATION_BLOCKS.equals(event.getAtlas().location())) {
             WorldMapCacheManager.getInstance().onClientBlockAtlasStitched();
         }

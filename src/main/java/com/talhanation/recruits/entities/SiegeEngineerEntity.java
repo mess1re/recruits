@@ -28,7 +28,7 @@ import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraftforge.common.ForgeMod;
+import com.talhanation.recruits.util.RecruitsAttributes;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -98,11 +98,11 @@ public class SiegeEngineerEntity extends AbstractRecruitEntity implements ICompa
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.3D)
-                .add(ForgeMod.SWIM_SPEED.get(), 0.3D)
+                .add(RecruitsAttributes.swimSpeed(), 0.3D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.1D)
                 .add(Attributes.ATTACK_DAMAGE, 0.5D)
                 .add(Attributes.FOLLOW_RANGE, 128.0D)
-                .add(ForgeMod.ENTITY_REACH.get(), 0D)
+                .add(RecruitsAttributes.entityReach(), 0D)
                 .add(Attributes.ATTACK_SPEED);
     }
 

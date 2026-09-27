@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+//? if forge {
 public class SailorNodeEvaluator extends SwimNodeEvaluator {
     private float oldWaterMalus;
     private float oldBlockedMalus;
@@ -128,3 +129,68 @@ public class SailorNodeEvaluator extends SwimNodeEvaluator {
         return this.getTargetFromNode(this.getNodeRaw(Mth.floor(p_77550_), Mth.floor(p_77551_), Mth.floor(p_77552_)));
     }
 }
+//?} else {
+/*public class SailorNodeEvaluator extends SwimNodeEvaluator {
+    private float oldWaterMalus;
+    private float oldBlockedMalus;
+    private float oldBreachMalus;
+
+    public SailorNodeEvaluator() {
+        super(false);
+    }
+
+    @Override
+    public void prepare(@NotNull PathNavigationRegion region, @NotNull Mob mob) {
+        super.prepare(region, mob);
+        this.oldWaterMalus = mob.getPathfindingMalus(PathType.WATER);
+        this.oldBlockedMalus = mob.getPathfindingMalus(PathType.BLOCKED);
+        this.oldBreachMalus = mob.getPathfindingMalus(PathType.BREACH);
+        mob.setPathfindingMalus(PathType.WATER, 8.0F);
+        mob.setPathfindingMalus(PathType.BLOCKED, -1.0F);
+        mob.setPathfindingMalus(PathType.BREACH, 0.0F);
+    }
+
+    @Override
+    protected Node findAcceptedNode(int x, int y, int z) {
+        Node node = super.findAcceptedNode(x, y, z);
+        if (node == null) {
+            return null;
+        }
+
+        BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            mutablePos.set(x, y, z).move(direction, 2);
+            if (this.currentContext.getBlockState(mutablePos).getFluidState().isEmpty()) node.costMalus += 4.0F;
+            mutablePos.move(direction, 2);
+            if (this.currentContext.getBlockState(mutablePos).getFluidState().isEmpty()) node.costMalus += 8.0F;
+            mutablePos.move(direction, 2);
+            if (this.currentContext.getBlockState(mutablePos).getFluidState().isEmpty()) node.costMalus += 16.0F;
+        }
+
+        mutablePos.set(x, y - 2, z);
+        if (this.currentContext.getBlockState(mutablePos).getFluidState().isEmpty()) node.costMalus += 4.0F;
+        mutablePos.set(x, y - 1, z);
+        if (this.currentContext.getBlockState(mutablePos).getFluidState().isEmpty()) node.costMalus += 8.0F;
+        return node;
+    }
+
+    @Override
+    public @NotNull Node getStart() {
+        AABB boundingBox = this.mob.getVehicle().getBoundingBox();
+        return getNode(Mth.floor(boundingBox.minX), Mth.floor(this.mob.getY()), Mth.floor(boundingBox.minZ));
+    }
+
+    @Override
+    public Target getTarget(double x, double y, double z) {
+        return getTargetNodeAt(x, y, z);
+    }
+
+    @Override
+    public void done() {
+        this.mob.setPathfindingMalus(PathType.WATER, this.oldWaterMalus);
+        this.mob.setPathfindingMalus(PathType.BLOCKED, this.oldBlockedMalus);
+        this.mob.setPathfindingMalus(PathType.BREACH, this.oldBreachMalus);
+        super.done();
+    }
+}
+*///?}

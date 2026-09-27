@@ -4,13 +4,18 @@ import com.talhanation.recruits.client.ClientManager;
 import com.talhanation.recruits.client.api.ClientClaimEvent;
 import com.talhanation.recruits.client.api.ClientOverlayEvent;
 import com.talhanation.recruits.config.RecruitsClientConfig;
+import com.talhanation.recruits.util.RecruitsEventBus;
 import com.talhanation.recruits.world.RecruitsClaim;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+//? if forge {
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+//?} else {
+/*import net.neoforged.neoforge.client.event.RenderGuiEvent;
+*///?}
 import net.minecraftforge.common.MinecraftForge;
 //? if forge {
 import net.minecraftforge.event.TickEvent;
@@ -73,7 +78,11 @@ public class ClaimOverlayManager {
     }
 
     @SubscribeEvent
+    //? if forge {
     public void onRenderGameOverlay(RenderGuiOverlayEvent.Post event) {
+    //?} else {
+    /*public void onRenderGameOverlay(RenderGuiEvent.Post event) {
+    *///?}
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
 
@@ -91,7 +100,7 @@ public class ClaimOverlayManager {
         if (alpha <= 0.01f) return;
 
         if (ClientManager.currentClaim != null) {
-            boolean cancelled = MinecraftForge.EVENT_BUS.post(new ClientOverlayEvent.RenderPre(event.getGuiGraphics(), ClientManager.currentClaim, currentState, alpha));
+            boolean cancelled = RecruitsEventBus.postCancelable(new ClientOverlayEvent.RenderPre(event.getGuiGraphics(), ClientManager.currentClaim, currentState, alpha));
             if (!cancelled) {
                 renderer.render(event.getGuiGraphics(), mc, ClientManager.currentClaim, currentState, alpha, getPanelWidth());
 
@@ -190,7 +199,7 @@ public class ClaimOverlayManager {
             hasChanges = true;
 
             if (claim.isUnderSiege) {
-                boolean cancelled = MinecraftForge.EVENT_BUS.post(new ClientClaimEvent.SiegeStarted(claim));
+                boolean cancelled = RecruitsEventBus.postCancelable(new ClientClaimEvent.SiegeStarted(claim));
                 if (!cancelled) {
                     claimEntryTime = System.currentTimeMillis();
                     transitionToState(OverlayState.FULL, false);
@@ -239,7 +248,7 @@ public class ClaimOverlayManager {
     private void transitionToState(OverlayState newState, boolean fade) {
         if (currentState == newState) return;
 
-        boolean cancelled = MinecraftForge.EVENT_BUS.post(new ClientOverlayEvent.StateChanged(ClientManager.currentClaim, currentState, newState, calculateAlpha()));
+        boolean cancelled = RecruitsEventBus.postCancelable(new ClientOverlayEvent.StateChanged(ClientManager.currentClaim, currentState, newState, calculateAlpha()));
         if (cancelled) return;
 
         if (fade) {

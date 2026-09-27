@@ -55,7 +55,7 @@ public abstract class ClaimEvent extends Event {
      * @see com.talhanation.recruits.world.RecruitsClaimManager#addOrUpdateClaim(ServerLevel, RecruitsClaim)
      */
     @Cancelable
-    public static class Updated extends ClaimEvent {
+    public static class Updated extends ClaimEvent implements RecruitsCancellableEvent {
         private final boolean isNew;
 
         public Updated(RecruitsClaim claim, ServerLevel level, boolean isNew) {

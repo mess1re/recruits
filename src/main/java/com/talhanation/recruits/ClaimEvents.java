@@ -40,7 +40,9 @@ import net.minecraftforge.event.TickEvent;
 /*import net.neoforged.neoforge.event.tick.ServerTickEvent;
 *///?}
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+//? if forge {
 import net.minecraftforge.event.entity.player.FillBucketEvent;
+//?}
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.ExplosionEvent;
@@ -472,9 +474,19 @@ public class ClaimEvents {
         }
     }
     @SubscribeEvent
-    public void onExplosion(ExplosionEvent event) {
+    public void onExplosion(
+            //? if forge {
+            ExplosionEvent event
+            //?} else {
+            /*ExplosionEvent.Start event
+            *///?}
+    ) {
         if(event.getLevel().isClientSide()) return;
+        //? if forge {
         Vec3 vec = event.getExplosion().getPosition();
+        //?} else {
+        /*Vec3 vec = event.getExplosion().center();
+        *///?}
         BlockPos pos = new BlockPos((int) vec.x, (int) vec.y, (int) vec.z);
         ChunkAccess access = server.overworld().getChunk(pos);
         RecruitsClaim claim = recruitsClaimManager.getClaim(access.getPos());
@@ -488,6 +500,7 @@ public class ClaimEvents {
             event.setCanceled(true);
         }
     }
+    //? if forge {
     @SubscribeEvent
     public void onBucketInteract(FillBucketEvent event) {
         if(event.getLevel().isClientSide()) return;
@@ -509,6 +522,7 @@ public class ClaimEvents {
         boolean isInTeam = player.getTeam() != null && player.getTeam().getName().equals(claim.getOwnerFactionStringID());
         if(!isInTeam) event.setCanceled(true);
     }
+    //?}
 
     @SubscribeEvent
     public void onBlockInteract(PlayerInteractEvent.RightClickBlock event) {

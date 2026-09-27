@@ -8,6 +8,7 @@ import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.inventory.*;
 import com.talhanation.recruits.network.*;
 import com.talhanation.recruits.util.DelayedExecutor;
+import com.talhanation.recruits.util.RecruitsEventBus;
 import com.talhanation.recruits.util.RegistryUtils;
 import com.talhanation.recruits.world.*;
 import com.talhanation.recruits.FactionEvent;
@@ -175,7 +176,7 @@ public class FactionEvents {
             RecruitsFaction createdFaction = recruitsFactionManager.getFactionByStringID(teamName);
             if (createdFaction != null) {
                 FactionEvent.Created createdEvent = new FactionEvent.Created(createdFaction, level, serverPlayer);
-                if (MinecraftForge.EVENT_BUS.post(createdEvent)) {
+                if (RecruitsEventBus.postCancelable(createdEvent)) {
                     // Addon hat gecanceled – Fraktion wieder entfernen
                     removeTeam(level, teamName);
                 }
@@ -353,7 +354,7 @@ public class FactionEvents {
             RecruitsFaction joiningFaction = recruitsFactionManager.getFactionByStringID(teamName);
             if (joiningFaction != null) {
                 FactionEvent.PlayerJoined joinEvent = new FactionEvent.PlayerJoined(joiningFaction, level, playerToAdd);
-                if (MinecraftForge.EVENT_BUS.post(joinEvent)) return;
+                if (RecruitsEventBus.postCancelable(joinEvent)) return;
             }
 
             server.getScoreboard().addPlayerToTeam(namePlayerToAdd, playerTeam);

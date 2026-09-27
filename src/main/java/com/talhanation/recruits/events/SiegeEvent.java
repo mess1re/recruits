@@ -44,7 +44,7 @@ public abstract class SiegeEvent extends Event {
      * <p>Ist cancelable: {@code event.setCanceled(true)} verhindert den Start.</p>
      */
     @Cancelable
-    public static class Start extends SiegeEvent {
+    public static class Start extends SiegeEvent implements RecruitsCancellableEvent {
         public Start(RecruitsClaim claim, ServerLevel level) {
             super(claim, level);
         }
@@ -95,7 +95,7 @@ public abstract class SiegeEvent extends Event {
      * </pre>
      */
     @Cancelable
-    public static class Tick extends SiegeEvent {
+    public static class Tick extends SiegeEvent implements RecruitsCancellableEvent {
         private final int attackerCount;
         private final int defenderCount;
         private int damage;

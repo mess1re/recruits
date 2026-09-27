@@ -47,7 +47,7 @@ public abstract class FactionEvent extends Event {
      * <p>Cancelable: {@code setCanceled(true)} rollt die Erstellung zurück.</p>
      */
     @Cancelable
-    public static class Created extends FactionEvent {
+    public static class Created extends FactionEvent implements RecruitsCancellableEvent {
         @Nullable
         private final ServerPlayer creator;
 
@@ -81,7 +81,7 @@ public abstract class FactionEvent extends Event {
      * <p>Cancelable: {@code setCanceled(true)} verhindert den Beitritt.</p>
      */
     @Cancelable
-    public static class PlayerJoined extends FactionEvent {
+    public static class PlayerJoined extends FactionEvent implements RecruitsCancellableEvent {
         private final ServerPlayer player;
 
         public PlayerJoined(RecruitsFaction faction, ServerLevel level, ServerPlayer player) {

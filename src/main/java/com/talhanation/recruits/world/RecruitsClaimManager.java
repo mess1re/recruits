@@ -8,6 +8,7 @@ import com.talhanation.recruits.Main;
 import com.talhanation.recruits.config.RecruitsServerConfig;
 import com.talhanation.recruits.network.MessageToClientUpdateClaim;
 import com.talhanation.recruits.network.MessageToClientUpdateClaims;
+import com.talhanation.recruits.util.RecruitsEventBus;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
@@ -55,7 +56,7 @@ public class RecruitsClaimManager {
         // ClaimEvent.Updated feuern – cancelable
         boolean isNew = !claimsById.containsKey(claim.getUUID());
         ClaimEvent.Updated updateEvent = new ClaimEvent.Updated(claim, level, isNew);
-        if (MinecraftForge.EVENT_BUS.post(updateEvent)) return;
+        if (RecruitsEventBus.postCancelable(updateEvent)) return;
 
         this.removeClaimFromIndexes(claim.getUUID());
 

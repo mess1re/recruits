@@ -34,7 +34,7 @@ public abstract class ClientOverlayEvent extends Event {
 
 
     @Cancelable
-    public static class RenderPre extends ClientOverlayEvent {
+    public static class RenderPre extends ClientOverlayEvent implements com.talhanation.recruits.RecruitsCancellableEvent {
         private final GuiGraphics guiGraphics;
 
         public RenderPre(GuiGraphics guiGraphics,
@@ -63,7 +63,7 @@ public abstract class ClientOverlayEvent extends Event {
     }
 
     @Cancelable
-    public static class StateChanged extends ClientOverlayEvent {
+    public static class StateChanged extends ClientOverlayEvent implements com.talhanation.recruits.RecruitsCancellableEvent {
         private final ClaimOverlayManager.OverlayState previousState;
 
         public StateChanged(@Nullable RecruitsClaim claim, ClaimOverlayManager.OverlayState previousState, ClaimOverlayManager.OverlayState newState, float alpha) {

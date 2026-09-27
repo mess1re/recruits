@@ -69,7 +69,7 @@ public abstract class ClientClaimEvent extends Event {
     }
 
     @Cancelable
-    public static class SiegeStarted extends ClientClaimEvent {
+    public static class SiegeStarted extends ClientClaimEvent implements com.talhanation.recruits.RecruitsCancellableEvent {
         public SiegeStarted(RecruitsClaim claim) {
             super(claim);
         }

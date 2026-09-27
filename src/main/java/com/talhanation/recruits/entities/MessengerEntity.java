@@ -45,7 +45,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ForgeMod;
+import com.talhanation.recruits.util.RecruitsAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -150,11 +150,11 @@ public class MessengerEntity extends AbstractChunkLoaderEntity implements ICompa
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.3D)
-                .add(ForgeMod.SWIM_SPEED.get(), 0.3D)
+                .add(RecruitsAttributes.swimSpeed(), 0.3D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.1D)
                 .add(Attributes.ATTACK_DAMAGE, 0.5D)
                 .add(Attributes.FOLLOW_RANGE, 32.0D)
-                .add(ForgeMod.ENTITY_REACH.get(), 0D)
+                .add(RecruitsAttributes.entityReach(), 0D)
                 .add(Attributes.ATTACK_SPEED);
     }
 

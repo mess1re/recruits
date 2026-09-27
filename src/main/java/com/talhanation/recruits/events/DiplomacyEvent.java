@@ -55,7 +55,7 @@ public abstract class DiplomacyEvent extends Event {
      * @see RecruitsDiplomacyManager#setRelation(String, String, RecruitsDiplomacyManager.DiplomacyStatus, ServerLevel)
      */
     @Cancelable
-    public static class RelationChanged extends DiplomacyEvent {
+    public static class RelationChanged extends DiplomacyEvent implements RecruitsCancellableEvent {
 
         private final RecruitsDiplomacyManager.DiplomacyStatus oldStatus;
         private final RecruitsDiplomacyManager.DiplomacyStatus newStatus;
