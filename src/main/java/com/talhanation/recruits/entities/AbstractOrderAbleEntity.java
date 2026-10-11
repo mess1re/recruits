@@ -64,9 +64,12 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
 
     ///////////////////////////////////TICK/////////////////////////////////////////
 
+    //? if <1.21 {
+    @Override
     public double getMyRidingOffset() {
         return -0.35D;
     }
+    //?}
 
     @Override
     public void aiStep() {
@@ -213,13 +216,12 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
         return 0.4F;
     }
 
+    //? if <1.21 {
+    @Override
     protected float getStandingEyeHeight(Pose pos, EntityDimensions size) {
-        //? if <1.21 {
         return size.height * 0.9F;
-        //?} else {
-        /*return size.height() * 0.9F;
-        *///?}
     }
+    //?}
 
     public int getMaxHeadXRot() {
         return super.getMaxHeadXRot();

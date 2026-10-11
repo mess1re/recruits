@@ -182,9 +182,12 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         super.rideTick();
     }
 
+    //? if <1.21 {
+    @Override
     public double getMyRidingOffset() {
         return -0.35D;
     }
+    //?}
 
     public int getMaxFallDistance() {
         return maxFallDistance;
@@ -760,13 +763,12 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         return 0.4F;
     }
 
+    //? if <1.21 {
+    @Override
     protected float getStandingEyeHeight(@NotNull Pose pos, EntityDimensions size) {
-        //? if <1.21 {
         return size.height * 0.98F;
-        //?} else {
-        /*return size.height() * 0.98F;
-        *///?}
     }
+    //?}
 
     public int getMaxHeadXRot() {
         return super.getMaxHeadXRot();
