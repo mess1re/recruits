@@ -13,18 +13,16 @@ a Java 17 toolchain, while 1.21.1 uses Java 21. Do not change `JAVA_HOME` betwee
 targets. Missing toolchains can be provisioned through Foojay.
 
 ```powershell
-.\gradlew.bat :1.20.1-forge:build :1.21.1-neoforge:build
-.\gradlew.bat :1.20.1-forge:runClient
-.\gradlew.bat :1.21.1-neoforge:runServer
+.\gradlew.bat :forge:1.20.1:build :neoforge:1.21.1:build :fabric:1.20.1:build :fabric:1.21.1:build
+.\gradlew.bat :fabric:1.21.1:runClient
+.\gradlew.bat :neoforge:1.21.1:runServer
 ```
 
-Stonecutter generates version-specific projects; do not edit `versions/` or
-`common/versions/`. The Architectury common module lives in `common/src` and
-compiles separately for each Minecraft version. Its transformed classes are
-included in each loader's final JAR, so users do not install a separate common
-JAR. `checkCommonBoundary` rejects loader-specific APIs in this module.
+Shared sources live in `src/main`; loader code lives in `forge/src`,
+`neoforge/src` and `fabric/src`. Edit these sources, not the generated files
+under `build/generated/stonecutter`. The common module is compiled for each
+Minecraft version and included in the loader JAR. `checkCommonBoundary`
+rejects loader-specific APIs in shared code.
 
-The multiloader migration is in progress: Forge 1.20.1 and NeoForge 1.21.1 are
-the current build targets. Only the networking contracts and async helpers have
-been extracted into common so far. The remaining shared Forge/NeoForge code is
-still in `src/main`; Fabric targets are not yet available.
+Build targets are Forge 1.20.1, NeoForge 1.21.1 and Fabric 1.20.1/1.21.1.
+Optional integrations are enabled only on supported targets.
