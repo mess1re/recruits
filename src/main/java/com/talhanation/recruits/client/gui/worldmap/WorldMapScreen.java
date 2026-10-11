@@ -215,11 +215,7 @@ public class WorldMapScreen extends Screen {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         camera.animate();
         refreshSelectedClaim();
-        //? if <1.21 {
-        renderBackground(guiGraphics);
-        //?} else {
-        /*renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
-        *///?}
+        guiGraphics.fill(0, 0, width, height, DARK_GRAY_BG);
 
         guiGraphics.enableScissor(0, 0, width, height);
 
@@ -319,7 +315,7 @@ public class WorldMapScreen extends Screen {
     }
     //?} else {
     /*public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.fill(0, 0, width, height, DARK_GRAY_BG);
+        // Screen.render calls this after the map; the base fill is drawn before the map instead.
     }
     *///?}
 

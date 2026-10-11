@@ -17,7 +17,9 @@ import java.util.function.Consumer;
 @Environment(EnvType.CLIENT)
 public class RecruitsCheckBox extends AbstractButton {
 
+    //? if <1.21 {
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/checkbox.png");
+    //?}
     private static final int TEXT_COLOR = 14737632;
     private final Consumer<Boolean> onToggle;
     private final boolean showLabel;
@@ -64,7 +66,13 @@ public class RecruitsCheckBox extends AbstractButton {
 
         graphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
         RenderSystem.enableBlend();
+        //? if <1.21 {
         graphics.blit(TEXTURE, this.getX(), this.getY(), this.isFocused() ? 20.0F : 0.0F, this.selected() ? 20.0F : 0.0F, 20, this.height, 64, 64);
+        //?} else {
+        /*String sprite = selected ? "widget/checkbox_selected" : "widget/checkbox";
+        if (this.isHoveredOrFocused()) sprite += "_highlighted";
+        graphics.blitSprite(ResourceLocation.withDefaultNamespace(sprite), getX(), getY(), 20, this.height);
+        *///?}
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         if (this.showLabel) {

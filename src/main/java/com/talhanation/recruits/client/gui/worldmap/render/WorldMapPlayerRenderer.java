@@ -19,7 +19,11 @@ import net.minecraft.world.item.Items;
 import org.joml.Matrix4f;
 
 public final class WorldMapPlayerRenderer {
+    //? if <1.21 {
     private static final ResourceLocation MAP_ICONS = new ResourceLocation("textures/map/map_icons.png");
+    //?} else {
+    /*private static final ResourceLocation MAP_ICONS = ResourceLocation.withDefaultNamespace("textures/map/decorations/player.png");
+    *///?}
     private static final ItemStack BOAT_STACK = new ItemStack(Items.OAK_BOAT);
     private static final float PLAYER_ARROW_BASE_SCALE = 0.55F;
     private static final float PLAYER_ARROW_MIN_SCALE = 0.18F;
@@ -98,6 +102,10 @@ public final class WorldMapPlayerRenderer {
         float v0 = (iconIndex / 16) / 16f;
         float u1 = u0 + 1f / 16f;
         float v1 = v0 + 1f / 16f;
+        //? if >=1.21 {
+        /*u0 = v0 = 0f;
+        u1 = v1 = 1f;
+        *///?}
         guiGraphics.flush();
         VertexConsumer consumer = guiGraphics.bufferSource().getBuffer(RenderType.text(MAP_ICONS));
         Matrix4f matrix = pose.last().pose();

@@ -18,7 +18,15 @@ public abstract class ListScreenListBase<T extends ListScreenEntryBase<T>> exten
     }
 
     //? if >=1.21 {
-    /*public void updateSize(int width, int height, int y0, int y1) {
+    /*@Override
+    protected void renderListBackground(GuiGraphics guiGraphics) {
+    }
+
+    @Override
+    protected void renderListSeparators(GuiGraphics guiGraphics) {
+    }
+
+    public void updateSize(int width, int height, int y0, int y1) {
         this.setRectangle(width, y1 - y0, 0, y0);
     }
     *///?}

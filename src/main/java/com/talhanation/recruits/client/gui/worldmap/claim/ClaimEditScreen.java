@@ -188,8 +188,8 @@ public class ClaimEditScreen extends RecruitsScreenBase {
     int claimMiniY = -60;
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        super.renderBackground(guiGraphics, mouseX, mouseY, delta);
+    public void renderPanel(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+        super.renderPanel(guiGraphics, mouseX, mouseY, delta);
         guiGraphics.fill(
                 panelX - 1 + x,
                 panelY - 1 + y,

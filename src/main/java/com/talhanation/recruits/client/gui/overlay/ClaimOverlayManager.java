@@ -96,11 +96,17 @@ public class ClaimOverlayManager {
         if (alpha <= 0.01f) return;
 
         if (ClientManager.currentClaim != null) {
-            boolean cancelled = RecruitsEventBus.post(new ClientOverlayEvent.RenderPre(guiGraphics, ClientManager.currentClaim, currentState, alpha));
-            if (!cancelled) {
-                renderer.render(guiGraphics, mc, ClientManager.currentClaim, currentState, alpha, getPanelWidth());
-
-                RecruitsEventBus.post(new ClientOverlayEvent.RenderPost(guiGraphics, ClientManager.currentClaim, currentState, alpha));
+            guiGraphics.pose().pushPose();
+            try {
+                guiGraphics.pose().translate(0, 0, 400);
+                boolean cancelled = RecruitsEventBus.post(new ClientOverlayEvent.RenderPre(guiGraphics, ClientManager.currentClaim, currentState, alpha));
+                if (!cancelled) {
+                    renderer.render(guiGraphics, mc, ClientManager.currentClaim, currentState, alpha, getPanelWidth());
+                    RecruitsEventBus.post(new ClientOverlayEvent.RenderPost(guiGraphics, ClientManager.currentClaim, currentState, alpha));
+                }
+            } finally {
+                guiGraphics.flush();
+                guiGraphics.pose().popPose();
             }
         }
     }

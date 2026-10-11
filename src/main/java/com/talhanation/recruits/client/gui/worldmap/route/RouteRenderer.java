@@ -26,7 +26,11 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class RouteRenderer {
+    //? if <1.21 {
     private static final ResourceLocation MAP_ICONS = new ResourceLocation("textures/map/map_icons.png");
+    //?} else {
+    /*private static final ResourceLocation MAP_ICONS = ResourceLocation.withDefaultNamespace("textures/map/decorations/player_off_map.png");
+    *///?}
 
     private static final int COLOR_NORMAL = 0xFFFFFFFF; // white
     private static final int COLOR_NOT_LOADED = 0xFFFF4444; // red
@@ -312,6 +316,10 @@ public class RouteRenderer {
         float v0 = (iconIndex / 16) / 16f;
         float u1 = u0 + 1f / 16f;
         float v1 = v0 + 1f / 16f;
+        //? if >=1.21 {
+        /*u0 = v0 = 0f;
+        u1 = v1 = 1f;
+        *///?}
 
         int a = (color >> 24) & 0xFF;
         int r = (color >> 16) & 0xFF;

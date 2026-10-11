@@ -141,7 +141,7 @@ public class NobleTradeScreen extends RecruitsScreenBase {
                 }
         );
         groupSelectionDropDownMenu.setBgFillSelected(FastColor.ARGB32.color(255, 139, 139, 139));
-        addRenderableWidget(groupSelectionDropDownMenu);
+        addWidget(groupSelectionDropDownMenu); // Render once, above the trade list, in render().
 
         if(isPlayerFactionLeader() || isPlayerClaimLeader() || (player.hasPermissions(2) && player.isCreative())){
             this.addRenderableWidget(new ExtendedButton(guiLeft + 256, guiTop + 172, 75, 20, INVENTORY_BUTTON,
@@ -254,7 +254,6 @@ public class NobleTradeScreen extends RecruitsScreenBase {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         if (groupSelectionDropDownMenu != null) {
@@ -263,7 +262,7 @@ public class NobleTradeScreen extends RecruitsScreenBase {
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+    public void renderPanel(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         RenderSystem.setShaderTexture(0, TEXTURE);
@@ -315,10 +314,11 @@ public class NobleTradeScreen extends RecruitsScreenBase {
             hasVillager = villagerList != null && villagerList.size() > 2;
         }
 
-        this.hireButton.active = selection.uses > 0 && hasMoney && hasVillager && ClientManager.canPlayerHire;
+        this.hireButton.active = group != null && selection.uses > 0 && hasMoney && hasVillager && ClientManager.canPlayerHire;
     }
 
     private int getPlayerCurrencyAmount(){
+        if (currency == null || currency.isEmpty()) return 0;
         int count = 0;
         for (ItemStack stack : player.getInventory().items) {
             if (!stack.isEmpty() && stack.is(currency.getItem())) {
@@ -333,6 +333,19 @@ public class NobleTradeScreen extends RecruitsScreenBase {
 
     /* ===================== List Widget ===================== */
     private class TradeList extends ObjectSelectionList<TradeList.TradeEntry> {
+        //? if >=1.21 {
+        /*@Override
+        protected void renderListBackground(GuiGraphics guiGraphics) {
+        }
+
+        @Override
+        protected void renderListSeparators(GuiGraphics guiGraphics) {
+        }
+
+        @Override
+        protected void renderSelection(GuiGraphics guiGraphics, int y, int width, int height, int outerColor, int innerColor) {
+        }
+        *///?}
         public int itemWidth;
         public TradeList(Minecraft mc, int width, int height, int top, int bottom, int itemHeight, int itemWidth) {
             //? if <1.21 {
@@ -397,7 +410,9 @@ public class NobleTradeScreen extends RecruitsScreenBase {
                 //? if <1.21 {
                 guiGraphics.blitNineSliced(AbstractButton.WIDGETS_LOCATION, rowLeft, top, rowWidth, entryHeight, 20, 4, 200, 20, 0, textureY);
                 //?} else {
-                /*guiGraphics.fill(rowLeft, top, rowLeft + rowWidth, top + entryHeight, selected ? 0x80909090 : 0x80404040);
+                /*guiGraphics.blitSprite(ResourceLocation.withDefaultNamespace(out ? "widget/button_disabled" :
+                        (hovered || selected ? "widget/button_highlighted" : "widget/button")),
+                        rowLeft, top, rowWidth, entryHeight);
                 *///?}
                 guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 

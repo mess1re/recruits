@@ -32,6 +32,7 @@ public class MessageHire implements Message<MessageHire> {
     public void executeServerSide(MessageContext context) {
         ServerPlayer player = Objects.requireNonNull(context.getSender());
         RecruitsGroup group = RecruitEvents.recruitsGroupsManager.getGroup(groupUUID);
+        if (group == null || !player.getUUID().equals(group.getPlayerUUID())) return;
         player.getCommandSenderWorld().getEntitiesOfClass(
                 AbstractRecruitEntity.class,
                 player.getBoundingBox().inflate(16.0D),

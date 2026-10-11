@@ -79,6 +79,9 @@ public class RenameRecruitScreen extends Screen {
         guiGraphics.drawString(font, TEXT_RENAME_RECRUIT, leftPos + 10  , topPos + 5, fontColor, false);
     }
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+        //? if >=1.21 {
+        /*renderTransparentBackground(guiGraphics);
+        *///?}
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         guiGraphics.blit(RESOURCE_LOCATION, leftPos, topPos, 0, 0, imageWidth, imageHeight);
@@ -88,8 +91,8 @@ public class RenameRecruitScreen extends Screen {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         //? if <1.21 {
         this.renderBackground(guiGraphics);
-        //?}
         this.renderBackground(guiGraphics, mouseX, mouseY, delta);
+        //?}
         super.render(guiGraphics, mouseX, mouseY, delta);
         this.renderForeground(guiGraphics, mouseX, mouseY, delta);
     }

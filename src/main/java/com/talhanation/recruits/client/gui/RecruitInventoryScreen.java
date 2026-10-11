@@ -370,7 +370,7 @@ public class RecruitInventoryScreen extends ScreenBase<RecruitInventoryMenu> {
             groupSelectionDropDownMenu.visible = Minecraft.getInstance().player.getUUID().equals(recruit.getOwnerUUID());
             RecruitsGroup group = ClientManager.getGroup(recruit.getGroup());
             groupSelectionDropDownMenu.canSelect = group == null || recruit.getGroup() == null || !recruit.getUUID().equals(group.leaderUUID);
-            addRenderableWidget(groupSelectionDropDownMenu);
+            addWidget(groupSelectionDropDownMenu); // Render once, above container slots, in render().
             this.buttonsSet = true;
         }
     }
@@ -546,6 +546,6 @@ public class RecruitInventoryScreen extends ScreenBase<RecruitInventoryMenu> {
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
 
-        renderEntityFollowsMouse(guiGraphics, i + 50, j + 82, 30, (float)(i + 50) - mouseX, (float)(j + 75 - 50) - mouseY, this.recruit);
+        renderRecruitPreview(guiGraphics, i + 26, j + 18, 49, 70, mouseX, mouseY, this.recruit);
     }
 }

@@ -40,9 +40,7 @@ public class ScreenBase<T extends AbstractContainerMenu> extends AbstractContain
     public void render(GuiGraphics guiGraphics, int x, int y, float partialTicks) {
         //? if <1.21 {
         renderBackground(guiGraphics);
-        //?} else {
-        /*renderTransparentBackground(guiGraphics);
-        *///?}
+        //?}
         super.render(guiGraphics, x, y, partialTicks);
         renderTooltip(guiGraphics, x, y);
     }
@@ -67,6 +65,22 @@ public class ScreenBase<T extends AbstractContainerMenu> extends AbstractContain
                 /*guiGraphics.renderTooltip(font, hoverArea.tooltip.get(), mouseX, mouseY);
                 *///?}
             }
+        }
+    }
+
+    protected void renderRecruitPreview(GuiGraphics guiGraphics, int x, int y, int width, int height,
+                                        int mouseX, int mouseY, LivingEntity entity) {
+        int scale = Math.max(1, (int) Math.min(29, Math.min(
+                (height - 10) / Math.max(2.0F, entity.getBbHeight()),
+                (width - 8) / Math.max(1.0F, entity.getBbWidth()))));
+        int centreX = x + width / 2;
+        int feetY = y + height - 5;
+        float lookY = feetY - entity.getBbHeight() * scale / 2.0F - mouseY;
+        guiGraphics.enableScissor(x, y, x + width, y + height);
+        try {
+            renderEntityFollowsMouse(guiGraphics, centreX, feetY, scale, centreX - mouseX, lookY, entity);
+        } finally {
+            guiGraphics.disableScissor();
         }
     }
 

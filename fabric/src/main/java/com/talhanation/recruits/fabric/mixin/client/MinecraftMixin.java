@@ -15,7 +15,11 @@ public class MinecraftMixin {
     @Shadow
     public ClientLevel level;
 
+    //? if <1.21 {
     @Inject(method = {"setLevel", "clearLevel(Lnet/minecraft/client/gui/screens/Screen;)V"}, at = @At("HEAD"))
+    //?} else {
+    /*@Inject(method = {"setLevel", "disconnect(Lnet/minecraft/client/gui/screens/Screen;Z)V"}, at = @At("HEAD"))
+    *///?}
     private void recruits$unloadLevel(CallbackInfo ci) {
         if (this.level != null) {
             ClientPlatformEvents.LEVEL_UNLOAD.invoker().unload(this.level);

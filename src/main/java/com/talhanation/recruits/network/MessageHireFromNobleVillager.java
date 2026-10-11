@@ -33,14 +33,14 @@ public class MessageHireFromNobleVillager implements Message<MessageHireFromNobl
     public MessageHireFromNobleVillager(UUID nobleUUID, UUID villagerUUID, RecruitsHireTrade trade, RecruitsGroup group, boolean needsVillager, boolean closing) {
         this.nobleUUID = nobleUUID;
         this.villagerUUID = villagerUUID;
-        this.groupUUID = group.getUUID();
+        this.groupUUID = group == null ? new UUID(0, 0) : group.getUUID();
         if(trade != null){
             this.cost = trade.cost;
             this.resource = trade.resourceLocation;
         }
         else{
             this.cost = 0;
-            this.resource = new ResourceLocation("","");
+            this.resource = new ResourceLocation(Main.MOD_ID, "none");
         }
 
         this.needsVillager = needsVillager;
@@ -58,7 +58,9 @@ public class MessageHireFromNobleVillager implements Message<MessageHireFromNobl
                 VillagerNobleEntity.class,
                 player.getBoundingBox().inflate(32.0D),
                 noble -> noble.getUUID().equals(this.nobleUUID) && noble.isAlive()
-        ).stream().findAny().get();
+        ).stream().findAny().orElse(null);
+
+        if (villagerNoble == null) return;
 
         if(closing){
             villagerNoble.isTrading(false);
@@ -66,6 +68,7 @@ public class MessageHireFromNobleVillager implements Message<MessageHireFromNobl
         }
 
         RecruitsGroup group = RecruitEvents.recruitsGroupsManager.getGroup(groupUUID);
+        if (group == null || !player.getUUID().equals(group.getPlayerUUID())) return;
 
         if(this.needsVillager){
             player.getCommandSenderWorld().getEntitiesOfClass(

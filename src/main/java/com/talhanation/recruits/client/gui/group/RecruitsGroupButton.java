@@ -62,7 +62,9 @@ public class RecruitsGroupButton extends ExtendedButton {
         //? if <1.21 {
         guiGraphics.blitNineSliced(WIDGETS_LOCATION, this.getX(), this.getY(), this.width, this.height, 2, 2, 2, 3, 200, 20, 0, 46 + k * 20);
         //?} else {
-        /*super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        /*guiGraphics.blitSprite(ResourceLocation.withDefaultNamespace(!this.active ? "widget/button_disabled" :
+                (this.isHoveredOrFocused() ? "widget/button_highlighted" : "widget/button")),
+                this.getX(), this.getY(), this.width, this.height);
         *///?}
 
         if(this.image != null){

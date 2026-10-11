@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 @Environment(EnvType.CLIENT)
 public class ImageToast implements Toast {
     //? if >=1.21 {
-    /*private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("toast/system");
+    /*private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("toast/advancement");
     *///?}
     @Nullable
     protected final ResourceLocation image;

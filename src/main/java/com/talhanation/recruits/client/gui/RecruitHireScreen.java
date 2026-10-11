@@ -18,7 +18,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -70,9 +69,8 @@ public class RecruitHireScreen extends ScreenBase<RecruitHireMenu> {
                 }
         );
         groupSelectionDropDownMenu.setBgFillSelected(FastColor.ARGB32.color(255, 139, 139, 139));
-        addRenderableWidget(groupSelectionDropDownMenu);
+        addWidget(groupSelectionDropDownMenu); // Render once, above container slots, in render().
 
-        if(ClientManager.currency != null) ClientManager.currency.setCount(recruit.getCost());
         hireButton = createHireButton();
         if(group == null || ClientManager.groups.isEmpty()) hireButton.active = false;
     }
@@ -80,6 +78,7 @@ public class RecruitHireScreen extends ScreenBase<RecruitHireMenu> {
     private ExtendedButton createHireButton() {
         return addRenderableWidget(new ExtendedButton(leftPos + 7, topPos + 100, 80, 20, TEXT_HIRE,
                 button -> {
+                    if (group == null) return;
                     RecruitsNetwork.sendToServer(new MessageHire(player.getUUID(), recruit.getUUID(), group.getUUID()));
                     this.onClose();
         }));
@@ -160,8 +159,10 @@ public class RecruitHireScreen extends ScreenBase<RecruitHireMenu> {
         guiGraphics.drawString(font, ""+ armor, k + 90, l + 30, fontColor, false);
 
         if(ClientManager.currency != null){
-            guiGraphics.renderFakeItem(ClientManager.currency, 70, this.imageHeight - 122);
-            guiGraphics.renderItemDecorations(font, ClientManager.currency, 70, this.imageHeight - 122);
+            ItemStack price = ClientManager.currency.copy();
+            price.setCount(recruit.getCost());
+            guiGraphics.renderFakeItem(price, 70, this.imageHeight - 122);
+            guiGraphics.renderItemDecorations(font, price, 70, this.imageHeight - 122);
         }
     }
 
@@ -181,8 +182,7 @@ public class RecruitHireScreen extends ScreenBase<RecruitHireMenu> {
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
 
-        renderEntityFollowsMouse(guiGraphics,i + 30, j + 60, 15, (float)(i + 50) - mouseX, (float)(j + 75 - 50) - mouseY, this.recruit);
-        if(recruit.getVehicle() instanceof AbstractHorse horse) renderEntityFollowsMouse(guiGraphics, i + 30, j + 72, 15, (float)(i + 50) - mouseX, (float)(j + 75 - 50) - mouseY, horse);
+        renderRecruitPreview(guiGraphics, i + 8, j + 18, 47, 69, mouseX, mouseY, this.recruit);
     }
 
 }

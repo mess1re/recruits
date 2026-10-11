@@ -135,7 +135,7 @@ public class RecruitsFactionListScreen extends ListScreenBase implements IFactio
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+    public void renderPanel(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         RenderSystem.setShaderTexture(0, TEXTURE);
         guiGraphics.blit(TEXTURE, guiLeft, guiTop, 0, 0, xSize, HEADER_SIZE);
         for (int i = 0; i < units; i++) {

@@ -40,13 +40,21 @@ public abstract class RecruitsScreenBase extends Screen{
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         //? if <1.21 {
         renderBackground(guiGraphics);
+        renderPanel(guiGraphics, mouseX, mouseY, delta);
         //?}
-        renderBackground(guiGraphics, mouseX, mouseY, delta);
         super.render(guiGraphics, mouseX, mouseY, delta);
         renderForeground(guiGraphics, mouseX, mouseY, delta);
     }
 
+    //? if >=1.21 {
+    /*@Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+        renderTransparentBackground(guiGraphics);
+        renderPanel(guiGraphics, mouseX, mouseY, delta);
+    }
+    *///?}
+
+    public void renderPanel(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
 
     }
 
