@@ -1,6 +1,13 @@
 package com.talhanation.recruits.network;
 
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
+import com.talhanation.recruits.entities.ICompanion;
+import com.talhanation.recruits.entities.IHasTargetPriority;
+import com.talhanation.recruits.init.ModEntityTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import com.talhanation.recruits.events.RecruitsOnWriteSpawnEggEvent;
 import com.talhanation.recruits.init.ModItems;
 import com.talhanation.recruits.util.RecruitsItemStacks;
@@ -8,7 +15,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -36,40 +42,45 @@ public class MessageWriteSpawnEgg implements Message<MessageWriteSpawnEgg> {
 
     public void executeServerSide(MessageContext context) {
         ServerPlayer player = Objects.requireNonNull(context.getSender());
-        player.getCommandSenderWorld().getEntitiesOfClass(AbstractRecruitEntity.class, context.getSender().getBoundingBox().inflate(64.0D),
-                (recruit) -> recruit.getUUID().equals(this.recruit)
-        ).forEach((recruitEntity) -> {
-            EntityType<?> type = recruitEntity.getType();
-            ItemStack itemStack = this.getItemStack(type);
+        if (!player.isCreative()) return;
 
-            CompoundTag entityTag = new CompoundTag();
-            entityTag = this.fillRecruitsInfo(entityTag, recruitEntity);
+        Entity entity = player.serverLevel().getEntity(this.recruit);
+        if (!(entity instanceof AbstractRecruitEntity recruitEntity)
+                || !recruitEntity.isAlive()
+                || player.distanceToSqr(recruitEntity) > 64.0D * 64.0D) return;
 
-            if (itemStack != null && !itemStack.isEmpty() && player.getMainHandItem().isEmpty()) {
-                RecruitsItemStacks.setEntityData(itemStack, entityTag);
-                player.setItemInHand(InteractionHand.MAIN_HAND, itemStack);
-            }
-        });
+        ItemStack itemStack = this.getItemStack(recruitEntity.getType());
+        CompoundTag entityTag = this.fillRecruitsInfo(new CompoundTag(), recruitEntity);
+        RecruitsItemStacks.setEntityData(itemStack, entityTag);
+        player.getInventory().setPickedItem(itemStack);
+        player.connection.send(new ClientboundSetCarriedItemPacket(player.getInventory().selected));
+        player.inventoryMenu.broadcastChanges();
     }
 
     public CompoundTag fillRecruitsInfo(CompoundTag entityTag, AbstractRecruitEntity recruitEntity) {
-        String name = recruitEntity.getName().getString();
+        ResourceLocation typeId = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(recruitEntity.getType());
+        if (typeId != null) entityTag.putString("id", typeId.toString());
+
+        Component customName = recruitEntity.getCustomName();
+        if (customName != null) {
+            entityTag.putString("CustomName", com.talhanation.recruits.util.RecruitsComponents.toJson(customName, recruitEntity.level().registryAccess()));
+            entityTag.putBoolean("CustomNameVisible", recruitEntity.isCustomNameVisible());
+            entityTag.putString("Name", customName.getString());
+        }
+
         Team team = recruitEntity.getTeam();
         if (team != null) {
             entityTag.putString("Team", team.getName());
         }
-        entityTag.putString("Name", name);
+
         entityTag.putInt("AggroState", recruitEntity.getState());
         entityTag.putInt("FollowState", recruitEntity.getFollowState());
-        entityTag.putBoolean("ShouldFollow", recruitEntity.getShouldFollow());
-        entityTag.putBoolean("ShouldMount", recruitEntity.getShouldMount());
-        entityTag.putBoolean("ShouldProtect", recruitEntity.getShouldProtect());
         entityTag.putBoolean("ShouldBlock", recruitEntity.getShouldBlock());
+        entityTag.putBoolean("ShouldRest", recruitEntity.getShouldRest());
+        entityTag.putBoolean("ShouldRanged", recruitEntity.getShouldRanged());
         if(recruitEntity.getGroup() != null) entityTag.putUUID("Group", recruitEntity.getGroup());
         entityTag.putInt("Variant", recruitEntity.getVariant());
         entityTag.putBoolean("Listen", recruitEntity.getListen());
-        entityTag.putBoolean("Fleeing", recruitEntity.getFleeing());
-        entityTag.putBoolean("isFollowing", recruitEntity.isFollowing());
         entityTag.putInt("Xp", recruitEntity.getXp());
         entityTag.putInt("Level", recruitEntity.getXpLevel());
         entityTag.putInt("Kills", recruitEntity.getKills());
@@ -77,35 +88,12 @@ public class MessageWriteSpawnEgg implements Message<MessageWriteSpawnEgg> {
         entityTag.putFloat("Moral", recruitEntity.getMorale());
         entityTag.putBoolean("isOwned", recruitEntity.getIsOwned());
         entityTag.putInt("Cost", recruitEntity.getCost());
-        entityTag.putInt("mountTimer", recruitEntity.getMountTimer());
-        entityTag.putInt("upkeepTimer", recruitEntity.getUpkeepTimer());
-        entityTag.putInt("Color", recruitEntity.getColor());
-        entityTag.putInt("Biome", recruitEntity.getBiome());
-
-        if (recruitEntity.getHoldPos() != null) {
-            entityTag.putDouble("HoldPosX", recruitEntity.getHoldPos().x());
-            entityTag.putDouble("HoldPosY", recruitEntity.getHoldPos().y());
-            entityTag.putDouble("HoldPosZ", recruitEntity.getHoldPos().z());
-            entityTag.putBoolean("ShouldHoldPos", recruitEntity.getShouldHoldPos());
-        }
-
-        if (recruitEntity.getMovePos() != null) {
-            entityTag.putInt("MovePosX", recruitEntity.getMovePos().getX());
-            entityTag.putInt("MovePosY", recruitEntity.getMovePos().getY());
-            entityTag.putInt("MovePosZ", recruitEntity.getMovePos().getZ());
-            entityTag.putBoolean("ShouldMovePos", recruitEntity.getShouldMovePos());
-        }
+        entityTag.putByte("Color", (byte) recruitEntity.getColor());
+        entityTag.putByte("Biome", (byte) recruitEntity.getBiome());
+        entityTag.put("Attributes", recruitEntity.getAttributes().save());
 
         if (recruitEntity.getOwnerUUID() != null) {
             entityTag.putUUID("OwnerUUID", recruitEntity.getOwnerUUID());
-        }
-
-        if (recruitEntity.getMountUUID() != null) {
-            entityTag.putUUID("MountUUID", recruitEntity.getMountUUID());
-        }
-
-        if (recruitEntity.getProtectUUID() != null) {
-            entityTag.putUUID("ProtectUUID", recruitEntity.getProtectUUID());
         }
 
         if (recruitEntity.getUpkeepUUID() != null) {
@@ -116,6 +104,13 @@ public class MessageWriteSpawnEgg implements Message<MessageWriteSpawnEgg> {
             entityTag.putInt("UpkeepPosX", recruitEntity.getUpkeepPos().getX());
             entityTag.putInt("UpkeepPosY", recruitEntity.getUpkeepPos().getY());
             entityTag.putInt("UpkeepPosZ", recruitEntity.getUpkeepPos().getZ());
+        }
+
+        if (recruitEntity instanceof ICompanion companion) {
+            entityTag.putString("CompanionOwnerName", companion.getOwnerName());
+        }
+        if (recruitEntity instanceof IHasTargetPriority priorityRecruit) {
+            entityTag.putInt("TargetPriority", priorityRecruit.getTargetPriority());
         }
 
         ListTag listnbt = new ListTag();
@@ -162,22 +157,13 @@ public class MessageWriteSpawnEgg implements Message<MessageWriteSpawnEgg> {
     }
 
     public ItemStack getItemStack(EntityType<?> type){
-        ItemStack itemStack = ItemStack.EMPTY;
-        if (type.getDescriptionId().equals("entity.recruits.recruit")) {
-            itemStack = new ItemStack(ModItems.RECRUIT_SPAWN_EGG.get());
-        } else if (type.getDescriptionId().equals("entity.recruits.recruit_shieldman")) {
-            itemStack = new ItemStack(ModItems.RECRUIT_SHIELD_SPAWN_EGG.get());
-        } else if (type.getDescriptionId().equals("entity.recruits.bowman")) {
-            itemStack = new ItemStack(ModItems.BOWMAN_SPAWN_EGG.get());
-        } else if (type.getDescriptionId().equals("entity.recruits.crossbowman")) {
-            itemStack = new ItemStack(ModItems.CROSSBOWMAN_SPAWN_EGG.get());
-        } else if (type.getDescriptionId().equals("entity.recruits.horseman")) {
-            itemStack = new ItemStack(ModItems.HORSEMAN_SPAWN_EGG.get());
-        } else if (type.getDescriptionId().equals("entity.recruits.nomad")) {
-            itemStack = new ItemStack(ModItems.NOMAD_SPAWN_EGG.get());
-        }
-
-        return itemStack;
+        if (type == ModEntityTypes.RECRUIT_SHIELDMAN.get()) return new ItemStack(ModItems.RECRUIT_SHIELD_SPAWN_EGG.get());
+        if (type == ModEntityTypes.BOWMAN.get()) return new ItemStack(ModItems.BOWMAN_SPAWN_EGG.get());
+        if (type == ModEntityTypes.CROSSBOWMAN.get()) return new ItemStack(ModItems.CROSSBOWMAN_SPAWN_EGG.get());
+        if (type == ModEntityTypes.HORSEMAN.get()) return new ItemStack(ModItems.HORSEMAN_SPAWN_EGG.get());
+        if (type == ModEntityTypes.NOMAD.get()) return new ItemStack(ModItems.NOMAD_SPAWN_EGG.get());
+        if (type == ModEntityTypes.VILLAGER_NOBLE.get()) return new ItemStack(ModItems.VILLAGER_NOBLE_SPAWN_EGG.get());
+        return new ItemStack(ModItems.RECRUIT_SPAWN_EGG.get());
     }
 
     public MessageWriteSpawnEgg fromBytes(FriendlyByteBuf buf) {

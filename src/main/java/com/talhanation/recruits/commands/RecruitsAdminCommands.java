@@ -594,24 +594,11 @@ public class RecruitsAdminCommands {
                                             ItemStack handItem = player.getMainHandItem();
 
                                             if(handItem.getItem() instanceof RecruitsSpawnEgg recruitsSpawnEgg){
-                                                BlockPos pos = player.getOnPos();
+                                                BlockPos pos = player.getOnPos().above();
                                                 EntityType<?> entitytype = recruitsSpawnEgg.getRecruitsType(handItem);
-                                                List<AbstractRecruitEntity> recruitEntities = new ArrayList<>();
-
+                                                CompoundTag entityTag = RecruitsItemStacks.getEntityData(handItem);
                                                 for(int i = 0; i < amount; i++){
-                                                    Entity entity = entitytype.create(serverLevel);
-                                                    CompoundTag entityTag = RecruitsItemStacks.getEntityData(handItem);
-
-                                                    if(entity instanceof AbstractRecruitEntity recruit && entityTag != null) {
-                                                        RecruitsSpawnEgg.fillRecruit(recruit, entityTag, pos);
-                                                        recruitEntities.add((AbstractRecruitEntity)entity);
-                                                    }
-                                                }
-
-                                                //FormationUtils.squareFormation(player, recruitEntities, pos.getCenter());
-
-                                                for(Entity entity : recruitEntities){
-                                                    serverLevel.addFreshEntity(entity);
+                                                    RecruitsSpawnEgg.spawnRecruitCopy(serverLevel, entitytype, entityTag, pos);
                                                 }
 
                                             }

@@ -19,7 +19,7 @@ public final class RecruitsItemStacks {
         //? if <1.21 {
         return stack.save(new CompoundTag());
         //?} else {
-        /*return (CompoundTag) stack.save(registries);
+        /*return (CompoundTag) stack.saveOptional(registries);
         *///?}
     }
 
@@ -27,7 +27,7 @@ public final class RecruitsItemStacks {
         //? if <1.21 {
         stack.save(tag);
         //?} else {
-        /*tag.merge((CompoundTag) stack.save(registries));
+        /*tag.merge((CompoundTag) stack.saveOptional(registries));
         *///?}
     }
 
@@ -35,8 +35,24 @@ public final class RecruitsItemStacks {
         //? if <1.21 {
         return ItemStack.of(tag);
         //?} else {
-        /*return ItemStack.parse(registries, tag).orElse(ItemStack.EMPTY);
+        /*if (!tag.contains("id", net.minecraft.nbt.Tag.TAG_STRING)) return ItemStack.EMPTY;
+        if (tag.contains("Count", net.minecraft.nbt.Tag.TAG_BYTE) && tag.getByte("Count") <= 0) return ItemStack.EMPTY;
+        tag = upgradeLegacyItem(tag);
+        return ItemStack.parse(registries, tag).orElse(ItemStack.EMPTY);
         *///?}
+    }
+
+    public static CompoundTag upgradeLegacyItem(CompoundTag tag) {
+        //? if >=1.21 {
+        /*if (tag.contains("Count", net.minecraft.nbt.Tag.TAG_BYTE)) {
+            // 3465 is Minecraft 1.20.1. Vanilla does not traverse item NBT inside mod SavedData or unknown entities.
+            return (CompoundTag) net.minecraft.util.datafix.DataFixers.getDataFixer().update(
+                    net.minecraft.util.datafix.fixes.References.ITEM_STACK,
+                    new com.mojang.serialization.Dynamic<>(net.minecraft.nbt.NbtOps.INSTANCE, tag.copy()),
+                    3465, net.minecraft.SharedConstants.getCurrentVersion().getDataVersion().getVersion()).getValue();
+        }
+        *///?}
+        return tag;
     }
 
     public static boolean isSame(ItemStack first, ItemStack second) {

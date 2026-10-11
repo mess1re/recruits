@@ -35,6 +35,21 @@ public class RecruitsFactionManager {
         teams.clear();
         teams.putAll(data.getTeams());
 
+        //? if >=1.21 {
+        /*boolean migrated = false;
+        for (RecruitsFaction team : teams.values()) {
+            CompoundTag banner = team.getBanner();
+            if (banner != null && banner.contains("Count", net.minecraft.nbt.Tag.TAG_BYTE)) {
+                ItemStack stack = com.talhanation.recruits.util.RecruitsItemStacks.parse(banner, level.registryAccess());
+                if (!stack.isEmpty()) {
+                    team.setBanner(com.talhanation.recruits.util.RecruitsItemStacks.save(stack, level.registryAccess()));
+                    migrated = true;
+                }
+            }
+        }
+        if (migrated) data.setDirty();
+        *///?}
+
         teams.values().forEach(this::loadConfig);
     }
 

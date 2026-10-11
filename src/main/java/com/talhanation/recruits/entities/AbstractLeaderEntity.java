@@ -167,7 +167,7 @@ public abstract class AbstractLeaderEntity extends AbstractChunkLoaderEntity imp
         this.waitingTime = nbt.getInt("waiting_time");
         this.waitForRecruitsUpkeepTime = nbt.getInt("waitForRecruitsUpkeepTime");
         this.setInfoMode(nbt.getByte("infoMode"));
-        this.ownerName = nbt.getString("ownerName");
+        this.ownerName = nbt.contains("OwnerName") ? nbt.getString("OwnerName") : nbt.getString("ownerName");
         this.setPatrolSpeed(nbt.getByte("patrolSpeed"));
         this.setEnemyAction(nbt.getByte("enemyAction"));
         if (nbt.hasUUID("routeId")) this.setRouteID(nbt.getUUID("routeId"));
@@ -179,7 +179,7 @@ public abstract class AbstractLeaderEntity extends AbstractChunkLoaderEntity imp
             //? if <1.21 {
             ItemStack itemStack = ItemStack.of(compoundnbt);
             //?} else {
-            /*ItemStack itemStack = ItemStack.parse(this.registryAccess(), compoundnbt).orElse(ItemStack.EMPTY);
+            /*ItemStack itemStack = com.talhanation.recruits.util.RecruitsItemStacks.parse(compoundnbt, this.registryAccess());
             *///?}
             this.WAYPOINT_ITEMS.push(itemStack);
         }

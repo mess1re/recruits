@@ -80,11 +80,7 @@ public abstract class AbstractInventoryEntity extends AsyncPathfinderMob {
             if (!itemstack.isEmpty()) {
                 CompoundTag compoundnbt = new CompoundTag();
                 compoundnbt.putByte("Slot", (byte) i);
-                //? if <1.21 {
-                itemstack.save(compoundnbt);
-                //?} else {
-                /*itemstack.save(this.registryAccess(), compoundnbt);
-                *///?}
+                com.talhanation.recruits.util.RecruitsItemStacks.saveInto(itemstack, compoundnbt, this.level().registryAccess());
                 listnbt.add(compoundnbt);
             }
         }
@@ -94,6 +90,15 @@ public abstract class AbstractInventoryEntity extends AsyncPathfinderMob {
     }
 
     public void readAdditionalSaveData(CompoundTag nbt) {
+        //? if >=1.21 {
+        /*nbt = nbt.copy();
+        for (String equipment : new String[]{"ArmorItems", "HandItems"}) {
+            ListTag items = nbt.getList(equipment, 10);
+            for (int i = 0; i < items.size(); i++) {
+                items.set(i, com.talhanation.recruits.util.RecruitsItemStacks.upgradeLegacyItem(items.getCompound(i)));
+            }
+        }
+        *///?}
         super.readAdditionalSaveData(nbt);
         ListTag listnbt = nbt.getList("Items", 10);//muss 10 sein amk sonst nix save
         this.createInventory();
@@ -105,7 +110,7 @@ public abstract class AbstractInventoryEntity extends AsyncPathfinderMob {
                 //? if <1.21 {
                 this.inventory.setItem(j, ItemStack.of(compoundnbt));
                 //?} else {
-                /*this.inventory.setItem(j, ItemStack.parse(this.registryAccess(), compoundnbt).orElse(ItemStack.EMPTY));
+                /*this.inventory.setItem(j, com.talhanation.recruits.util.RecruitsItemStacks.parse(compoundnbt, this.registryAccess()));
                 *///?}
             }
         }
