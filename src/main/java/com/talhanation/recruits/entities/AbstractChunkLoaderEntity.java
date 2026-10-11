@@ -35,7 +35,7 @@ public abstract class AbstractChunkLoaderEntity extends BowmanEntity {
         if (!this.getCommandSenderWorld().isClientSide() && RecruitsServerConfig.RecruitsChunkLoading.get()) {
             RecruitsChunk currentChunk = new RecruitsChunk(this.chunkPosition().x, this.chunkPosition().z);
             if (loadedChunk.isEmpty()) {
-                this.setForceChunk(currentChunk, true);
+                this.getSetOfChunks(currentChunk).forEach(chunk -> this.setForceChunk(chunk, true));
                 loadedChunk = Optional.of(currentChunk);
 
             } else if (!currentChunk.equals(loadedChunk.get())){

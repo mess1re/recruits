@@ -18,7 +18,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import com.talhanation.recruits.pathfinding.AsyncGroundPathNavigation;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -99,7 +99,9 @@ public class ScoutEntity extends BowmanEntity implements ICompanion {
         //?} else {
         /*SpawnGroupData ilivingentitydata = super.finalizeSpawn(world, difficultyInstance, reason, data);
         *///?}
-        ((GroundPathNavigation)this.getNavigation()).setCanOpenDoors(true);
+        if (this.getNavigation() instanceof AsyncGroundPathNavigation navigation) {
+            navigation.setCanOpenDoors(true);
+        }
 
         this.initSpawn();
 

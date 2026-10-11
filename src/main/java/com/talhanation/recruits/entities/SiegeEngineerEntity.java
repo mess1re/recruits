@@ -19,7 +19,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import com.talhanation.recruits.pathfinding.AsyncGroundPathNavigation;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -117,7 +117,9 @@ public class SiegeEngineerEntity extends AbstractRecruitEntity implements ICompa
         //?} else {
         /*SpawnGroupData ilivingentitydata = super.finalizeSpawn(world, difficultyInstance, reason, data);
         *///?}
-        ((GroundPathNavigation)this.getNavigation()).setCanOpenDoors(true);
+        if (this.getNavigation() instanceof AsyncGroundPathNavigation navigation) {
+            navigation.setCanOpenDoors(true);
+        }
         this.populateDefaultEquipmentEnchantments(random, difficultyInstance);
 
         this.initSpawn();
