@@ -103,6 +103,7 @@ public final class WorldMapPlayerRenderer {
         Matrix4f matrix = pose.last().pose();
         int light = 0xF000F0;
         int color = 0xFFFFFFFF;
+        //? if <1.21 {
         consumer
                 .vertex(matrix, -1f, 1f, 0f)
                 .color((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF)
@@ -111,6 +112,16 @@ public final class WorldMapPlayerRenderer {
                 .uv2(light)
                 .normal(0, 0, 1)
                 .endVertex();
+        //?} else {
+        /*consumer
+                .addVertex(matrix, -1f, 1f, 0f)
+                .setColor((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF)
+                .setUv(u0, v0)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(0, 0, 1);
+        *///?}
+        //? if <1.21 {
         consumer
                 .vertex(matrix, 1f, 1f, 0f)
                 .color((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF)
@@ -119,6 +130,16 @@ public final class WorldMapPlayerRenderer {
                 .uv2(light)
                 .normal(0, 0, 1)
                 .endVertex();
+        //?} else {
+        /*consumer
+                .addVertex(matrix, 1f, 1f, 0f)
+                .setColor((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF)
+                .setUv(u1, v0)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(0, 0, 1);
+        *///?}
+        //? if <1.21 {
         consumer
                 .vertex(matrix, 1f, -1f, 0f)
                 .color((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF)
@@ -127,6 +148,16 @@ public final class WorldMapPlayerRenderer {
                 .uv2(light)
                 .normal(0, 0, 1)
                 .endVertex();
+        //?} else {
+        /*consumer
+                .addVertex(matrix, 1f, -1f, 0f)
+                .setColor((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF)
+                .setUv(u1, v1)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(0, 0, 1);
+        *///?}
+        //? if <1.21 {
         consumer
                 .vertex(matrix, -1f, -1f, 0f)
                 .color((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF)
@@ -135,6 +166,15 @@ public final class WorldMapPlayerRenderer {
                 .uv2(light)
                 .normal(0, 0, 1)
                 .endVertex();
+        //?} else {
+        /*consumer
+                .addVertex(matrix, -1f, -1f, 0f)
+                .setColor((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF)
+                .setUv(u0, v1)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(0, 0, 1);
+        *///?}
     }
 
     private static void renderPlayerArrowIcon(

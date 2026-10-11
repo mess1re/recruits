@@ -2,7 +2,7 @@ package com.talhanation.recruits.world;
 import com.talhanation.recruits.ClaimEvents;
 import com.talhanation.recruits.FactionEvents;
 import com.talhanation.recruits.SiegeEvent;
-import net.minecraftforge.common.MinecraftForge;
+import com.talhanation.recruits.events.RecruitsEventBus;
 import com.talhanation.recruits.config.RecruitsServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -308,7 +308,7 @@ public class RecruitsClaim {
         this.defendingParties.clear();
 
         // SiegeEvent.Success feuern – Besitz wurde bereits übertragen
-        MinecraftForge.EVENT_BUS.post(new SiegeEvent.Success(this, level));
+        RecruitsEventBus.post(new SiegeEvent.Success(this, level));
     }
 
     public void resetHealth() {
@@ -328,13 +328,13 @@ public class RecruitsClaim {
         if (newState) {
             // SiegeEvent.Start feuern – cancelable, damit andere Mods/Config den Start verhindern können
             SiegeEvent.Start startEvent = new SiegeEvent.Start(this, level);
-            MinecraftForge.EVENT_BUS.post(startEvent);
+            RecruitsEventBus.post(startEvent);
             if (startEvent.isCanceled()) return;
 
             startSiege(owner, level);
         } else {
             endSiege(owner, level);
-            MinecraftForge.EVENT_BUS.post(new SiegeEvent.End(this, level));
+            RecruitsEventBus.post(new SiegeEvent.End(this, level));
         }
 
         this.isUnderSiege = newState;

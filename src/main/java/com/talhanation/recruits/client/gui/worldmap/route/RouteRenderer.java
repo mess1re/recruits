@@ -155,11 +155,23 @@ public class RouteRenderer {
 
         try {
             Matrix4f matrix = guiGraphics.pose().last().pose();
+            //? if <1.21 {
             BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+            //?} else {
+            /*BufferBuilder buffer;
+            *///?}
+            //? if <1.21 {
             buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+            //?} else {
+            /*buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+            *///?}
             appendLineQuad(buffer, matrix, x1, z1, x2, z2, 3.0, ROUTE_LINE_SHADOW_COLOR);
             appendLineQuad(buffer, matrix, x1, z1, x2, z2, 1.25, color);
+            //? if <1.21 {
             BufferUploader.drawWithShader(buffer.end());
+            //?} else {
+            /*BufferUploader.drawWithShader(buffer.buildOrThrow());
+            *///?}
         } finally {
             RenderSystem.depthMask(true);
             RenderSystem.enableCull();
@@ -190,18 +202,38 @@ public class RouteRenderer {
         int green = (color >>> 8) & 0xFF;
         int blue = color & 0xFF;
 
+        //? if <1.21 {
         buffer.vertex(matrix, (float) (x1 - nx), (float) (y1 - ny), 0.0F)
                 .color(red, green, blue, alpha)
                 .endVertex();
+        //?} else {
+        /*buffer.addVertex(matrix, (float) (x1 - nx), (float) (y1 - ny), 0.0F)
+                .setColor(red, green, blue, alpha);
+        *///?}
+        //? if <1.21 {
         buffer.vertex(matrix, (float) (x2 - nx), (float) (y2 - ny), 0.0F)
                 .color(red, green, blue, alpha)
                 .endVertex();
+        //?} else {
+        /*buffer.addVertex(matrix, (float) (x2 - nx), (float) (y2 - ny), 0.0F)
+                .setColor(red, green, blue, alpha);
+        *///?}
+        //? if <1.21 {
         buffer.vertex(matrix, (float) (x2 + nx), (float) (y2 + ny), 0.0F)
                 .color(red, green, blue, alpha)
                 .endVertex();
+        //?} else {
+        /*buffer.addVertex(matrix, (float) (x2 + nx), (float) (y2 + ny), 0.0F)
+                .setColor(red, green, blue, alpha);
+        *///?}
+        //? if <1.21 {
         buffer.vertex(matrix, (float) (x1 + nx), (float) (y1 + ny), 0.0F)
                 .color(red, green, blue, alpha)
                 .endVertex();
+        //?} else {
+        /*buffer.addVertex(matrix, (float) (x1 + nx), (float) (y1 + ny), 0.0F)
+                .setColor(red, green, blue, alpha);
+        *///?}
     }
 
     private static void renderWaypointIcon(
@@ -290,6 +322,7 @@ public class RouteRenderer {
         VertexConsumer consumer = guiGraphics.bufferSource().getBuffer(RenderType.text(MAP_ICONS));
         Matrix4f matrix = pose.last().pose();
         int light = 0xF000F0;
+        //? if <1.21 {
         consumer
                 .vertex(matrix, -1f, 1f, 0f)
                 .color(r, g, b, a)
@@ -298,6 +331,16 @@ public class RouteRenderer {
                 .uv2(light)
                 .normal(0, 0, 1)
                 .endVertex();
+        //?} else {
+        /*consumer
+                .addVertex(matrix, -1f, 1f, 0f)
+                .setColor(r, g, b, a)
+                .setUv(u0, v0)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(0, 0, 1);
+        *///?}
+        //? if <1.21 {
         consumer
                 .vertex(matrix, 1f, 1f, 0f)
                 .color(r, g, b, a)
@@ -306,6 +349,16 @@ public class RouteRenderer {
                 .uv2(light)
                 .normal(0, 0, 1)
                 .endVertex();
+        //?} else {
+        /*consumer
+                .addVertex(matrix, 1f, 1f, 0f)
+                .setColor(r, g, b, a)
+                .setUv(u1, v0)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(0, 0, 1);
+        *///?}
+        //? if <1.21 {
         consumer
                 .vertex(matrix, 1f, -1f, 0f)
                 .color(r, g, b, a)
@@ -314,6 +367,16 @@ public class RouteRenderer {
                 .uv2(light)
                 .normal(0, 0, 1)
                 .endVertex();
+        //?} else {
+        /*consumer
+                .addVertex(matrix, 1f, -1f, 0f)
+                .setColor(r, g, b, a)
+                .setUv(u1, v1)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(0, 0, 1);
+        *///?}
+        //? if <1.21 {
         consumer
                 .vertex(matrix, -1f, -1f, 0f)
                 .color(r, g, b, a)
@@ -322,6 +385,15 @@ public class RouteRenderer {
                 .uv2(light)
                 .normal(0, 0, 1)
                 .endVertex();
+        //?} else {
+        /*consumer
+                .addVertex(matrix, -1f, -1f, 0f)
+                .setColor(r, g, b, a)
+                .setUv(u0, v1)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(0, 0, 1);
+        *///?}
         guiGraphics.flush();
 
         pose.popPose();

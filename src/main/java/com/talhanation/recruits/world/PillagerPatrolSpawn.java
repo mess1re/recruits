@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-//? if forge {
+//? if <1.21 {
 import net.minecraft.world.entity.SpawnPlacements.Type;
 //?} else {
 /*import net.minecraft.world.entity.SpawnPlacements;
@@ -76,11 +76,7 @@ public class PillagerPatrolSpawn {
                     case 1, 2 -> spawnMediumPillagerPatrol(upPos, blockpos, world);
                     case 3, 4 -> spawnLargePillagerPatrol(upPos, blockpos, world);
                 }
-                //? if forge {
-                this.world.playSound(null, upPos.above(2), SoundEvents.RAID_HORN.get(), SoundSource.BLOCKS, 15F, 2F);
-                //?} else {
-                /*this.world.playSound(null, upPos.above(2), SoundEvents.RAID_HORN.value(), SoundSource.BLOCKS, 15F, 2F);
-                *///?}
+                this.world.playSound(null, upPos.above(2), SoundEvents.RAID_HORN.value(), SoundSource.BLOCKS, 15F, 2F);
 
                 Main.LOGGER.info("New Pillager Patrol Spawned at "+ upPos);
                 player.sendSystemMessage(Component.literal("A Pillager Patrol Spawned next to you!").withStyle(ChatFormatting.GRAY));
@@ -233,7 +229,7 @@ public class PillagerPatrolSpawn {
             int k = p_221244_1_.getZ() + random.nextInt(p_221244_2_ * 2) - p_221244_2_;
             int l = this.world.getHeight(Types.WORLD_SURFACE, j, k);
             BlockPos blockpos1 = new BlockPos(j, l, k);
-            //? if forge {
+            //? if <1.21 {
             if (!this.world.getLevel().isCloseToVillage(blockpos1, 2) && NaturalSpawner.isSpawnPositionOk(Type.ON_GROUND, this.world, blockpos1, EntityType.WANDERING_TRADER)) {
             //?} else {
             /*if (!this.world.getLevel().isCloseToVillage(blockpos1, 2) && SpawnPlacements.isSpawnPositionOk(EntityType.WANDERING_TRADER, this.world, blockpos1)) {

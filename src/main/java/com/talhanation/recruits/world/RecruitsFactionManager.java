@@ -10,7 +10,7 @@ import com.talhanation.recruits.network.MessageToClientUpdateOnlinePlayers;
 import com.talhanation.recruits.network.MessageToClientUpdateOwnFaction;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
-//? if neoforge {
+//? if >=1.21 {
 /*import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
 *///?}
@@ -134,7 +134,7 @@ public class RecruitsFactionManager {
     }
 
     public static boolean isBannerBlank(ItemStack itemStack){
-        //? if forge {
+        //? if <1.21 {
         CompoundTag compoundtag = BlockItem.getBlockEntityData(itemStack);
         return compoundtag == null || !compoundtag.contains("Patterns");
         //?} else {

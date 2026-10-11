@@ -22,7 +22,7 @@ public class DiplomacyTeamList extends ListScreenListBase<DiplomacyTeamEntry> {
         this.filter = "";
         this.diplomacyFilter = DiplomacyFilter.ALL;
 
-        //? if forge {
+        //? if <1.21 {
         setRenderBackground(false);
         setRenderTopAndBottom(false);
         setRenderSelection(true);

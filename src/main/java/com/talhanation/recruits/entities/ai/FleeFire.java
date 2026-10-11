@@ -7,6 +7,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.Random;
 
@@ -66,7 +68,7 @@ public boolean isNearLava() {
                 while(this.entity.getCommandSenderWorld().isEmptyBlock(blockpos1) && blockpos1.getY() > 1){
                 blockpos1 = blockpos1.below();
                 }
-                if(this.entity.getCommandSenderWorld().getFluidState(blockpos1).is(FluidTags.LAVA) || this.entity.getCommandSenderWorld().getBlockState(blockpos1).isBurning(entity.getCommandSenderWorld(), blockpos1)){
+                if(this.entity.getCommandSenderWorld().getFluidState(blockpos1).is(FluidTags.LAVA) || isBurning(this.entity.getCommandSenderWorld().getBlockState(blockpos1))){
                     this.fleePos = blockpos1;
 
                     return true;
@@ -75,4 +77,8 @@ public boolean isNearLava() {
 
         return false;
         }
+
+    private static boolean isBurning(BlockState state) {
+        return state.is(Blocks.FIRE) || state.is(Blocks.LAVA);
+    }
 }

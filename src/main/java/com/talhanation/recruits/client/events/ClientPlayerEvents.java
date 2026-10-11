@@ -3,25 +3,24 @@ package com.talhanation.recruits.client.events;
 import com.talhanation.recruits.client.gui.worldmap.storage.WorldMapCacheManager;
 import com.talhanation.recruits.client.gui.worldmap.storage.WorldMapStorageId;
 import com.talhanation.recruits.config.RecruitsClientConfig;
+import com.talhanation.recruits.platform.ClientPlatformEvents;
+import dev.architectury.event.events.client.ClientLifecycleEvent;
+import dev.architectury.event.events.client.ClientTickEvent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.level.Level;
-//? if forge {
-import net.minecraftforge.event.TickEvent;
-//?} else {
-/*import net.neoforged.neoforge.client.event.ClientTickEvent;
-*///?}
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 public class ClientPlayerEvents {
-    @SubscribeEvent
-    //? if forge {
-    public void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
-    //?} else {
-    /*public void onClientTick(ClientTickEvent.Post event) {
-    *///?}
+    public void register() {
+        ClientTickEvent.CLIENT_POST.register(this::onClientTick);
+        ClientLifecycleEvent.CLIENT_LEVEL_LOAD.register(this::onWorldLoad);
+        ClientPlatformEvents.LEVEL_UNLOAD.register(this::onWorldUnload);
+        ClientPlatformEvents.CHUNK_LOAD.register(this::onChunkLoad);
+        ClientPlatformEvents.CHUNK_UNLOAD.register(this::onChunkUnload);
+    }
+
+    public void onClientTick(Minecraft minecraft) {
         if (!RecruitsClientConfig.UpdateMapTiles.get()) return;
 
         updateMapTiles();
@@ -35,32 +34,20 @@ public class ClientPlayerEvents {
         WorldMapCacheManager.getInstance().updateCurrentTile();
     }
 
-    @SubscribeEvent
-    public void onWorldLoad(LevelEvent.Load event) {
-        if (event.getLevel().isClientSide()) {
-            WorldMapCacheManager.getInstance().initialize((Level) event.getLevel());
-        }
+    public void onWorldLoad(ClientLevel level) {
+        WorldMapCacheManager.getInstance().initialize(level);
     }
 
-    @SubscribeEvent
-    public void onWorldUnload(LevelEvent.Unload event) {
-        if (event.getLevel().isClientSide()) {
-            WorldMapCacheManager.getInstance().close();
-            WorldMapStorageId.clearServerWorldId();
-        }
+    public void onWorldUnload(ClientLevel level) {
+        WorldMapCacheManager.getInstance().close();
+        WorldMapStorageId.clearServerWorldId();
     }
 
-    @SubscribeEvent
-    public void onChunkLoad(ChunkEvent.Load event) {
-        if (event.getLevel() instanceof Level level && level.isClientSide) {
-            WorldMapCacheManager.getInstance().onChunkLoaded(level, event.getChunk().getPos());
-        }
+    public void onChunkLoad(ClientLevel level, LevelChunk chunk) {
+        WorldMapCacheManager.getInstance().onChunkLoaded(level, chunk.getPos());
     }
 
-    @SubscribeEvent
-    public void onChunkUnload(ChunkEvent.Unload event) {
-        if (event.getLevel() instanceof Level level && level.isClientSide) {
-            WorldMapCacheManager.getInstance().onChunkUnloaded(level, event.getChunk().getPos());
-        }
+    public void onChunkUnload(ClientLevel level, LevelChunk chunk) {
+        WorldMapCacheManager.getInstance().onChunkUnloaded(level, chunk.getPos());
     }
 }

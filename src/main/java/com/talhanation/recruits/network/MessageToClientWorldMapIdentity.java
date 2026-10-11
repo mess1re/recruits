@@ -5,8 +5,8 @@ import com.talhanation.recruits.client.gui.worldmap.storage.WorldMapCacheManager
 import com.talhanation.recruits.client.gui.worldmap.storage.WorldMapStorageId;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.UUID;
 
@@ -26,7 +26,7 @@ public class MessageToClientWorldMapIdentity implements Message<MessageToClientW
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void executeClientSide(MessageContext context) {
         if (worldId == null) return;
 

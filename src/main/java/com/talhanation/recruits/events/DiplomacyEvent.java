@@ -2,20 +2,19 @@ package com.talhanation.recruits;
 
 import com.talhanation.recruits.world.RecruitsDiplomacyManager;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import com.talhanation.recruits.events.Cancelable;
+import com.talhanation.recruits.events.Event;
 
 /**
  * Events für Diplomatie-Änderungen zwischen Fraktionen. Werden auf dem
- * {@code MinecraftForge.EVENT_BUS} gepostet und sind server-side only.
+ * {@link com.talhanation.recruits.events.RecruitsEventBus} gepostet und sind server-side only.
  *
  * <pre>
- *   {@code @SubscribeEvent}
- *   public void onRelationChanged(DiplomacyEvent.RelationChanged event) {
+ *   RecruitsEventBus.register(DiplomacyEvent.RelationChanged.class, event -> {
  *       if (event.getNewStatus() == RecruitsDiplomacyManager.DiplomacyStatus.ENEMY) {
  *           // Krieg begonnen!
  *       }
- *   }
+ *   });
  * </pre>
  */
 public abstract class DiplomacyEvent extends Event {
@@ -55,7 +54,7 @@ public abstract class DiplomacyEvent extends Event {
      * @see RecruitsDiplomacyManager#setRelation(String, String, RecruitsDiplomacyManager.DiplomacyStatus, ServerLevel)
      */
     @Cancelable
-    public static class RelationChanged extends DiplomacyEvent implements RecruitsCancellableEvent {
+    public static class RelationChanged extends DiplomacyEvent {
 
         private final RecruitsDiplomacyManager.DiplomacyStatus oldStatus;
         private final RecruitsDiplomacyManager.DiplomacyStatus newStatus;

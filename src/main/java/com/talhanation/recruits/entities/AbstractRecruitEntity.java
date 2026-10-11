@@ -15,6 +15,7 @@ import com.talhanation.recruits.entities.ai.*;
 import com.talhanation.recruits.entities.ai.compat.BlockWithWeapon;
 import com.talhanation.recruits.entities.ai.navigation.RecruitPathNavigation;
 import com.talhanation.recruits.entities.ai.navigation.RecruitsOpenDoorGoal;
+import com.talhanation.recruits.init.ModTags;
 import com.talhanation.recruits.init.ModItems;
 import com.talhanation.recruits.inventory.DebugInvMenu;
 import com.talhanation.recruits.inventory.RecruitHireMenu;
@@ -28,7 +29,7 @@ import com.talhanation.recruits.world.RecruitsGroup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-//? if neoforge {
+//? if >=1.21 {
 /*import net.minecraft.core.component.DataComponents;
 *///?}
 import net.minecraft.nbt.CompoundTag;
@@ -78,8 +79,8 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Tags;
+import com.talhanation.recruits.events.RecruitsEventBus;
+import com.talhanation.recruits.platform.PlatformHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -160,7 +161,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     }
 
     public void setRecruitStepHeight(float height) {
-        //? if forge {
+        //? if <1.21 {
         this.setMaxUpStep(height);
         //?} else {
         /*this.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(height);
@@ -329,7 +330,11 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     }
 
     @Nullable
+    //? if <1.21 {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance diff, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag nbt) {
+    //?} else {
+    /*public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance diff, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+    *///?}
         this.setRandomSpawnBonus();
         this.createNavigation(world.getLevel());
         return spawnData;
@@ -742,11 +747,11 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     public SoundEvent getHurtSound(@NotNull DamageSource ds) {
         if (this.isBlocking())
             return SoundEvents.SHIELD_BLOCK;
-        return RecruitsClientConfig.RecruitsLookLikeVillagers.get() ? SoundEvents.VILLAGER_HURT : SoundEvents.GENERIC_HURT;
+        return RecruitsClientConfig.recruitsLookLikeVillagers() ? SoundEvents.VILLAGER_HURT : SoundEvents.GENERIC_HURT;
     }
 
     protected SoundEvent getDeathSound() {
-        return RecruitsClientConfig.RecruitsLookLikeVillagers.get() ? SoundEvents.VILLAGER_DEATH : SoundEvents.GENERIC_DEATH;
+        return RecruitsClientConfig.recruitsLookLikeVillagers() ? SoundEvents.VILLAGER_DEATH : SoundEvents.GENERIC_DEATH;
     }
 
     protected float getSoundVolume() {
@@ -754,7 +759,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     }
 
     protected float getStandingEyeHeight(@NotNull Pose pos, EntityDimensions size) {
-        //? if forge {
+        //? if <1.21 {
         return size.height * 0.98F;
         //?} else {
         /*return size.height() * 0.98F;
@@ -867,7 +872,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     public void disband(@Nullable Player player, boolean keepTeam, boolean increaseCost){
         if (!this.getCommandSenderWorld().isClientSide()) {
             RecruitEvent.Dismissed dismissEvent = new RecruitEvent.Dismissed(this, player, keepTeam);
-            MinecraftForge.EVENT_BUS.post(dismissEvent);
+            RecruitsEventBus.post(dismissEvent);
             if (dismissEvent.isCanceled()) return;
         }
         String name = this.getName().getString();
@@ -1132,32 +1137,32 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         byte biomeByte = 2; //PLAINS
         int variant = recruit.random.nextInt(0, 14);
         //DESERT
-        if(biome.is(Biomes.ERODED_BADLANDS) || biome.is(Tags.Biomes.IS_DESERT) || biome.is(Tags.Biomes.IS_SANDY) && !biome.is(Tags.Biomes.IS_WET_OVERWORLD)){
+        if(biome.is(Biomes.ERODED_BADLANDS) || biome.is(ModTags.Biomes.IS_DESERT) || biome.is(ModTags.Biomes.IS_SANDY) && !biome.is(ModTags.Biomes.IS_WET_OVERWORLD)){
             biomeByte = 0;
             variant = recruit.random.nextInt(15, 19);
         }
         //TAIGA
-        else if(biome.is(Tags.Biomes.IS_CONIFEROUS) && biome.is(Tags.Biomes.IS_COLD_OVERWORLD) && !(biome.is(Tags.Biomes.IS_SNOWY))){
+        else if(biome.is(ModTags.Biomes.IS_CONIFEROUS) && biome.is(ModTags.Biomes.IS_COLD_OVERWORLD) && !(biome.is(ModTags.Biomes.IS_SNOWY))){
             biomeByte = 6;
             variant = recruit.random.nextInt(5, 14);
         }
         //JUNGLE
-        else if(biome.is(Tags.Biomes.IS_WET_OVERWORLD) && !biome.is(Tags.Biomes.IS_SANDY) && !biome.is(Tags.Biomes.IS_SWAMP)){
+        else if(biome.is(ModTags.Biomes.IS_WET_OVERWORLD) && !biome.is(ModTags.Biomes.IS_SANDY) && !biome.is(ModTags.Biomes.IS_SWAMP)){
             biomeByte = 1;
             variant = recruit.random.nextInt(15, 19);
         }
         //SVANNA
-        else if(biome.is(Tags.Biomes.IS_HOT_OVERWORLD) && biome.is(Tags.Biomes.IS_SPARSE_OVERWORLD)){
+        else if(biome.is(ModTags.Biomes.IS_HOT_OVERWORLD) && biome.is(ModTags.Biomes.IS_SPARSE_OVERWORLD)){
             biomeByte = 3;
             variant = recruit.random.nextInt(15, 19);
         }
         //SNOWY
-        else if(biome.is(Tags.Biomes.IS_SNOWY)){
+        else if(biome.is(ModTags.Biomes.IS_SNOWY)){
             biomeByte = 4;
             variant = recruit.random.nextInt(5, 10);
         }
         //SWAMP
-        else if(biome.is(Tags.Biomes.IS_SWAMP)){
+        else if(biome.is(ModTags.Biomes.IS_SWAMP)){
             biomeByte = 5;
             variant = recruit.random.nextInt(5, 14);
         }
@@ -1305,7 +1310,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     public boolean hire(Player player, RecruitsGroup group, boolean message) {
         if (!this.getCommandSenderWorld().isClientSide()) {
             RecruitEvent.Hired hireEvent = new RecruitEvent.Hired(this, player);
-            MinecraftForge.EVENT_BUS.post(hireEvent);
+            RecruitsEventBus.post(hireEvent);
             if (hireEvent.isCanceled()) return false;
         }
         String name = this.getName().getString() + ": ";
@@ -1419,7 +1424,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     }
 
     public boolean doHurtTarget(@NotNull Entity entity) {
-        //? if forge {
+        //? if <1.21 {
         float f = (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
         if (entity instanceof LivingEntity) {
             f += EnchantmentHelper.getDamageBonus(this.getMainHandItem(), ((LivingEntity)entity).getMobType());
@@ -1656,7 +1661,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
             if(this.getMorale() < 100)
                 this.setMoral(getMorale() + 5F);
             if (!this.getCommandSenderWorld().isClientSide()) {
-                MinecraftForge.EVENT_BUS.post(new RecruitEvent.LevelUp(this, this.getXpLevel()));
+                RecruitsEventBus.post(new RecruitEvent.LevelUp(this, this.getXpLevel()));
             }
         }
     }
@@ -1682,18 +1687,18 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     public void makeLevelUpSound() {
         this.getCommandSenderWorld().playSound(null, this.getX(), this.getY() + 1 , this.getZ(), SoundEvents.PLAYER_LEVELUP, this.getSoundSource(), 1.0F, 0.8F + 0.4F * this.random.nextFloat());
 
-        if(RecruitsClientConfig.RecruitsLookLikeVillagers.get())
+        if(RecruitsClientConfig.recruitsLookLikeVillagers())
             this.getCommandSenderWorld().playSound(null, this.getX(), this.getY() + 1 , this.getZ(), SoundEvents.VILLAGER_CELEBRATE, this.getSoundSource(), 1.0F, 0.8F + 0.4F * this.random.nextFloat());
     }
 
     public void makeHireSound() {
-        if(RecruitsClientConfig.RecruitsLookLikeVillagers.get())
+        if(RecruitsClientConfig.recruitsLookLikeVillagers())
             this.playSound(SoundEvents.VILLAGER_AMBIENT, 1.0F, 0.8F + 0.4F * this.random.nextFloat());
     }
 
     @Override
     public boolean canBeLeashed(
-            //? if forge {
+            //? if <1.21 {
             @NotNull Player player
             //?}
     ) {
@@ -1826,7 +1831,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     }
 
     private boolean isFireResistant(ItemStack stack) {
-        //? if forge {
+        //? if <1.21 {
         return stack.getItem().isFireResistant();
         //?} else {
         /*return stack.has(DataComponents.FIRE_RESISTANT);
@@ -1834,7 +1839,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     }
 
     private void damageItem(ItemStack stack, EquipmentSlot slot) {
-        //? if forge {
+        //? if <1.21 {
         stack.hurtAndBreak(1, this, recruit -> recruit.broadcastBreakEvent(slot));
         //?} else {
         /*stack.hurtAndBreak(1, this, slot);
@@ -1888,7 +1893,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     @Override
     protected void blockUsingShield(@NotNull LivingEntity living) {
         super.blockUsingShield(living);
-        if (living.getMainHandItem().canDisableShield(this.useItem, this, living))
+        if (PlatformHooks.INSTANCE.canDisableShield(living.getMainHandItem(), this.useItem, this, living))
             this.disableShield();
     }
 
@@ -2311,7 +2316,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
                 AbstractArrow.class,
                 this.getBoundingBox().inflate(7D),
                 (arrow) ->
-                        //? if forge {
+                        //? if <1.21 {
                         arrow.inGround &&
                         //?} else {
                         /*arrow.getDeltaMovement().lengthSqr() < 0.01D &&

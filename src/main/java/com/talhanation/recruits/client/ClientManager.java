@@ -7,8 +7,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -108,12 +108,12 @@ public class ClientManager {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static RecruitsDiplomacyManager.DiplomacyStatus getRelation(String team, String otherTeam) {
         return diplomacyMap.getOrDefault(team, new HashMap<>()).getOrDefault(otherTeam, RecruitsDiplomacyManager.DiplomacyStatus.NEUTRAL);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static boolean hasTreaty(String factionA, String factionB) {
         String[] sorted = new String[]{factionA, factionB};
         java.util.Arrays.sort(sorted);
@@ -123,7 +123,7 @@ public class ClientManager {
         return System.currentTimeMillis() < expiry;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static long getTreatyRemainingMillis(String factionA, String factionB) {
         String[] sorted = new String[]{factionA, factionB};
         java.util.Arrays.sort(sorted);
@@ -132,14 +132,14 @@ public class ClientManager {
         return Math.max(0L, expiry - System.currentTimeMillis());
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static RecruitsPlayerInfo getPlayerInfo() {
         Player player = Minecraft.getInstance().player;
         if (player != null) return new RecruitsPlayerInfo(player.getUUID(), player.getName().getString(), ownFaction);
         return null;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static RecruitsGroup getGroup(UUID groupUUID) {
         for (RecruitsGroup group : groups) {
             if (group.getUUID().equals(groupUUID)) return group;
@@ -147,7 +147,7 @@ public class ClientManager {
         return null;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static RecruitsGroup getSelectedGroup() {
         if (groups != null && !groups.isEmpty()) {
             try { return groups.get(groupSelection); }
@@ -175,7 +175,7 @@ public class ClientManager {
         ClientManager.groups.sort((a, b) -> Integer.compare(b.getCount(), a.getCount()));
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static void loadRoutes() {
         routesMap.clear();
         try {
@@ -186,7 +186,7 @@ public class ClientManager {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static void saveRoute(RecruitsRoute route) {
         try {
             route.saveToFile(getRoutesDirectory());
@@ -196,20 +196,20 @@ public class ClientManager {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static void renameRoute(RecruitsRoute route, String newName) {
         route.deleteFile(getRoutesDirectory());
         route.setName(newName);
         saveRoute(route);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static void deleteRoute(RecruitsRoute route) {
         routesMap.remove(route.getId().toString());
         route.deleteFile(getRoutesDirectory());
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static List<RecruitsRoute> getRoutesList() {
         return new ArrayList<>(routesMap.values());
     }
@@ -224,7 +224,7 @@ public class ClientManager {
         return new File(dir, "special_states.txt");
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static void loadSpecialStates() {
         groupSpecialStates.clear();
         File file = getSpecialStatesFile();
@@ -254,7 +254,7 @@ public class ClientManager {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static void saveSpecialStates() {
         File file = getSpecialStatesFile();
         try (java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(file))) {

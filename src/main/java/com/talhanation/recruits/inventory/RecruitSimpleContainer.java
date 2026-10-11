@@ -1,6 +1,7 @@
 package com.talhanation.recruits.inventory;
 
 import com.talhanation.recruits.entities.AbstractInventoryEntity;
+import com.talhanation.recruits.platform.PlatformHooks;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -46,7 +47,7 @@ public class RecruitSimpleContainer extends SimpleContainer {
     private void moveItemToOccupiedSlotsWithSameType(ItemStack itemStack) {
         for(int i = 0; i < this.size; ++i) {
             ItemStack itemstack = this.getItem(i);
-            //? if forge {
+            //? if <1.21 {
             if (ItemStack.isSameItemSameTags(itemstack, itemStack)) {
             //?} else {
             /*if (ItemStack.isSameItemSameComponents(itemstack, itemStack)) {
@@ -73,7 +74,7 @@ public class RecruitSimpleContainer extends SimpleContainer {
     public boolean canPlaceItem(int slot, ItemStack itemStack) {
         if(slot == 0|| slot == 1 || slot == 2 || slot == 3) {
             EquipmentSlot equipmentslottype = RecruitInventoryMenu.SLOT_IDS[slot];
-            return itemStack.canEquip(equipmentslottype, recruit); //|| (itemStack.getItem() instanceof BannerItem && equipmentslottype.equals(EquipmentSlot.HEAD))
+            return PlatformHooks.INSTANCE.canEquip(itemStack, equipmentslottype, recruit); //|| (itemStack.getItem() instanceof BannerItem && equipmentslottype.equals(EquipmentSlot.HEAD))
         }
         else if(slot == 4)//offhand
             return (itemStack.getItem() instanceof ShieldItem);

@@ -7,6 +7,7 @@ import com.talhanation.recruits.client.gui.worldmap.WorldMapScreen;
 import com.talhanation.recruits.world.RecruitsClaim;
 import com.talhanation.recruits.world.RecruitsDiplomacyManager;
 import com.talhanation.recruits.world.RecruitsFaction;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -109,7 +110,7 @@ public class ClaimInfoMenu {
     public void render(GuiGraphics guiGraphics) {
         if (!visible || currentClaim == null) return;
 
-        Font font = parent.getMinecraft().font;
+        Font font = Minecraft.getInstance().font;
 
         guiGraphics.fill(x, y, x + width, y + height, PANEL_BACKGROUND);
         guiGraphics.renderOutline(x, y, width, height, PANEL_OUTLINE);

@@ -32,6 +32,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import com.talhanation.recruits.util.RecruitsAttributes;
+import com.talhanation.recruits.platform.PlatformHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -110,9 +111,17 @@ public class BowmanEntity extends AbstractRecruitEntity implements IRangedRecrui
 
     @Override
     @Nullable
+    //? if <1.21 {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData data, @Nullable CompoundTag nbt) {
+    //?} else {
+    /*public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData data) {
+    *///?}
         RandomSource randomsource = world.getRandom();
+        //? if <1.21 {
         SpawnGroupData ilivingentitydata = super.finalizeSpawn(world, difficultyInstance, reason, data, nbt);
+        //?} else {
+        /*SpawnGroupData ilivingentitydata = super.finalizeSpawn(world, difficultyInstance, reason, data);
+        *///?}
         this.populateDefaultEquipmentEnchantments(randomsource, difficultyInstance);
         this.initSpawn();
         return ilivingentitydata;
@@ -151,9 +160,9 @@ public class BowmanEntity extends AbstractRecruitEntity implements IRangedRecrui
 
             ItemStack itemstack = this.getProjectile(this.getItemInHand(InteractionHand.MAIN_HAND));
 
-            //? if forge {
+            //? if <1.21 {
             AbstractArrow arrow = ProjectileUtil.getMobArrow(this, itemstack, v);
-            arrow = ((net.minecraft.world.item.BowItem) this.getMainHandItem().getItem()).customArrow(arrow);
+            arrow = PlatformHooks.INSTANCE.customArrow((net.minecraft.world.item.BowItem) this.getMainHandItem().getItem(), arrow);
 
             int powerLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, itemstack);
             arrow.setBaseDamage(arrow.getBaseDamage() + (double) powerLevel * 0.5D + 0.5D + this.arrowDamageModifier());
@@ -185,7 +194,7 @@ public class BowmanEntity extends AbstractRecruitEntity implements IRangedRecrui
             arrow.shoot(d0, d1 + d3 * angle, d2, force, accuracy);
 
             if(RecruitsServerConfig.RangedRecruitsNeedArrowsToShoot.get()){
-                //? if forge {
+                //? if <1.21 {
                 int k = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, this.getMainHandItem());
                 //?} else {
                 /*int k = EnchantmentHelper.getItemEnchantmentLevel(
@@ -215,9 +224,9 @@ public class BowmanEntity extends AbstractRecruitEntity implements IRangedRecrui
         if (this.getMainHandItem().getItem() instanceof BowItem) {
             ItemStack itemstack = this.getProjectile(this.getItemInHand(InteractionHand.MAIN_HAND));
 
-            //? if forge {
+            //? if <1.21 {
             AbstractArrow arrow = ProjectileUtil.getMobArrow(this, itemstack, v);
-            arrow = ((net.minecraft.world.item.BowItem) this.getMainHandItem().getItem()).customArrow(arrow);
+            arrow = PlatformHooks.INSTANCE.customArrow((net.minecraft.world.item.BowItem) this.getMainHandItem().getItem(), arrow);
 
             int powerLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, itemstack);
             if (powerLevel > 0) arrow.setBaseDamage(arrow.getBaseDamage() + (double) powerLevel * 0.5D + 0.5D + this.arrowDamageModifier());

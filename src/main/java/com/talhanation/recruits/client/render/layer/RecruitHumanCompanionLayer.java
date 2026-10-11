@@ -25,7 +25,11 @@ public class RecruitHumanCompanionLayer extends RenderLayer<AbstractRecruitEntit
     public void render(PoseStack poseStack, MultiBufferSource bufferSource, int p_117722_, AbstractRecruitEntity recruit, float p_117724_, float p_117725_, float p_117726_, float p_117727_, float p_117728_, float p_117729_) {
         if(!recruit.isInvisible() && recruit instanceof ICompanion){
             VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(LOCATION));
+            //? if <1.21 {
             this.getParentModel().renderToBuffer(poseStack, vertexconsumer, p_117722_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            //?} else {
+            /*this.getParentModel().renderToBuffer(poseStack, vertexconsumer, p_117722_, OverlayTexture.NO_OVERLAY, -1);
+            *///?}
         }
     }
 

@@ -15,7 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 
 public class MessengerAnswerScreen extends RecruitsScreenBase {
 
@@ -49,7 +49,9 @@ public class MessengerAnswerScreen extends RecruitsScreenBase {
     }
     public void tick() {
         super.tick();
+        //? if <1.21 {
         if(textFieldMessage != null) this.textFieldMessage.tick();
+        //?}
     }
 
     public boolean mouseClicked(double p_100753_, double p_100754_, int p_100755_) {

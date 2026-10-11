@@ -12,7 +12,6 @@ import com.talhanation.recruits.network.MessageHire;
 import com.talhanation.recruits.world.RecruitsGroup;
 import com.talhanation.recruits.client.gui.ScreenBase;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -23,13 +22,13 @@ import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 
 import java.text.DecimalFormat;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class RecruitHireScreen extends ScreenBase<RecruitHireMenu> {
     private static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(Main.MOD_ID,"textures/gui/hire_gui.png");
 
@@ -55,7 +54,7 @@ public class RecruitHireScreen extends ScreenBase<RecruitHireMenu> {
     protected void containerTick() {
         super.containerTick();
         if(hireButton != null){
-            hireButton.active = ClientManager.canPlayerHire;
+            hireButton.active = ClientManager.canPlayerHire && group != null;
         }
     }
 
@@ -103,7 +102,7 @@ public class RecruitHireScreen extends ScreenBase<RecruitHireMenu> {
         return super.mouseClicked(mouseX, mouseY, button);
     }
     @Override
-    //? if forge {
+    //? if <1.21 {
     public boolean mouseScrolled(double x, double y, double d) {
         if(groupSelectionDropDownMenu != null) groupSelectionDropDownMenu.mouseScrolled(x,y,d);
         return super.mouseScrolled(x, y, d);
@@ -182,13 +181,8 @@ public class RecruitHireScreen extends ScreenBase<RecruitHireMenu> {
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
 
-        //? if forge {
-        InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,i + 30, j + 60, 15, (float)(i + 50) - mouseX, (float)(j + 75 - 50) - mouseY, this.recruit);
-        if(recruit.getVehicle() instanceof AbstractHorse horse) InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, i + 30, j + 72, 15, (float)(i + 50) - mouseX, (float)(j + 75 - 50) - mouseY, horse);
-        //?} else {
-        /*InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, i + 10, j + 20, i + 50, j + 60, 15, 0.0625F, mouseX, mouseY, this.recruit);
-        if(recruit.getVehicle() instanceof AbstractHorse horse) InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, i + 10, j + 32, i + 50, j + 72, 15, 0.0625F, mouseX, mouseY, horse);
-        *///?}
+        renderEntityFollowsMouse(guiGraphics,i + 30, j + 60, 15, (float)(i + 50) - mouseX, (float)(j + 75 - 50) - mouseY, this.recruit);
+        if(recruit.getVehicle() instanceof AbstractHorse horse) renderEntityFollowsMouse(guiGraphics, i + 30, j + 72, 15, (float)(i + 50) - mouseX, (float)(j + 75 - 50) - mouseY, horse);
     }
 
 }

@@ -5,6 +5,7 @@ import com.talhanation.recruits.Main;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.init.ModScreens;
 import com.talhanation.recruits.inventory.ContainerBase;
+import com.talhanation.recruits.platform.PlatformHooks;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -16,8 +17,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 public class RecruitInventoryMenu extends ContainerBase {
     private final Container recruitInventory;
@@ -127,7 +128,7 @@ public class RecruitInventoryMenu extends ContainerBase {
                 }
 
                 public boolean mayPlace(ItemStack itemStack) {
-                    return itemStack.canEquip(equipmentslottype, recruit)
+                    return PlatformHooks.INSTANCE.canEquip(itemStack, equipmentslottype, recruit)
                             || (itemStack.getItem() instanceof BannerItem && equipmentslottype.equals(EquipmentSlot.HEAD));
                 }
 
@@ -144,7 +145,7 @@ public class RecruitInventoryMenu extends ContainerBase {
                     recruit.onInventoryChanged();
                 }
 
-                @OnlyIn(Dist.CLIENT)
+                @Environment(EnvType.CLIENT)
                 public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
                     return Pair.of(InventoryMenu.BLOCK_ATLAS, TEXTURE_EMPTY_SLOTS[equipmentslottype.getIndex()]);
                 }

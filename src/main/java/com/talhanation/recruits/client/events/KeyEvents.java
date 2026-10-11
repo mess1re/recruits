@@ -13,20 +13,24 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import com.talhanation.recruits.platform.ClientPlatformEvents;
+import dev.architectury.event.EventResult;
+import dev.architectury.event.events.client.ClientRawInputEvent;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 
 public class KeyEvents {
-    @SubscribeEvent
-    public void onKeyInput(InputEvent.Key event) {
-        Minecraft minecraft = Minecraft.getInstance();
+    public void register() {
+        ClientRawInputEvent.KEY_PRESSED.register(this::onKeyInput);
+        ClientPlatformEvents.PICK_BLOCK.register(this::onPlayerPick);
+    }
+
+    public EventResult onKeyInput(Minecraft minecraft, int keyCode, int scanCode, int action, int modifiers) {
         LocalPlayer clientPlayerEntity = minecraft.player;
         if (clientPlayerEntity == null)
-            return;
+            return EventResult.pass();
 
         if (ModShortcuts.COMMAND_SCREEN_KEY.isDown()) {
             CommandEvents.openCommandScreen(clientPlayerEntity);
@@ -41,23 +45,22 @@ public class KeyEvents {
                 minecraft.setScreen(new WorldMapScreen());
             }
         }
+        return EventResult.pass();
     }
 
-    @SubscribeEvent
-    public void onPlayerPick(InputEvent.InteractionKeyMappingTriggered event){
-        if(event.isPickBlock()){
-            Minecraft minecraft = Minecraft.getInstance();
-            LocalPlayer clientPlayerEntity = minecraft.player;
-            if (clientPlayerEntity == null || !clientPlayerEntity.isCreative())
-                return;
-            
+    public EventResult onPlayerPick(){
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer clientPlayerEntity = minecraft.player;
+        if (clientPlayerEntity == null || !clientPlayerEntity.isCreative())
+            return EventResult.pass();
 
-            Entity target = ClientEvent.getEntityByLooking();
-            if(target instanceof AbstractRecruitEntity recruitEntity){
-                RecruitsNetwork.sendToServer(new MessageWriteSpawnEgg(recruitEntity.getUUID()));
-                event.setCanceled(true);
-            }
+
+        Entity target = ClientEvent.getEntityByLooking();
+        if(target instanceof AbstractRecruitEntity recruitEntity){
+            RecruitsNetwork.sendToServer(new MessageWriteSpawnEgg(recruitEntity.getUUID()));
+            return EventResult.interruptFalse();
         }
+        return EventResult.pass();
     }
 
 }

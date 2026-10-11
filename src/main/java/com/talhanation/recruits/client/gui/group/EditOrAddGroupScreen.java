@@ -22,7 +22,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 
 import static com.talhanation.recruits.client.gui.RecruitMoreScreen.TOOLTIP_ASSIGN_GROUP_TO_PLAYER;
 import static com.talhanation.recruits.client.gui.RecruitMoreScreen.TOOLTIP_KEEP_TEAM;
@@ -203,7 +203,9 @@ public class EditOrAddGroupScreen extends Screen {
     @Override
     public void tick() {
         super.tick();
+        //? if <1.21 {
         groupNameField.tick();
+        //?}
     }
 
     @Override
@@ -230,7 +232,7 @@ public class EditOrAddGroupScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        //? if forge {
+        //? if <1.21 {
         this.renderBackground(guiGraphics);
         //?}
         this.renderBackground(guiGraphics, mouseX, mouseY, delta);

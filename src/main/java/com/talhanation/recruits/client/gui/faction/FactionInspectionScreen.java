@@ -29,11 +29,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class FactionInspectionScreen extends ListScreenBase implements IPlayerSelection {
 
     protected static final ResourceLocation TEXTURE = new ResourceLocation(Main.MOD_ID, "textures/gui/team/team_inspect.png");
@@ -241,7 +241,7 @@ public class FactionInspectionScreen extends ListScreenBase implements IPlayerSe
             if(ClientManager.ownFaction.maxNPCs > 0) npcs = npcs + "/" + ClientManager.ownFaction.maxNPCs;
             if(ClientManager.ownFaction.maxPlayers > 0) players = players + "/" + ClientManager.ownFaction.maxPlayers;
 
-            guiGraphics.drawString(font, this.getTitle().getString(), width / 2F - font.width(getTitle()) / 2F, guiTop + 5, 0xFF000000 | ChatFormatting.getById(ClientManager.ownFaction.getTeamColor()).getColor(), false);
+            guiGraphics.drawString(font, this.getTitle().getString(), width / 2 - font.width(getTitle()) / 2, guiTop + 5, 0xFF000000 | ChatFormatting.getById(ClientManager.ownFaction.getTeamColor()).getColor(), false);
 
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderColor(1F, 1F, 1F, 1F);

@@ -11,11 +11,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class FactionMainScreen extends RecruitsScreenBase {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(Main.MOD_ID,"textures/gui/gui_small.png");

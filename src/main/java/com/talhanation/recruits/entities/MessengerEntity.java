@@ -43,8 +43,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.PlayerTeam;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import com.talhanation.recruits.util.RecruitsAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -160,8 +160,16 @@ public class MessengerEntity extends AbstractChunkLoaderEntity implements ICompa
 
 
     @Nullable
+    //? if <1.21 {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData data, @Nullable CompoundTag nbt) {
+    //?} else {
+    /*public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData data) {
+    *///?}
+        //? if <1.21 {
         SpawnGroupData ilivingentitydata = super.finalizeSpawn(world, difficultyInstance, reason, data, nbt);
+        //?} else {
+        /*SpawnGroupData ilivingentitydata = super.finalizeSpawn(world, difficultyInstance, reason, data);
+        *///?}
         ((AsyncGroundPathNavigation)this.getNavigation()).setCanOpenDoors(true);
 
         this.initSpawn();
@@ -505,11 +513,7 @@ public class MessengerEntity extends AbstractChunkLoaderEntity implements ICompa
     }
 
     public void playHornSound() {
-        //? if forge {
-        this.playSound(SoundEvents.GOAT_HORN_SOUND_VARIANTS.get(1).get(), 20F, 0.8F + 0.4F * this.getCommandSenderWorld().random.nextFloat());
-        //?} else {
-        /*this.playSound(SoundEvents.GOAT_HORN_SOUND_VARIANTS.get(1).value(), 20F, 0.8F + 0.4F * this.getCommandSenderWorld().random.nextFloat());
-        *///?}
+        this.playSound(SoundEvents.GOAT_HORN_SOUND_VARIANTS.get(1).value(), 20F, 0.8F + 0.4F * this.getCommandSenderWorld().random.nextFloat());
     }
 
     public void arriveAtTargetPlayer(ServerPlayer target){
@@ -571,7 +575,7 @@ public class MessengerEntity extends AbstractChunkLoaderEntity implements ICompa
     private MutableComponent MESSENGER_ARRIVED_TARGET_PLAYER_NOT_ANSWERED(){
         return Component.translatable("chat.recruits.text.messenger_target_player_not_answered", this.getName().getString());
     }
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public boolean shouldGlow() {
         LocalPlayer clientPlayer = Minecraft.getInstance().player;
         MessengerState messengerState = this.getMessengerState();

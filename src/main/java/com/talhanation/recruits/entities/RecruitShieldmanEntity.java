@@ -58,9 +58,17 @@ public class RecruitShieldmanEntity extends AbstractRecruitEntity{
     }
 
     @Nullable
+    //? if <1.21 {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData data, @Nullable CompoundTag nbt) {
+    //?} else {
+    /*public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData data) {
+    *///?}
         RandomSource randomsource = world.getRandom();
+        //? if <1.21 {
         SpawnGroupData ilivingentitydata = super.finalizeSpawn(world, difficultyInstance, reason, data, nbt);
+        //?} else {
+        /*SpawnGroupData ilivingentitydata = super.finalizeSpawn(world, difficultyInstance, reason, data);
+        *///?}
         ((AsyncGroundPathNavigation)this.getNavigation()).setCanOpenDoors(true);
         this.populateDefaultEquipmentEnchantments(randomsource, difficultyInstance);
 

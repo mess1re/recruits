@@ -21,25 +21,33 @@ public class RecruitsWorldSaveData extends SavedData {
     }
 
     public static RecruitsWorldSaveData get(ServerLevel level) {
-        //? if forge {
+        //? if <1.21 {
         return level.getDataStorage().computeIfAbsent(
                 RecruitsWorldSaveData::load,
                 RecruitsWorldSaveData::new,
                 FILE_ID);
         //?} else {
         /*return level.getDataStorage().computeIfAbsent(
-                new SavedData.Factory<>(RecruitsWorldSaveData::new, RecruitsWorldSaveData::load),
+                new SavedData.Factory<>(RecruitsWorldSaveData::new, RecruitsWorldSaveData::load, null),
                 FILE_ID);
         *///?}
     }
 
+    //? if <1.21 {
     public static RecruitsWorldSaveData load(CompoundTag nbt) {
+    //?} else {
+    /*public static RecruitsWorldSaveData load(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+    *///?}
         UUID worldId = nbt.hasUUID("WorldId") ? nbt.getUUID("WorldId") : null;
         return new RecruitsWorldSaveData(worldId);
     }
 
     @Override
+    //? if <1.21 {
     public CompoundTag save(CompoundTag nbt) {
+    //?} else {
+    /*public CompoundTag save(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+    *///?}
         nbt.putUUID("WorldId", worldId);
         return nbt;
     }

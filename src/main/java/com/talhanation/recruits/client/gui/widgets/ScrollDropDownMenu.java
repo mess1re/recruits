@@ -160,7 +160,7 @@ public class ScrollDropDownMenu<T> extends AbstractWidget {
     }
 
     @Override
-    //? if forge {
+    //? if <1.21 {
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         if(!visible) return false;
 

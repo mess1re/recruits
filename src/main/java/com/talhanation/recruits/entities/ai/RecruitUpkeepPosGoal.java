@@ -1,6 +1,7 @@
 package com.talhanation.recruits.entities.ai;
 
 import com.talhanation.recruits.entities.*;
+import com.talhanation.recruits.platform.PlatformHooks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -252,7 +253,7 @@ public class RecruitUpkeepPosGoal extends Goal {
             boolean isOpened = false;
             CompoundTag compoundTag = new CompoundTag();
             if(recruit.getCommandSenderWorld().getBlockEntity(chestPos) instanceof ChestBlockEntity chestBlockEntity){
-                compoundTag = chestBlockEntity.getPersistentData();
+                compoundTag = PlatformHooks.INSTANCE.getPersistentData(chestBlockEntity);
                 if(compoundTag.contains("isOpened"))
                     isOpened = compoundTag.getBoolean("isOpened");
                 else

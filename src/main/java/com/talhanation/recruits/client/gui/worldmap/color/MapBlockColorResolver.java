@@ -14,7 +14,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraftforge.client.model.data.ModelData;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -133,13 +132,13 @@ public final class MapBlockColorResolver {
             Minecraft minecraft = Minecraft.getInstance();
             BakedModel model = minecraft.getBlockRenderer().getBlockModelShaper().getBlockModel(state);
             RandomSource random = RandomSource.create(42L);
-            List<BakedQuad> upQuads = model.getQuads(state, Direction.UP, random, ModelData.EMPTY, null);
+            List<BakedQuad> upQuads = model.getQuads(state, Direction.UP, random);
             BakedQuad quad = selectColorQuad(upQuads);
             TextureAtlasSprite sprite = quad != null ? quad.getSprite() : null;
             int tintIndex = quad != null ? quad.getTintIndex() : -1;
             if (quad == null || sprite == null || isMissingSprite(sprite)) {
                 random.setSeed(42L);
-                List<BakedQuad> generalQuads = model.getQuads(state, null, random, ModelData.EMPTY, null);
+                List<BakedQuad> generalQuads = model.getQuads(state, null, random);
                 quad = selectColorQuad(generalQuads);
                 if (quad != null) {
                     sprite = quad.getSprite();
@@ -147,7 +146,7 @@ public final class MapBlockColorResolver {
                 }
             }
             if (sprite == null || isMissingSprite(sprite)) {
-                sprite = model.getParticleIcon(ModelData.EMPTY);
+                sprite = model.getParticleIcon();
                 tintIndex = DEFAULT_TINT_INDEX;
             }
             return isMissingSprite(sprite) ? TextureColor.EMPTY : averageSprite(sprite, tintIndex);
@@ -205,7 +204,7 @@ public final class MapBlockColorResolver {
 
         for (int y = 0; y < size; y += step) {
             for (int x = 0; x < size; x += step) {
-                int abgr = sprite.getPixelRGBA(0, x, y);
+                int abgr = sprite.contents().originalImage.getPixelRGBA(x, y);
                 int alpha = (abgr >> 24) & 0xFF;
                 if (alpha == 0 || (abgr & 0x00FFFFFF) == 0) continue;
 

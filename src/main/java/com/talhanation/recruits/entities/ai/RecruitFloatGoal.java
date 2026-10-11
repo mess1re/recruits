@@ -1,6 +1,7 @@
 package com.talhanation.recruits.entities.ai;
 
 import com.talhanation.recruits.pathfinding.AsyncPathfinderMob;
+import com.talhanation.recruits.platform.PlatformHooks;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.ai.goal.Goal;
 
@@ -32,7 +33,7 @@ public class RecruitFloatGoal extends Goal {
         long i = this.mob.getCommandSenderWorld().getGameTime();
         if (i - this.lastCanUseCheck >= 20L) {
             this.lastCanUseCheck = i;
-            return this.mob.isInWater() && this.mob.getFluidHeight(FluidTags.WATER) > this.mob.getFluidJumpThreshold() || this.mob.isInLava() || this.mob.isInFluidType((fluidType, height) -> this.mob.canSwimInFluidType(fluidType) && height > this.mob.getFluidJumpThreshold());
+            return this.mob.isInWater() && this.mob.getFluidHeight(FluidTags.WATER) > this.mob.getFluidJumpThreshold() || this.mob.isInLava() || PlatformHooks.INSTANCE.isInSwimmableFluid(this.mob, this.mob.getFluidJumpThreshold());
         }
         return false;
     }

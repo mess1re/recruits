@@ -17,10 +17,19 @@ public class RecruitsTeamSaveData extends SavedData {
 
     public static RecruitsTeamSaveData get(ServerLevel level) {
         DimensionDataStorage storage = level.getDataStorage();
+        //? if <1.21 {
         return storage.computeIfAbsent(RecruitsTeamSaveData::load, RecruitsTeamSaveData::new, FILE_ID);
+        //?} else {
+        /*return storage.computeIfAbsent(
+                new SavedData.Factory<>(RecruitsTeamSaveData::new, RecruitsTeamSaveData::load, null), FILE_ID);
+        *///?}
     }
 
+    //? if <1.21 {
     public static RecruitsTeamSaveData load(CompoundTag nbt) {
+    //?} else {
+    /*public static RecruitsTeamSaveData load(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+    *///?}
         RecruitsTeamSaveData data = new RecruitsTeamSaveData();
         if (nbt.contains("Teams", 9)) {
             data.teams = loadTeams(nbt.getList("Teams", 10));
@@ -60,7 +69,11 @@ public class RecruitsTeamSaveData extends SavedData {
     }
 
     @Override
+    //? if <1.21 {
     public CompoundTag save(CompoundTag nbt) {
+    //?} else {
+    /*public CompoundTag save(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+    *///?}
         nbt.put("Teams", saveTeams());
         return nbt;
     }

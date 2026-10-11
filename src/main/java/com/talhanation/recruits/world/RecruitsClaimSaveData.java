@@ -17,10 +17,19 @@ public class RecruitsClaimSaveData extends SavedData {
     private List<RecruitsClaim> claimList = new ArrayList<>();
 
     public static RecruitsClaimSaveData get(ServerLevel level) {
+        //? if <1.21 {
         return level.getDataStorage().computeIfAbsent(RecruitsClaimSaveData::load, RecruitsClaimSaveData::new, FILE_ID);
+        //?} else {
+        /*return level.getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(RecruitsClaimSaveData::new, RecruitsClaimSaveData::load, null), FILE_ID);
+        *///?}
     }
 
+    //? if <1.21 {
     public static RecruitsClaimSaveData load(CompoundTag nbt) {
+    //?} else {
+    /*public static RecruitsClaimSaveData load(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+    *///?}
         RecruitsClaimSaveData data = new RecruitsClaimSaveData();
         if (nbt.contains("claims", Tag.TAG_LIST)) {
             ListTag list = nbt.getList("claims", Tag.TAG_COMPOUND);
@@ -32,7 +41,11 @@ public class RecruitsClaimSaveData extends SavedData {
     }
 
     @Override
+    //? if <1.21 {
     public CompoundTag save(CompoundTag nbt) {
+    //?} else {
+    /*public CompoundTag save(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+    *///?}
         ListTag list = new ListTag();
         for (RecruitsClaim claim : this.claimList) {
             list.add(claim.toNBT());

@@ -14,7 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 
 import java.util.Locale;
 import java.util.function.Consumer;
@@ -115,7 +115,9 @@ public class SelectFactionScreen extends ListScreenBase implements IFactionSelec
     public void tick() {
         super.tick();
         if(searchBox != null){
+            //? if <1.21 {
             searchBox.tick();
+            //?}
         }
 
         if(factionList != null){

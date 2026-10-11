@@ -9,13 +9,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FastColor;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class RecruitsFactionEntry extends ListScreenEntryBase<RecruitsFactionEntry> {
     protected static final int SKIN_SIZE = 24;
     protected static final int PADDING = 4;
@@ -69,8 +69,8 @@ public class RecruitsFactionEntry extends ListScreenEntryBase<RecruitsFactionEnt
 
         GuiComponent.fill(guiGraphics, left + 10, top + 20, left + 200,top + 10, 0x8000FF00);
          */
-        guiGraphics.drawString(minecraft.font, team.getTeamDisplayName(), (float) textX + 10, (float) textY,  PLAYER_NAME_COLOR, false);
-        if(showPlayerCount) guiGraphics.drawString(minecraft.font, getPlayersText(team.getPlayers()).getString(), (float) textX + 120, (float) textY, PLAYER_NAME_COLOR, false);
+        guiGraphics.drawString(minecraft.font, team.getTeamDisplayName(), textX + 10, textY,  PLAYER_NAME_COLOR, false);
+        if(showPlayerCount) guiGraphics.drawString(minecraft.font, getPlayersText(team.getPlayers()).getString(), textX + 120, textY, PLAYER_NAME_COLOR, false);
     }
 
     @Nullable

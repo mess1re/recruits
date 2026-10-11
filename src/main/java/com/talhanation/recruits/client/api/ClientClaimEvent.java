@@ -1,15 +1,15 @@
 package com.talhanation.recruits.client.api;
 
 import com.talhanation.recruits.world.RecruitsClaim;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import com.talhanation.recruits.events.Cancelable;
+import com.talhanation.recruits.events.Event;
 
 import javax.annotation.Nullable;
 
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public abstract class ClientClaimEvent extends Event {
 
     private final RecruitsClaim claim;
@@ -69,7 +69,7 @@ public abstract class ClientClaimEvent extends Event {
     }
 
     @Cancelable
-    public static class SiegeStarted extends ClientClaimEvent implements com.talhanation.recruits.RecruitsCancellableEvent {
+    public static class SiegeStarted extends ClientClaimEvent {
         public SiegeStarted(RecruitsClaim claim) {
             super(claim);
         }

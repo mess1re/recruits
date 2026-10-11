@@ -1,10 +1,11 @@
 package com.talhanation.recruits.util;
 
+import com.talhanation.recruits.platform.PlatformHooks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.LivingEntity;
-//? if neoforge {
+//? if >=1.21 {
 /*import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomData;
 *///?}
@@ -15,15 +16,15 @@ public final class RecruitsItemStacks {
     }
 
     public static CompoundTag save(ItemStack stack, HolderLookup.Provider registries) {
-        //? if forge {
-        return stack.serializeNBT();
+        //? if <1.21 {
+        return stack.save(new CompoundTag());
         //?} else {
         /*return (CompoundTag) stack.save(registries);
         *///?}
     }
 
     public static void saveInto(ItemStack stack, CompoundTag tag, HolderLookup.Provider registries) {
-        //? if forge {
+        //? if <1.21 {
         stack.save(tag);
         //?} else {
         /*tag.merge((CompoundTag) stack.save(registries));
@@ -31,7 +32,7 @@ public final class RecruitsItemStacks {
     }
 
     public static ItemStack parse(CompoundTag tag, HolderLookup.Provider registries) {
-        //? if forge {
+        //? if <1.21 {
         return ItemStack.of(tag);
         //?} else {
         /*return ItemStack.parse(registries, tag).orElse(ItemStack.EMPTY);
@@ -39,7 +40,7 @@ public final class RecruitsItemStacks {
     }
 
     public static boolean isSame(ItemStack first, ItemStack second) {
-        //? if forge {
+        //? if <1.21 {
         return ItemStack.isSameItemSameTags(first, second);
         //?} else {
         /*return ItemStack.isSameItemSameComponents(first, second);
@@ -47,7 +48,7 @@ public final class RecruitsItemStacks {
     }
 
     public static CompoundTag getEntityData(ItemStack stack) {
-        //? if forge {
+        //? if <1.21 {
         CompoundTag tag = stack.getTag();
         return tag == null ? new CompoundTag() : tag.getCompound("EntityTag");
         //?} else {
@@ -56,7 +57,7 @@ public final class RecruitsItemStacks {
     }
 
     public static void setEntityData(ItemStack stack, CompoundTag entityData) {
-        //? if forge {
+        //? if <1.21 {
         CompoundTag itemTag = new CompoundTag();
         itemTag.put("EntityTag", entityData);
         stack.setTag(itemTag);
@@ -66,16 +67,16 @@ public final class RecruitsItemStacks {
     }
 
     public static int nutrition(ItemStack stack, LivingEntity entity) {
-        //? if forge {
-        return stack.getItem().getFoodProperties(stack, entity).getNutrition();
+        //? if <1.21 {
+        return PlatformHooks.INSTANCE.getFoodProperties(stack, entity).getNutrition();
         //?} else {
         /*return stack.getOrDefault(DataComponents.FOOD, new net.minecraft.world.food.FoodProperties(0, 0, false, 0, java.util.Optional.empty(), java.util.List.of())).nutrition();
         *///?}
     }
 
     public static float saturation(ItemStack stack, LivingEntity entity) {
-        //? if forge {
-        return stack.getItem().getFoodProperties(stack, entity).getSaturationModifier();
+        //? if <1.21 {
+        return PlatformHooks.INSTANCE.getFoodProperties(stack, entity).getSaturationModifier();
         //?} else {
         /*return stack.getOrDefault(DataComponents.FOOD, new net.minecraft.world.food.FoodProperties(0, 0, false, 0, java.util.Optional.empty(), java.util.List.of())).saturation();
         *///?}

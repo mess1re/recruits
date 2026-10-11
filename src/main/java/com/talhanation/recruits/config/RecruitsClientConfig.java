@@ -3,11 +3,9 @@ package com.talhanation.recruits.config;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.common.Mod;
 
 import java.nio.file.Path;
 
-@Mod.EventBusSubscriber
 public class RecruitsClientConfig {
     public enum MapPlayerIconStyle {
         VANILLA,
@@ -133,7 +131,14 @@ public class RecruitsClientConfig {
         CLIENT = BUILDER.build();
     }
 
-    //? if forge {
+    /**
+     * The server picks recruit sounds by this setting, but a dedicated server only has the client config loaded on Forge.
+     */
+    public static boolean recruitsLookLikeVillagers() {
+        return CLIENT.isLoaded() ? RecruitsLookLikeVillagers.get() : RecruitsLookLikeVillagers.getDefault();
+    }
+
+    //? if <1.21 {
     public static void loadConfig(ForgeConfigSpec spec, Path path) {
         CommentedFileConfig configData = CommentedFileConfig.builder(path)
                 .sync()

@@ -18,13 +18,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 
 import java.util.Locale;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class RecruitsGroupListScreen extends ListScreenBase implements IGroupSelection {
 
     protected static final ResourceLocation TEXTURE = new ResourceLocation(Main.MOD_ID, "textures/gui/select_player.png");
@@ -104,7 +104,9 @@ public class RecruitsGroupListScreen extends ListScreenBase implements IGroupSel
         super.tick();
         ClientManager.updateGroups();
         if(searchBox != null){
+            //? if <1.21 {
             searchBox.tick();
+            //?}
         }
         if(groupList != null){
             groupList.tick();

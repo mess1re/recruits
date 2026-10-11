@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.talhanation.recruits.fabric.mixin",
+  "compatibilityLevel": "${java_compatibility}",
+  "mixins": [
+    "EntityMixin",
+    "LivingEntityMixin",
+    "ProjectileMixin",
+    "TeleportCommandMixin"
+  ],
+  "client": [
+    "client.MinecraftMixin",
+    "client.ModelManagerMixin",
+    "client.TextureAtlasMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

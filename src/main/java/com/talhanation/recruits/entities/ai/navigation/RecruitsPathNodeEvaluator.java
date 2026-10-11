@@ -1,5 +1,6 @@
 package com.talhanation.recruits.entities.ai.navigation;
 
+import com.talhanation.recruits.platform.PlatformHooks;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
@@ -30,7 +31,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.pathfinder.*;
 import org.jetbrains.annotations.NotNull;
 
-//? if forge {
+//? if <1.21 {
 public class RecruitsPathNodeEvaluator extends NodeEvaluator {
 
     private int x;
@@ -108,7 +109,7 @@ public class RecruitsPathNodeEvaluator extends NodeEvaluator {
 
     protected static BlockPathTypes getBlockPathTypeRaw(BlockGetter p_77644_, BlockPos p_77645_) {
         BlockState blockstate = p_77644_.getBlockState(p_77645_);
-        BlockPathTypes type = blockstate.getBlockPathType(p_77644_, p_77645_, null);
+        BlockPathTypes type = PlatformHooks.INSTANCE.getBlockPathType(blockstate, p_77644_, p_77645_, null);
         if (type != null) return type;
         Block block = blockstate.getBlock();
         if (blockstate.isAir()) {
@@ -123,7 +124,7 @@ public class RecruitsPathNodeEvaluator extends NodeEvaluator {
                     return BlockPathTypes.COCOA;
                 } else if (!blockstate.is(Blocks.WITHER_ROSE) && !blockstate.is(Blocks.POINTED_DRIPSTONE)) {
                     FluidState fluidstate = p_77644_.getFluidState(p_77645_);
-                    BlockPathTypes nonLoggableFluidPathType = fluidstate.getBlockPathType(p_77644_, p_77645_, null, false);
+                    BlockPathTypes nonLoggableFluidPathType = PlatformHooks.INSTANCE.getFluidPathType(fluidstate, p_77644_, p_77645_, null, false);
                     if (nonLoggableFluidPathType != null) return nonLoggableFluidPathType;
                     if (fluidstate.is(FluidTags.LAVA)) {
                         return BlockPathTypes.LAVA;
@@ -148,7 +149,7 @@ public class RecruitsPathNodeEvaluator extends NodeEvaluator {
                         if (!blockstate.isPathfindable(p_77644_, p_77645_, PathComputationType.LAND)) {
                             return BlockPathTypes.BLOCKED;
                         } else {
-                            BlockPathTypes loggableFluidPathType = fluidstate.getBlockPathType(p_77644_, p_77645_, null, true);
+                            BlockPathTypes loggableFluidPathType = PlatformHooks.INSTANCE.getFluidPathType(fluidstate, p_77644_, p_77645_, null, true);
                             if (loggableFluidPathType != null) return loggableFluidPathType;
                             return fluidstate.is(FluidTags.WATER) ? BlockPathTypes.WATER : BlockPathTypes.OPEN;
                         }
@@ -248,7 +249,7 @@ public class RecruitsPathNodeEvaluator extends NodeEvaluator {
         BlockPathTypes blockpathtypes = this.getCachedBlockType(this.mob, p_77641_.x, p_77641_.y + 1, p_77641_.z);
         BlockPathTypes blockpathtypes1 = this.getCachedBlockType(this.mob, p_77641_.x, p_77641_.y, p_77641_.z);
         if (this.mob.getPathfindingMalus(blockpathtypes) >= 0.0F && blockpathtypes1 != BlockPathTypes.STICKY_HONEY) {
-            j = Mth.floor(Math.max(1.0F, this.mob.getStepHeight()));
+            j = Mth.floor(Math.max(1.0F, this.mob.maxUpStep()));
         }
 
         double d0 = this.getFloorLevel(new BlockPos(p_77641_.x, p_77641_.y, p_77641_.z));
@@ -442,7 +443,7 @@ public class RecruitsPathNodeEvaluator extends NodeEvaluator {
     }
 
     private double getMobJumpHeight() {
-        return Math.max(1.125D, (double)this.mob.getStepHeight());
+        return Math.max(1.125D, (double)this.mob.maxUpStep());
     }
 
     private Node getNodeAndUpdateCostToMax(int p_230620_, int p_230621_, int p_230622_, BlockPathTypes p_230623_, float p_230624_) {
@@ -589,10 +590,10 @@ public class RecruitsPathNodeEvaluator extends NodeEvaluator {
                     if (l != 0 || j1 != 0) {
                         p_77609_.set(i + l, j + i1, k + j1);
                         BlockState blockstate = p_77608_.getBlockState(p_77609_);
-                        BlockPathTypes blockPathType = blockstate.getAdjacentBlockPathType(p_77608_, p_77609_, null, p_77610_);
+                        BlockPathTypes blockPathType = PlatformHooks.INSTANCE.getAdjacentBlockPathType(blockstate, p_77608_, p_77609_, null, p_77610_);
                         if (blockPathType != null) return blockPathType;
                         FluidState fluidState = blockstate.getFluidState();
-                        BlockPathTypes fluidPathType = fluidState.getAdjacentBlockPathType(p_77608_, p_77609_, null, p_77610_);
+                        BlockPathTypes fluidPathType = PlatformHooks.INSTANCE.getAdjacentFluidPathType(fluidState, p_77608_, p_77609_, null, p_77610_);
                         if (fluidPathType != null) return fluidPathType;
                         if (blockstate.is(Blocks.CACTUS) || blockstate.is(Blocks.SWEET_BERRY_BUSH)) {
                             return BlockPathTypes.DANGER_OTHER;
@@ -629,22 +630,22 @@ public class RecruitsPathNodeEvaluator extends NodeEvaluator {
     @Override
     public void prepare(PathNavigationRegion region, Mob mob) {
         super.prepare(region, mob);
-        mob.setPathfindingMalus(PathType.WATER, 128.0F);
-        mob.setPathfindingMalus(PathType.WATER_BORDER, 128.0F);
-        mob.setPathfindingMalus(PathType.TRAPDOOR, -1.0F);
-        mob.setPathfindingMalus(PathType.DAMAGE_FIRE, 32.0F);
-        mob.setPathfindingMalus(PathType.DAMAGE_CAUTIOUS, 32.0F);
-        mob.setPathfindingMalus(PathType.DANGER_POWDER_SNOW, -1.0F);
-        mob.setPathfindingMalus(PathType.DOOR_WOOD_CLOSED, 0.0F);
-        mob.setPathfindingMalus(PathType.FENCE, -1.0F);
-        mob.setPathfindingMalus(PathType.LAVA, -1.0F);
-        mob.setPathfindingMalus(PathType.LEAVES, -1.0F);
+        mob.setPathfindingMalus(BlockPathTypes.WATER, 128.0F);
+        mob.setPathfindingMalus(BlockPathTypes.WATER_BORDER, 128.0F);
+        mob.setPathfindingMalus(BlockPathTypes.TRAPDOOR, -1.0F);
+        mob.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, 32.0F);
+        mob.setPathfindingMalus(BlockPathTypes.DAMAGE_CAUTIOUS, 32.0F);
+        mob.setPathfindingMalus(BlockPathTypes.DANGER_POWDER_SNOW, -1.0F);
+        mob.setPathfindingMalus(BlockPathTypes.DOOR_WOOD_CLOSED, 0.0F);
+        mob.setPathfindingMalus(BlockPathTypes.FENCE, -1.0F);
+        mob.setPathfindingMalus(BlockPathTypes.LAVA, -1.0F);
+        mob.setPathfindingMalus(BlockPathTypes.LEAVES, -1.0F);
     }
 
     @Override
     protected @NotNull Node getNode(int x, int y, int z) {
         Node node = super.getNode(x, y, z);
-        PathType pathType = this.getCachedPathType(x, y, z);
+        BlockPathTypes pathType = this.getCachedPathType(x, y, z);
         float malus = this.mob.getPathfindingMalus(pathType);
 
         if (malus >= 0.0F) {

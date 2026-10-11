@@ -2,12 +2,12 @@ package com.talhanation.recruits;
 
 import com.talhanation.recruits.world.RecruitsClaim;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import com.talhanation.recruits.events.Cancelable;
+import com.talhanation.recruits.events.Event;
 
 /**
  * Events für den Lebenszyklus von Claims. Werden auf dem
- * {@code MinecraftForge.EVENT_BUS} gepostet und sind server-side only.
+ * {@link com.talhanation.recruits.events.RecruitsEventBus} gepostet und sind server-side only.
  *
  * <p>Hinweis: {@code ClaimEvent.Updated} deckt sowohl die erstmalige Erstellung
  * eines Claims als auch spätere Änderungen (Chunks hinzugefügt/entfernt, Name,
@@ -15,13 +15,12 @@ import net.minecraftforge.eventbus.api.Event;
  * mit {@link Updated#isNew()} abfragen.</p>
  *
  * <pre>
- *   {@code @SubscribeEvent}
- *   public void onClaimCreated(ClaimEvent.Updated event) {
+ *   RecruitsEventBus.register(ClaimEvent.Updated.class, event -> {
  *       if (event.isNew()) {
  *           RecruitsClaim claim = event.getClaim();
  *           // Neuer Claim wurde registriert
  *       }
- *   }
+ *   });
  * </pre>
  */
 public abstract class ClaimEvent extends Event {
@@ -55,7 +54,7 @@ public abstract class ClaimEvent extends Event {
      * @see com.talhanation.recruits.world.RecruitsClaimManager#addOrUpdateClaim(ServerLevel, RecruitsClaim)
      */
     @Cancelable
-    public static class Updated extends ClaimEvent implements RecruitsCancellableEvent {
+    public static class Updated extends ClaimEvent {
         private final boolean isNew;
 
         public Updated(RecruitsClaim claim, ServerLevel level, boolean isNew) {

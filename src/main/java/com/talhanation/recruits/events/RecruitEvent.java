@@ -2,21 +2,20 @@ package com.talhanation.recruits;
 
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import com.talhanation.recruits.events.Cancelable;
+import com.talhanation.recruits.events.Event;
 
 import javax.annotation.Nullable;
 
 /**
  * Events für individuelle Recruits. Alle Sub-Events werden auf dem
- * {@code MinecraftForge.EVENT_BUS} gepostet und sind server-side only.
+ * {@link com.talhanation.recruits.events.RecruitsEventBus} gepostet und sind server-side only.
  *
  * <pre>
- *   {@code @SubscribeEvent}
- *   public void onRecruitHired(RecruitEvent.Hired event) {
+ *   RecruitsEventBus.register(RecruitEvent.Hired.class, event -> {
  *       AbstractRecruitEntity recruit = event.getRecruit();
  *       Player owner = event.getPlayer();
- *   }
+ *   });
  * </pre>
  */
 public abstract class RecruitEvent extends Event {
@@ -40,7 +39,7 @@ public abstract class RecruitEvent extends Event {
      * <p>Der zugehörige Spieler ist immer gesetzt.</p>
      */
     @Cancelable
-    public static class Hired extends RecruitEvent implements RecruitsCancellableEvent {
+    public static class Hired extends RecruitEvent {
         private final Player player;
 
         public Hired(AbstractRecruitEntity recruit, Player player) {
@@ -61,7 +60,7 @@ public abstract class RecruitEvent extends Event {
      * @see AbstractRecruitEntity#disband(Player, boolean, boolean)
      */
     @Cancelable
-    public static class Dismissed extends RecruitEvent implements RecruitsCancellableEvent {
+    public static class Dismissed extends RecruitEvent {
 
         @Nullable
         private final Player player;
@@ -115,7 +114,7 @@ public abstract class RecruitEvent extends Event {
      * @see RecruitEvents#promoteRecruit(AbstractRecruitEntity, int, String, net.minecraft.server.level.ServerPlayer)
      */
     @Cancelable
-    public static class Promoted extends RecruitEvent implements RecruitsCancellableEvent {
+    public static class Promoted extends RecruitEvent {
         private final int newProfession;
         private final String newName;
         private final net.minecraft.server.level.ServerPlayer promotingPlayer;

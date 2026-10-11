@@ -7,6 +7,7 @@ import com.talhanation.recruits.client.render.layer.RecruitHumanTeamColorLayer;
 import com.talhanation.recruits.compat.musketmod.IWeapon;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.entities.CrossBowmanEntity;
+import com.talhanation.recruits.platform.ClientPlatformHooks;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.layers.*;
@@ -118,7 +119,7 @@ public class RecruitHumanRenderer extends MobRenderer<AbstractRecruitEntity, Hum
                 return HumanoidModel.ArmPose.CROSSBOW_HOLD;
             }
 
-            HumanoidModel.ArmPose forgeArmPose = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(itemstack).getArmPose(recruit, hand, itemstack);
+            HumanoidModel.ArmPose forgeArmPose = ClientPlatformHooks.INSTANCE.getArmPose(recruit, hand, itemstack);
             if (forgeArmPose != null) return forgeArmPose;
 
             return HumanoidModel.ArmPose.ITEM;

@@ -118,7 +118,7 @@ public class WorldMapContextMenu {
                                 this.worldMapScreen.selectedClaim().getOwnerFaction()))
                         || this.worldMapScreen.isPlayerClaimLeader(),
                 (screen) -> {
-                    screen.getMinecraft()
+                    Minecraft.getInstance()
                             .setScreen(new ClaimEditScreen(screen, screen.selectedClaim(), screen.getPlayer()));
                     screen.clearSelectedClaim();
                 }
@@ -274,12 +274,12 @@ public class WorldMapContextMenu {
                 textColor = hovered ? 0xFFFFFF : 0xCCCCCC;
             }
 
-            guiGraphics.drawString(screen.getMinecraft().font, entry.text(), x + 8, entryY + 6, textColor);
+            guiGraphics.drawString(Minecraft.getInstance().font, entry.text(), x + 8, entryY + 6, textColor);
 
             if (!entry.stack.isEmpty()) {
                 guiGraphics.renderFakeItem(entry.stack, x + width - 20, entryY + 1);
                 guiGraphics.renderItemDecorations(
-                        screen.getMinecraft().font, entry.stack, x + width - 20, entryY + 1);
+                        Minecraft.getInstance().font, entry.stack, x + width - 20, entryY + 1);
             }
 
             entryY += entryHeight;
@@ -335,7 +335,7 @@ public class WorldMapContextMenu {
         if (reason == null || reason.getString().isBlank()) return;
 
         int padding = 5;
-        int textWidth = screen.getMinecraft().font.width(reason);
+        int textWidth = Minecraft.getInstance().font.width(reason);
         int tooltipWidth = textWidth + padding * 2;
         int tooltipHeight = 18;
         int tooltipX = x + width + 6;
@@ -346,7 +346,7 @@ public class WorldMapContextMenu {
 
         guiGraphics.fill(tooltipX, tooltipY, tooltipX + tooltipWidth, tooltipY + tooltipHeight, 0xDD101010);
         guiGraphics.renderOutline(tooltipX, tooltipY, tooltipWidth, tooltipHeight, 0xFF555555);
-        guiGraphics.drawString(screen.getMinecraft().font, reason, tooltipX + padding, tooltipY + 5, 0xFFE0E0E0);
+        guiGraphics.drawString(Minecraft.getInstance().font, reason, tooltipX + padding, tooltipY + 5, 0xFFE0E0E0);
     }
 
     private static String tags(String... tags) {

@@ -1,11 +1,11 @@
 package com.talhanation.recruits.client.gui.group;
 
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class RecruitsCommandButton extends ExtendedButton {
 
     public RecruitsCommandButton(int xPos, int yPos, Component displayString, OnPress handler) {

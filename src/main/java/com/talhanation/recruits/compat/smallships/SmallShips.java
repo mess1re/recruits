@@ -208,12 +208,17 @@ public class SmallShips {
             if (shipClass.isInstance(boat)) {
                 Object ship = shipClass.cast(boat);
 
-                Method controlBoat = shipClass.getDeclaredMethod("controlBoat");
-                controlBoat.setAccessible(true);
-                controlBoat.invoke(ship);
+                // Small Ships 2.0.1 for 1.20.1 has its own controlShip, older versions override the vanilla controlBoat.
+                Method controlShip = null;
+                try {
+                    controlShip = shipClass.getMethod("controlShip");
+                } catch (NoSuchMethodException ignored) {
+                }
+                if (controlShip != null) controlShip.invoke(ship);
+                else boat.controlBoat();
             }
         }
-        catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
             Main.LOGGER.info("" + e );
         }
     }
@@ -465,8 +470,7 @@ public class SmallShips {
                 if(shipClass.isInstance(boat)) {
                     Object ship = shipClass.cast(boat);
 
-                    Method getDamageMethod = shipClass.getMethod("getDamage");
-                    float damage = (float) getDamageMethod.invoke(ship);
+                    float damage = boat.getDamage();
 
                     if(damage > 5) {
                         Method shipRepairMethod = shipClass.getMethod("repairShip", int.class);
@@ -500,13 +504,10 @@ public class SmallShips {
         try{
             Class<?> shipClass = Class.forName("com.talhanation.smallships.world.entity.ship.Ship");
             if(shipClass.isInstance(boat)) {
-                Object ship = shipClass.cast(boat);
-
-                Method shipClassGetDamage = shipClass.getMethod("getDamage");
-                damage = (float) shipClassGetDamage.invoke(ship);
+                damage = boat.getDamage();
 
             }
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (ClassNotFoundException e) {
             Main.LOGGER.info("shipClass was not found");
         }
 

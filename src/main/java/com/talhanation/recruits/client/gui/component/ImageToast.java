@@ -6,14 +6,14 @@ import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import javax.annotation.Nullable;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class ImageToast implements Toast {
-    //? if neoforge {
+    //? if >=1.21 {
     /*private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("toast/system");
     *///?}
     @Nullable
@@ -32,7 +32,7 @@ public class ImageToast implements Toast {
 
     @Override
     public Visibility render(GuiGraphics guiGraphics, ToastComponent toastComponent, long deltaTime) {
-        //? if forge {
+        //? if <1.21 {
         guiGraphics.blit(TEXTURE, 0, 0, 0, 0, this.width(), this.height());
         //?} else {
         /*guiGraphics.blitSprite(BACKGROUND_SPRITE, 0, 0, this.width(), this.height());

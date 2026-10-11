@@ -27,22 +27,19 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
-//? if neoforge {
+//? if >=1.21 {
 /*import net.minecraft.world.item.trading.ItemCost;
 *///?}
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.Team;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-//? if forge {
-import net.minecraftforge.event.entity.living.LivingEvent;
-//?} else {
-/*import net.neoforged.neoforge.event.tick.EntityTickEvent;
-*///?}
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.event.village.VillagerTradesEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import com.talhanation.recruits.platform.PlatformEvents;
+import dev.architectury.event.EventResult;
+import dev.architectury.event.events.common.InteractionEvent;
+import dev.architectury.event.events.common.LifecycleEvent;
+import dev.architectury.registry.level.entity.trade.TradeRegistry;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.InteractionHand;
 
 
 import java.util.*;
@@ -66,26 +63,35 @@ public class VillagerEvents {
             }
         }
     }
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
+    public void register() {
+        LifecycleEvent.SERVER_STARTING.register(this::onServerStarting);
+        PlatformEvents.ENTITY_JOIN.register(this::onPlayerJoiningServer);
+        PlatformEvents.ENTITY_JOIN.register(this::onVillagerJoinWorld);
+        PlatformEvents.LIVING_TICK.register(this::onVillagerLivingUpdate);
+        InteractionEvent.INTERACT_ENTITY.register(this::onPlayerInteractEntity);
+        villagerTrades();
+    }
+
+    public void onServerStarting(MinecraftServer server) {
         RecruitsHireTradesRegistry.registerTrades();
     }
-    @SubscribeEvent
-    public void onPlayerJoiningServer(EntityJoinLevelEvent event){
-        if(event.getLevel().isClientSide() && event.getEntity() instanceof Player player){
+
+    public EventResult onPlayerJoiningServer(Entity entity, Level level){
+        if(level.isClientSide() && entity instanceof Player player){
             if(Minecraft.getInstance().player.getUUID().equals(player.getUUID())){
                 RecruitsHireTradesRegistry.registerTrades();
             }
         }
+        return EventResult.pass();
     }
-    @SubscribeEvent
-    public void onVillagerJoinWorld(EntityJoinLevelEvent event) {
-        Entity entity = event.getEntity();
-        if(!RecruitsServerConfig.NobleVillagerSpawn.get()) return;
+
+    public EventResult onVillagerJoinWorld(Entity entity, Level level) {
+        if(!RecruitsServerConfig.NobleVillagerSpawn.get()) return EventResult.pass();
 
         if (entity instanceof Villager villager) {
             villager.goalSelector.addGoal(0, new VillagerBecomeNobleGoal(villager));
         }
+        return EventResult.pass();
     }
 
     public HashMap<VillagerProfession, EntityType<? extends  AbstractRecruitEntity>> entitiesByProfession = new HashMap<>(){{
@@ -98,15 +104,7 @@ public class VillagerEvents {
     }
     };
 
-    @SubscribeEvent
-    public void onVillagerLivingUpdate(
-            //? if forge {
-            LivingEvent.LivingTickEvent event
-            //?} else {
-            /*EntityTickEvent.Post event
-            *///?}
-    ) {
-        Entity entity = event.getEntity();
+    public void onVillagerLivingUpdate(LivingEntity entity) {
         if (entity instanceof Villager villager) {
             VillagerProfession profession = villager.getVillagerData().getProfession();
 
@@ -139,12 +137,8 @@ public class VillagerEvents {
         }
     }
 
-    @SubscribeEvent
-    public void onPlayerInteractEntity(PlayerInteractEvent.EntityInteract event) {
-        Player player = event.getEntity();
-        Entity target = event.getTarget();
-
-        if(player == null || target == null) return;
+    public EventResult onPlayerInteractEntity(Player player, Entity target, InteractionHand hand) {
+        if(player == null || target == null) return EventResult.pass();
 
         Team targetTeam = target.getTeam();
         String teamID = null;
@@ -156,25 +150,26 @@ public class VillagerEvents {
             teamID = targetTeam.getName();
         }
 
-        if (teamID == null || teamID.isEmpty()) return;
+        if (teamID == null || teamID.isEmpty()) return EventResult.pass();
 
-        if (event.getLevel().isClientSide()) {
+        if (player.getCommandSenderWorld().isClientSide()) {
 
             String embargoed = ClientManager.embargoMap.getOrDefault(player.getUUID(), "");
 
             if (embargoed.contains(teamID)) {
-                event.setCanceled(true);
+                return EventResult.interruptFalse();
             }
         }
         else {
             // Server-side: gegen die authoritative Map prüfen
             if (FactionEvents.recruitsDiplomacyManager.hasEmbargo(player.getUUID(), teamID)) {
-                event.setCanceled(true);
                 player.sendSystemMessage(
                         Component.translatable("chat.recruits.text.embargoBlocked", target.getName().getString())
                 );
+                return EventResult.interruptFalse();
             }
         }
+        return EventResult.pass();
     }
 
     private static void createRecruit(Villager villager, EntityType<? extends AbstractRecruitEntity> recruitType){
@@ -306,50 +301,13 @@ public class VillagerEvents {
         }
     }
 
-    @SubscribeEvent
-    public void villagerTrades(VillagerTradesEvent event) {
-        if(!RecruitsServerConfig.ShouldProfessionBlocksTrade.get()) return;
-
-        if (event.getType() == VillagerProfession.ARMORER) {
-            Trade block_trade = new Trade(Items.EMERALD, 15, ModBlocks.RECRUIT_SHIELD_BLOCK.get(), 1, 2, 20);
-            List<VillagerTrades.ItemListing> list = event.getTrades().get(2);
-            list.add(block_trade);
-            event.getTrades().put(2, list);
-        }
-        if (event.getType() == VillagerProfession.WEAPONSMITH) {
-            Trade block_trade = new Trade(Items.EMERALD, 8, ModBlocks.RECRUIT_BLOCK.get(), 1, 2, 20);
-            List<VillagerTrades.ItemListing> list = event.getTrades().get(2);
-            list.add(block_trade);
-            event.getTrades().put(2, list);
-        }
-
-        if (event.getType() == VillagerProfession.FLETCHER) {
-            Trade block_trade = new Trade(Items.EMERALD, 10, ModBlocks.BOWMAN_BLOCK.get(), 1, 2, 20);
-            List<VillagerTrades.ItemListing> list = event.getTrades().get(2);
-            list.add(block_trade);
-            event.getTrades().put(2, list);
-        }
-
-        if (event.getType() == VillagerProfession.FLETCHER) {
-            Trade block_trade = new Trade(Items.EMERALD, 20, ModBlocks.CROSSBOWMAN_BLOCK.get(), 1, 2, 20);
-            List<VillagerTrades.ItemListing> list = event.getTrades().get(2);
-            list.add(block_trade);
-            event.getTrades().put(2, list);
-        }
-
-        if (event.getType() == VillagerProfession.CARTOGRAPHER) {
-            Trade block_trade = new Trade(Items.EMERALD, 30, ModBlocks.NOMAD_BLOCK.get(), 1, 2, 20);
-            List<VillagerTrades.ItemListing> list = event.getTrades().get(2);
-            list.add(block_trade);
-            event.getTrades().put(2, list);
-        }
-
-        if (event.getType() == VillagerProfession.BUTCHER) {
-            Trade block_trade = new Trade(Items.EMERALD, 30, ModBlocks.HORSEMAN_BLOCK.get(), 1, 2, 20);
-            List<VillagerTrades.ItemListing> list = event.getTrades().get(2);
-            list.add(block_trade);
-            event.getTrades().put(2, list);
-        }
+    public void villagerTrades() {
+        TradeRegistry.registerVillagerTrade(VillagerProfession.ARMORER, 2, new Trade(Items.EMERALD, 15, ModBlocks.RECRUIT_SHIELD_BLOCK.get(), 1, 2, 20));
+        TradeRegistry.registerVillagerTrade(VillagerProfession.WEAPONSMITH, 2, new Trade(Items.EMERALD, 8, ModBlocks.RECRUIT_BLOCK.get(), 1, 2, 20));
+        TradeRegistry.registerVillagerTrade(VillagerProfession.FLETCHER, 2, new Trade(Items.EMERALD, 10, ModBlocks.BOWMAN_BLOCK.get(), 1, 2, 20));
+        TradeRegistry.registerVillagerTrade(VillagerProfession.FLETCHER, 2, new Trade(Items.EMERALD, 20, ModBlocks.CROSSBOWMAN_BLOCK.get(), 1, 2, 20));
+        TradeRegistry.registerVillagerTrade(VillagerProfession.CARTOGRAPHER, 2, new Trade(Items.EMERALD, 30, ModBlocks.NOMAD_BLOCK.get(), 1, 2, 20));
+        TradeRegistry.registerVillagerTrade(VillagerProfession.BUTCHER, 2, new Trade(Items.EMERALD, 30, ModBlocks.HORSEMAN_BLOCK.get(), 1, 2, 20));
     }
 
     private static void createRecruitIronGolem(LivingEntity entity){
@@ -643,7 +601,8 @@ public class VillagerEvents {
 
         @Override
         public MerchantOffer getOffer(Entity entity, RandomSource random) {
-            //? if forge {
+            if (!RecruitsServerConfig.ShouldProfessionBlocksTrade.get()) return null;
+            //? if <1.21 {
             return new MerchantOffer(new ItemStack(this.buyingItem, this.buyingAmount), new ItemStack(sellingItem, sellingAmount), maxUses, givenExp, priceMultiplier);
             //?} else {
             /*return new MerchantOffer(new ItemCost(this.buyingItem, this.buyingAmount), new ItemStack(sellingItem, sellingAmount), maxUses, givenExp, priceMultiplier);

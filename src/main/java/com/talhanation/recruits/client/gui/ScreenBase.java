@@ -3,6 +3,12 @@ package com.talhanation.recruits.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.world.entity.LivingEntity;
+//? if >=1.21 {
+/*import org.joml.Quaternionf;
+import org.joml.Vector3f;
+*///?}
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -32,7 +38,7 @@ public class ScreenBase<T extends AbstractContainerMenu> extends AbstractContain
 
     @Override
     public void render(GuiGraphics guiGraphics, int x, int y, float partialTicks) {
-        //? if forge {
+        //? if <1.21 {
         renderBackground(guiGraphics);
         //?} else {
         /*renderTransparentBackground(guiGraphics);
@@ -55,13 +61,45 @@ public class ScreenBase<T extends AbstractContainerMenu> extends AbstractContain
     public void drawHoverAreas(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         for (HoverArea hoverArea : hoverAreas) {
             if (hoverArea.tooltip != null && hoverArea.isHovered(leftPos, topPos, mouseX, mouseY)) {
-                //? if forge {
+                //? if <1.21 {
                 guiGraphics.renderTooltip(font, hoverArea.tooltip.get(), mouseX - leftPos, mouseY - topPos);
                 //?} else {
                 /*guiGraphics.renderTooltip(font, hoverArea.tooltip.get(), mouseX, mouseY);
                 *///?}
             }
         }
+    }
+
+    /**
+     * Renders the entity with its feet at x, y, looking towards the given offset from the mouse, like 1.20.1 did.
+     * Since 1.21 the vanilla method centres the entity in a scissored box and measures the look direction from there.
+     */
+    public static void renderEntityFollowsMouse(GuiGraphics guiGraphics, int x, int y, int scale, float lookX, float lookY, LivingEntity entity) {
+        //? if <1.21 {
+        InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, x, y, scale, lookX, lookY, entity);
+        //?} else {
+        /*float yaw = (float) Math.atan(lookX / 40.0F);
+        float pitch = (float) Math.atan(lookY / 40.0F);
+        Quaternionf pose = new Quaternionf().rotateZ((float) Math.PI);
+        Quaternionf cameraOrientation = new Quaternionf().rotateX(pitch * 20.0F * ((float) Math.PI / 180F));
+        pose.mul(cameraOrientation);
+        float yBodyRot = entity.yBodyRot;
+        float yRot = entity.getYRot();
+        float xRot = entity.getXRot();
+        float yHeadRotO = entity.yHeadRotO;
+        float yHeadRot = entity.yHeadRot;
+        entity.yBodyRot = 180.0F + yaw * 20.0F;
+        entity.setYRot(180.0F + yaw * 40.0F);
+        entity.setXRot(-pitch * 20.0F);
+        entity.yHeadRot = entity.getYRot();
+        entity.yHeadRotO = entity.getYRot();
+        InventoryScreen.renderEntityInInventory(guiGraphics, x, y, scale, new Vector3f(), pose, cameraOrientation, entity);
+        entity.yBodyRot = yBodyRot;
+        entity.setYRot(yRot);
+        entity.setXRot(xRot);
+        entity.yHeadRotO = yHeadRotO;
+        entity.yHeadRot = yHeadRot;
+        *///?}
     }
 
     public int getBlitSize(int amount, int max, int size) {

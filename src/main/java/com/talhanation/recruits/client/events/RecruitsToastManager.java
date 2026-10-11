@@ -10,10 +10,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.Nullable;
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class RecruitsToastManager {
     private static final ResourceLocation LETTER_IMAGE = new ResourceLocation(Main.MOD_ID, "textures/gui/image/letter.png");
     private static final ResourceLocation ALLY_IMAGE = new ResourceLocation(Main.MOD_ID, "textures/gui/image/ally.png");
@@ -96,7 +96,7 @@ public class RecruitsToastManager {
         minecraft.getToasts().addToast(toast);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public enum Images{
         NONE,
         LETTER,

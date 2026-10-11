@@ -10,6 +10,7 @@ import com.talhanation.recruits.client.gui.widgets.ListScreenBase;
 import com.talhanation.recruits.client.gui.widgets.ListScreenListBase;
 import com.talhanation.recruits.network.MessageSendJoinRequestTeam;
 import com.talhanation.recruits.world.RecruitsFaction;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -17,15 +18,15 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 
 import java.util.Locale;
 import static com.talhanation.recruits.client.events.RecruitsToastManager.*;
 
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class RecruitsFactionListScreen extends ListScreenBase implements IFactionSelection{
 
     protected static final ResourceLocation TEXTURE = new ResourceLocation(Main.MOD_ID, "textures/gui/select_player.png");
@@ -98,7 +99,7 @@ public class RecruitsFactionListScreen extends ListScreenBase implements IFactio
                 button -> {
                     RecruitsToastManager.setTeamToastForPlayer(RecruitsToastManager.Images.LETTER, TOAST_SENT_JOIN_REQUEST_TITLE, TOAST_TO(selected.getTeamDisplayName()), selected);
 
-                    RecruitsNetwork.sendToServer(new MessageSendJoinRequestTeam(parent.getMinecraft().player.getUUID(), selected.getStringID()));
+                    RecruitsNetwork.sendToServer(new MessageSendJoinRequestTeam(Minecraft.getInstance().player.getUUID(), selected.getStringID()));
                 });
         sendJoinRequestButton.active = false;
 
@@ -109,7 +110,9 @@ public class RecruitsFactionListScreen extends ListScreenBase implements IFactio
     public void tick() {
         super.tick();
         if(searchBox != null){
+            //? if <1.21 {
             searchBox.tick();
+            //?}
         }
         if(teamList != null){
             teamList.tick();

@@ -10,10 +10,10 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
-@OnlyIn(Dist.CLIENT)
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
+@Environment(EnvType.CLIENT)
 public class RecruitsGroupButton extends ExtendedButton {
 
     private RecruitsGroup group;
@@ -59,8 +59,8 @@ public class RecruitsGroupButton extends ExtendedButton {
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         Minecraft mc = Minecraft.getInstance();
         int k = !this.active ? 0 : (this.isHoveredOrFocused() ? 2 : 1);
-        //? if forge {
-        guiGraphics.blitWithBorder(WIDGETS_LOCATION, this.getX(), this.getY(), 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2);
+        //? if <1.21 {
+        guiGraphics.blitNineSliced(WIDGETS_LOCATION, this.getX(), this.getY(), this.width, this.height, 2, 2, 2, 3, 200, 20, 0, 46 + k * 20);
         //?} else {
         /*super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
         *///?}

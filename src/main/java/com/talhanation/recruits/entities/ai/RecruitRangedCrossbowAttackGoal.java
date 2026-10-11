@@ -143,7 +143,7 @@ public class RecruitRangedCrossbowAttackGoal extends Goal {
                         if (i >= weapon.getWeaponLoadTime()) {
                             this.crossBowman.releaseUsingItem();
                             this.crossBowman.playSound(this.weapon.getLoadSound(), 1.0F, 1.0F / (crossBowman.getRandom().nextFloat() * 0.4F + 0.8F));
-                            setCharged(this.crossBowman.getMainHandItem(), true);
+                            weapon.setLoaded(this.crossBowman.getMainHandItem(), true);
 
                             this.state = State.AIMING;
                         }
@@ -164,7 +164,7 @@ public class RecruitRangedCrossbowAttackGoal extends Goal {
                     case SHOOT -> {
                         if (pos != null) {
                             this.weapon.performRangedAttackIWeapon(this.crossBowman, pos.getX(), pos.getY(), pos.getZ(), weapon.getProjectileSpeed());
-                            setCharged(this.crossBowman.getMainHandItem(), false);
+                            weapon.setLoaded(this.crossBowman.getMainHandItem(), false);
                         }
                         this.state = State.IDLE; //RESUPPLY
                     }
@@ -186,7 +186,7 @@ public class RecruitRangedCrossbowAttackGoal extends Goal {
                         if (i >= weapon.getWeaponLoadTime()) {
                             this.crossBowman.releaseUsingItem();
                             this.crossBowman.playSound(this.weapon.getLoadSound(), 1.0F, 1.0F / (crossBowman.getRandom().nextFloat() * 0.4F + 0.8F));
-                            setCharged(this.crossBowman.getMainHandItem(), true);
+                            weapon.setLoaded(this.crossBowman.getMainHandItem(), true);
 
                             this.state = State.AIMING;
                         }
@@ -230,24 +230,13 @@ public class RecruitRangedCrossbowAttackGoal extends Goal {
                                 target = savedTarget;
                             }
 
-                            setCharged(this.crossBowman.getMainHandItem(), false);
+                            weapon.setLoaded(this.crossBowman.getMainHandItem(), false);
                         }
                         this.state = State.IDLE;
                     }
                 }
             }
         }
-    }
-
-    private static void setCharged(ItemStack stack, boolean charged) {
-        //? if forge {
-        CrossbowItem.setCharged(stack, charged);
-        //?} else {
-        /*if (!charged) {
-            stack.set(net.minecraft.core.component.DataComponents.CHARGED_PROJECTILES,
-                    net.minecraft.world.item.component.ChargedProjectiles.EMPTY);
-        }
-        *///?}
     }
 
 

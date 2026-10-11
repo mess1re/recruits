@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -126,7 +126,7 @@ public class RecruitStrategicFire extends Goal {
                     this.bowman.stopUsingItem();
                 }
             } else if (--this.attackTime <= 0) {
-                this.bowman.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.bowman, predicateBow -> this.isBow(predicateBow.getDefaultInstance())));
+                this.bowman.startUsingItem(this.isBow(this.bowman.getMainHandItem()) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
             }
         }
     }

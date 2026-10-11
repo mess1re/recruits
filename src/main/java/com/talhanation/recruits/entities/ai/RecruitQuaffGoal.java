@@ -6,10 +6,10 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.item.Items;
-//? if forge {
+//? if <1.21 {
 import net.minecraft.world.item.alchemy.PotionUtils;
 //?}
-//? if neoforge {
+//? if >=1.21 {
 /*import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.alchemy.PotionContents;
 *///?}
@@ -85,7 +85,7 @@ public class RecruitQuaffGoal extends Goal {
     }
 
     private boolean isUsefulPotion(ItemStack itemStack) {
-        //? if forge {
+        //? if <1.21 {
         return !PotionUtils.getMobEffects(itemStack).isEmpty()
                 && PotionUtils.getMobEffects(itemStack).stream().noneMatch(instance -> instance.getEffect().getCategory().equals(MobEffectCategory.HARMFUL));
         //?} else {

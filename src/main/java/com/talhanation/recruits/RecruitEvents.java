@@ -17,7 +17,7 @@ import com.talhanation.recruits.inventory.PromoteContainer;
 import com.talhanation.recruits.network.MessageOpenPromoteScreen;
 import com.talhanation.recruits.world.*;
 import com.talhanation.recruits.RecruitEvent;
-import net.minecraftforge.common.MinecraftForge;
+import com.talhanation.recruits.events.RecruitsEventBus;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -40,28 +40,16 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.scores.Team;
-//? if forge {
-import net.minecraftforge.event.TickEvent;
-//?} else {
-/*import net.neoforged.neoforge.event.tick.LevelTickEvent;
-*///?}
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
-import net.minecraftforge.event.entity.EntityTeleportEvent;
-import net.minecraftforge.event.entity.ProjectileImpactEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-//? if forge {
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-//?} else {
-/*import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-*///?}
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import com.talhanation.recruits.platform.PlatformEvents;
+import com.talhanation.recruits.platform.PlatformHooks;
+import dev.architectury.event.EventResult;
+import dev.architectury.event.events.common.EntityEvent;
+import dev.architectury.event.events.common.InteractionEvent;
+import dev.architectury.event.events.common.LifecycleEvent;
+import dev.architectury.event.events.common.TickEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -85,7 +73,7 @@ public class RecruitEvents {
 
     public static void promoteRecruit(AbstractRecruitEntity recruit, int profession, String name, ServerPlayer player) {
         RecruitEvent.Promoted promoteEvent = new RecruitEvent.Promoted(recruit, profession, name, player);
-        MinecraftForge.EVENT_BUS.post(promoteEvent);
+        RecruitsEventBus.post(promoteEvent);
         if (promoteEvent.isCanceled()) return;
 
         EntityType<? extends AbstractRecruitEntity> companionType = entitiesByProfession.get(profession);
@@ -149,9 +137,26 @@ public class RecruitEvents {
         }
     }
 
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-        server = event.getServer();
+    public void register() {
+        LifecycleEvent.SERVER_STARTING.register(this::onServerStarting);
+        LifecycleEvent.SERVER_STARTED.register(this::onServerStarted);
+        LifecycleEvent.SERVER_STOPPING.register(this::onServerStopping);
+        LifecycleEvent.SERVER_LEVEL_SAVE.register(this::onWorldSave);
+        PlatformEvents.ENTITY_JOIN.register(this::onPlayerJoin);
+        PlatformEvents.ENTITY_TELEPORT.register(this::onTeleportEvent);
+        TickEvent.SERVER_LEVEL_POST.register(this::onServerTick);
+        PlatformEvents.PROJECTILE_IMPACT.register(this::onProjectileImpact);
+        PlatformEvents.ENTITY_LEAVE.register(this::onEntityLeaveWorld);
+        InteractionEvent.INTERACT_ENTITY.register(this::onPlayerInteractWithCaravan);
+        EntityEvent.LIVING_HURT.register(this::onLivingHurt);
+        EntityEvent.LIVING_HURT.register(this::onLivingAttack);
+        PlatformEvents.ENTITY_JOIN.register(this::onHorseJoinWorld);
+        EntityEvent.LIVING_DEATH.register(this::onRecruitDeath);
+        TickEvent.SERVER_LEVEL_POST.register(this::onWorldTickArrowCleaner);
+    }
+
+    public void onServerStarting(MinecraftServer minecraftServer) {
+        server = minecraftServer;
 
         recruitsPlayerUnitManager = new RecruitsPlayerUnitManager();
         recruitsPlayerUnitManager.load(server.overworld());
@@ -160,8 +165,7 @@ public class RecruitEvents {
         recruitsGroupsManager.load(server.overworld());
     }
 
-    @SubscribeEvent
-    public void onServerStarted(ServerStartedEvent event) {
+    public void onServerStarted(MinecraftServer minecraftServer) {
         // start() hier und nicht in ServerStartingEvent:
         // ServerStartingEvent feuert bevor die Levels initialisiert sind — server.overworld()
         // kann dort eine NPE werfen und würde start() nie erreichen lassen.
@@ -171,8 +175,7 @@ public class RecruitEvents {
     }
 
 
-    @SubscribeEvent
-    public void onServerStopping(ServerStoppingEvent event) {
+    public void onServerStopping(MinecraftServer minecraftServer) {
         recruitsPlayerUnitManager.save(server.overworld());
 
         recruitsGroupsManager.save(server.overworld());
@@ -181,29 +184,24 @@ public class RecruitEvents {
         AsyncPathProcessor.shutdown();
     }
 
-    @SubscribeEvent
-    public void onWorldSave(LevelEvent.Save event){
+    public void onWorldSave(ServerLevel serverLevel){
         recruitsPlayerUnitManager.save(server.overworld());
         recruitsGroupsManager.save(server.overworld());
     }
 
-    @SubscribeEvent
-    public void onPlayerJoin(EntityJoinLevelEvent event){
-        if(event.getLevel().isClientSide()) return;
+    public EventResult onPlayerJoin(Entity entity, Level level){
+        if(level.isClientSide()) return EventResult.pass();
 
-        if(event.getEntity() instanceof Player player){
+        if(entity instanceof Player player){
             recruitsPlayerUnitManager.broadCastUnitInfoToPlayer(player);
 
             recruitsGroupsManager.broadCastGroupsToPlayer(player);
         }
+        return EventResult.pass();
     }
 
-    @SubscribeEvent
-    public void onTeleportEvent(EntityTeleportEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player && !(event instanceof EntityTeleportEvent.EnderPearl) && !(event instanceof EntityTeleportEvent.ChorusFruit) && !(event instanceof EntityTeleportEvent.EnderEntity)) {
-            double targetX = event.getTargetX();
-            double targetY = event.getTargetY();
-            double targetZ = event.getTargetZ();
+    public void onTeleportEvent(Entity entity, double targetX, double targetY, double targetZ) {
+        if (entity instanceof ServerPlayer player) {
             UUID player_uuid = player.getUUID();
 
             List<AbstractRecruitEntity> recruits = player.getCommandSenderWorld().getEntitiesOfClass(
@@ -217,14 +215,7 @@ public class RecruitEvents {
         }
     }
 
-    @SubscribeEvent
-    //? if forge {
-    public void onServerTick(TickEvent.LevelTickEvent event) {
-        net.minecraft.world.level.Level level = event.level;
-    //?} else {
-    /*public void onServerTick(LevelTickEvent event) {
-        net.minecraft.world.level.Level level = event.getLevel();
-    *///?}
+    public void onServerTick(Level level) {
         if (!level.isClientSide && level instanceof ServerLevel serverWorld) {
             if (RecruitsServerConfig.ShouldRecruitPatrolsSpawn.get()) {
                 RECRUIT_PATROL.computeIfAbsent(serverWorld,
@@ -262,43 +253,34 @@ public class RecruitEvents {
 
     private static final Set<Projectile> canceledProjectiles = new HashSet<>();
 
-    @SubscribeEvent
-    public void onProjectileImpact(ProjectileImpactEvent event) {
-        Entity entity = event.getEntity();
-        HitResult rayTrace = event.getRayTraceResult();
-
-        if (canceledProjectiles.contains(entity)) {
-            return;
+    public EventResult onProjectileImpact(Projectile projectile, HitResult rayTrace) {
+        if (canceledProjectiles.contains(projectile)) {
+            return EventResult.pass();
         }
 
-        if (!(entity instanceof Projectile projectile)) {
-            return;
-        }
         Entity owner = projectile.getOwner();
 
-        if(owner == null) return;
+        if(owner == null) return EventResult.pass();
 
         if (rayTrace.getType() != HitResult.Type.ENTITY) {
-            return;
+            return EventResult.pass();
         }
 
         Entity impactEntity = ((EntityHitResult) rayTrace).getEntity();
         String encode = impactEntity.getEncodeId();
         if (encode != null && encode.contains("corpse:corpse")) {
-            skipProjectileImpact(event);
-            return;
+            return EventResult.interruptFalse();
         }
 
         if (!(impactEntity instanceof LivingEntity impactLiving)) {
-            return;
+            return EventResult.pass();
         }
 
         if (projectile instanceof AbstractArrow arrow && arrow.getPierceLevel() > 0) {
 
             if (owner instanceof LivingEntity livingOwner && !canAttack(livingOwner, impactLiving)) {
-                skipProjectileImpact(event);
                 canceledProjectiles.add(projectile);
-                return;
+                return EventResult.interruptFalse();
             }
         }
 
@@ -309,22 +291,19 @@ public class RecruitEvents {
                 if (passenger instanceof AbstractRecruitEntity passengerRecruit) {
                     if (!canAttack(recruit, passengerRecruit)) {
 
-                        skipProjectileImpact(event);
-                        return;
+                        return EventResult.interruptFalse();
                     }
                 }
                 else if (passenger instanceof Player player) {
                     if (!canAttack(recruit, player)) {
 
-                        skipProjectileImpact(event);
-                        return;
+                        return EventResult.interruptFalse();
                     }
                 }
             }
 
             if (!canAttack(recruit, impactLiving)) {
-                skipProjectileImpact(event);
-                return;
+                return EventResult.interruptFalse();
             }
             else {
                 recruit.addXp(2);
@@ -334,49 +313,34 @@ public class RecruitEvents {
 
         if (owner instanceof AbstractIllager illager && !RecruitsServerConfig.PillagerFriendlyFire.get()) {
             if (illager.isAlliedTo(impactLiving)) {
-                skipProjectileImpact(event);
                 canceledProjectiles.add(projectile);
-                return;
+                return EventResult.interruptFalse();
             }
         }
 
         if (owner instanceof Player player) {
             if (!canHarmTeam(player, impactLiving)) {
-                skipProjectileImpact(event);
-                return;
+                return EventResult.interruptFalse();
             }
         }
+        return EventResult.pass();
     }
 
-    private static void skipProjectileImpact(ProjectileImpactEvent event) {
-        //? if forge {
-        event.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
-        //?} else {
-        /*event.setCanceled(true);
-        *///?}
-    }
+    public void onEntityLeaveWorld(Entity entity, Level level) {
+        if(level.isClientSide()) return;
 
-    @SubscribeEvent
-    public void onEntityLeaveWorld(EntityLeaveLevelEvent event) {
-        if(event.getLevel().isClientSide()) return;
-
-        Entity entity = event.getEntity();
         if (entity instanceof Projectile projectile) {
             canceledProjectiles.remove(projectile);
         }
     }
 
-    @SubscribeEvent
-    public void onPlayerInteractWithCaravan(PlayerInteractEvent.EntityInteract entityInteract) {
-        if(entityInteract.getLevel().isClientSide()) return;
-
-        Player player = entityInteract.getEntity();
-        Entity interacting = entityInteract.getTarget();
+    public EventResult onPlayerInteractWithCaravan(Player player, Entity interacting, InteractionHand hand) {
+        if(player.getCommandSenderWorld().isClientSide()) return EventResult.pass();
 
         if (interacting instanceof AbstractChestedHorse chestedHorse) {
-            CompoundTag nbt = chestedHorse.getPersistentData();
+            CompoundTag nbt = PlatformHooks.INSTANCE.getPersistentData(chestedHorse);
             if (!nbt.contains("Caravan") || !chestedHorse.hasChest()) {
-                return;
+                return EventResult.pass();
             }
 
             player.getCommandSenderWorld().getEntitiesOfClass(
@@ -387,26 +351,20 @@ public class RecruitEvents {
                                     recruit.getName().getString().equals("Caravan Guard"))
             ).forEach((recruit) -> recruit.setTarget(player));
         }
+        return EventResult.pass();
     }
 
-    @SubscribeEvent
-    public void onLivingHurt(
-            //? if forge {
-            LivingHurtEvent event
-            //?} else {
-            /*LivingIncomingDamageEvent event
-            *///?}
-    ) {
-        if(event.getEntity().getCommandSenderWorld().isClientSide()) return;
+    public EventResult onLivingHurt(LivingEntity entity, DamageSource damageSource, float amount) {
+        if(entity.getCommandSenderWorld().isClientSide()) return EventResult.pass();
 
         if (Main.isMusketModLoaded) {
-            Entity sourceEntity = event.getSource().getEntity();
+            Entity sourceEntity = damageSource.getEntity();
             if (sourceEntity instanceof AbstractRecruitEntity owner && IWeapon.isMusketModWeapon(owner.getMainHandItem())) {
-                Entity target = event.getEntity();
+                Entity target = entity;
                 if (target instanceof LivingEntity impactEntity) {
 
                     if (!canAttack(owner, impactEntity)) {
-                        event.setCanceled(true);
+                        return EventResult.interruptFalse();
                     } else {
                         owner.addXp(2);
                         owner.checkLevel();
@@ -415,10 +373,10 @@ public class RecruitEvents {
             }
         }
 
-        Entity target = event.getEntity();
-        Entity source = event.getSource().getEntity();
+        Entity target = entity;
+        Entity source = damageSource.getEntity();
         if (source instanceof LivingEntity sourceEntity) {
-            if (target.getTeam() == null) return;
+            if (target.getTeam() == null) return EventResult.pass();
 
             target.getCommandSenderWorld().getEntitiesOfClass(
                     AbstractRecruitEntity.class,
@@ -428,31 +386,26 @@ public class RecruitEvents {
                             recruit.getTeam().equals(target.getTeam())
             ).forEach((recruit) -> recruit.setTarget(sourceEntity));
         }
+        return EventResult.pass();
     }
 
     private static final double DAMAGE_THRESHOLD_PERCENTAGE = 0.75;
 
-    @SubscribeEvent
-    public void onLivingAttack(
-            //? if forge {
-            LivingAttackEvent event
-            //?} else {
-            /*LivingIncomingDamageEvent event
-            *///?}
-    ) {
-        if(event.getEntity().getCommandSenderWorld().isClientSide()) return;
+    public EventResult onLivingAttack(LivingEntity entity, DamageSource damageSource, float amount) {
+        if(entity.getCommandSenderWorld().isClientSide()) return EventResult.pass();
 
-        Entity target = event.getEntity();
-        Entity source = event.getSource().getEntity();
+        Entity target = entity;
+        Entity source = damageSource.getEntity();
 
         if (!target.getCommandSenderWorld().isClientSide() && target instanceof LivingEntity livingTarget && source instanceof LivingEntity livingSource) {
             if (!canAttack(livingSource, livingTarget)){
-                event.setCanceled(true);
+                return EventResult.interruptFalse();
             }
             else{
-                handleSignificantDamage(livingSource, livingTarget, event.getAmount(), (ServerLevel) livingTarget.getCommandSenderWorld());
+                handleSignificantDamage(livingSource, livingTarget, amount, (ServerLevel) livingTarget.getCommandSenderWorld());
             }
         }
+        return EventResult.pass();
     }
 
     private void handleSignificantDamage(LivingEntity attacker, LivingEntity target, double damage, ServerLevel level) {
@@ -483,13 +436,11 @@ public class RecruitEvents {
         }
     }
 
-    @SubscribeEvent
-    public void onHorseJoinWorld(EntityJoinLevelEvent event) {
-        Entity entity = event.getEntity();
-
+    public EventResult onHorseJoinWorld(Entity entity, Level level) {
         if (entity instanceof AbstractHorse horse) {
             horse.goalSelector.addGoal(0, new HorseRiddenByRecruitGoal(horse));
         }
+        return EventResult.pass();
     }
 
     public static boolean canAttack(LivingEntity attacker, LivingEntity target) {
@@ -630,12 +581,9 @@ public class RecruitEvents {
         }
     }
 
-    @SubscribeEvent
-    public void onRecruitDeath(LivingDeathEvent event) {
-        Entity target = event.getEntity();
-
+    public EventResult onRecruitDeath(LivingEntity target, DamageSource damageSource) {
         if (target instanceof AbstractRecruitEntity recruit) {
-            if (!recruit.getIsOwned() || server == null) return;
+            if (!recruit.getIsOwned() || server == null) return EventResult.pass();
 
             //Morale loss when recruits teammate die
             UUID owner = recruit.getOwnerUUID();
@@ -649,23 +597,15 @@ public class RecruitEvents {
                 entity.setMoral(Math.max(newMorale, 0F));
             });
         }
+        return EventResult.pass();
     }
 
     private final List<AbstractArrow> trackedArrows = new ArrayList<>();
     private int tickCounter = 0;
 
-    @SubscribeEvent
-    //? if forge {
-    public void onWorldTickArrowCleaner(TickEvent.LevelTickEvent event) {//for 1.18 and 1.19 use TickEvent.WorldTickEvent
-        if (event.level.isClientSide()) return;
-    //?} else {
-    /*public void onWorldTickArrowCleaner(LevelTickEvent.Post event) {
-        if (event.getLevel().isClientSide()) return;
-    *///?}
+    public void onWorldTickArrowCleaner(ServerLevel level) {
+        if (level.isClientSide()) return;
         if (!RecruitsServerConfig.AllowArrowCleaning.get()) return;
-        //? if forge {
-        if (event.phase != TickEvent.Phase.END) return;
-        //?}
         if (server == null) return;
 
 
@@ -673,23 +613,14 @@ public class RecruitEvents {
         tickCounter = 0;
 
 
-        //? if forge {
-        List<AbstractArrow> arrows = event.level.getEntitiesOfClass(AbstractArrow.class, event.level.getWorldBorder().getCollisionShape().bounds());
-        //?} else {
-        /*List<AbstractArrow> arrows = event.getLevel().getEntitiesOfClass(AbstractArrow.class, event.getLevel().getWorldBorder().getCollisionShape().bounds());
-        *///?}
+        List<AbstractArrow> arrows = level.getEntitiesOfClass(AbstractArrow.class, level.getWorldBorder().getCollisionShape().bounds());
         trackedArrows.addAll(arrows);
 
 
         Iterator<AbstractArrow> iterator = trackedArrows.iterator();
         while (iterator.hasNext()) {
             AbstractArrow arrow = iterator.next();
-            //? if forge {
-            boolean expired = arrow.inGroundTime > 300;
-            //?} else {
-            /*boolean expired = arrow.tickCount > 300;
-            *///?}
-            if (arrow.pickup == AbstractArrow.Pickup.DISALLOWED && expired) {
+            if (arrow.pickup == AbstractArrow.Pickup.DISALLOWED && arrow.inGroundTime > 300) {
                 arrow.discard();
                 iterator.remove();
             }

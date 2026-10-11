@@ -8,7 +8,7 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-//? if neoforge {
+//? if >=1.21 {
 /*import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -46,7 +46,7 @@ public final class RecruitsNetwork {
             MESSAGE_IDS.put(messageType, id);
         }
 
-        //? if forge {
+        //? if <1.21 {
         NetworkManager.registerReceiver(NetworkManager.c2s(), SERVERBOUND,
                 (buffer, context) -> handle(decode(buffer), MessageSide.SERVER, context));
         EnvExecutor.runInEnv(Env.CLIENT, () -> () ->
@@ -67,7 +67,7 @@ public final class RecruitsNetwork {
 
     public static void sendToServer(Message<?> message) {
         requireSide(message, MessageSide.SERVER);
-        //? if forge {
+        //? if <1.21 {
         NetworkManager.sendToServer(SERVERBOUND, encode(message));
         //?} else {
         /*NetworkManager.sendToServer(new ServerboundPayload(message));
@@ -76,7 +76,7 @@ public final class RecruitsNetwork {
 
     public static void sendToPlayer(ServerPlayer player, Message<?> message) {
         requireSide(message, MessageSide.CLIENT);
-        //? if forge {
+        //? if <1.21 {
         NetworkManager.sendToPlayer(player, CLIENTBOUND, encode(message));
         //?} else {
         /*NetworkManager.sendToPlayer(player, new ClientboundPayload(message));
@@ -143,14 +143,14 @@ public final class RecruitsNetwork {
     }
 
     private static ResourceLocation id(String path) {
-        //? if forge {
+        //? if <1.21 {
         return new ResourceLocation(Main.MOD_ID, path);
         //?} else {
-        /*return ResourceLocation.fromNamespaceAndPath(Main.MOD_ID, path);
+        /*return new ResourceLocation(Main.MOD_ID, path);
         *///?}
     }
 
-    //? if neoforge {
+    //? if >=1.21 {
     /*private record ServerboundPayload(Message<?> message) implements CustomPacketPayload {
         private static final Type<ServerboundPayload> TYPE = new Type<>(SERVERBOUND);
         private static final StreamCodec<RegistryFriendlyByteBuf, ServerboundPayload> STREAM_CODEC =

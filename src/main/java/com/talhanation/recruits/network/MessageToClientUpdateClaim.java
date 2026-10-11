@@ -6,9 +6,9 @@ import com.talhanation.recruits.client.gui.worldmap.claim.WorldMapClaimIndex;
 import com.talhanation.recruits.network.codec.ClaimNetworkCodec;
 import com.talhanation.recruits.world.RecruitsClaim;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import com.talhanation.recruits.events.RecruitsEventBus;
 
 public class MessageToClientUpdateClaim implements Message<MessageToClientUpdateClaim> {
     private RecruitsClaim claim;
@@ -26,12 +26,12 @@ public class MessageToClientUpdateClaim implements Message<MessageToClientUpdate
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void executeClientSide(MessageContext context) {
         this.updateOrAddClaim(claim);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private void updateOrAddClaim(RecruitsClaim newClaim) {
         if (newClaim == null) return;
 
@@ -56,7 +56,7 @@ public class MessageToClientUpdateClaim implements Message<MessageToClientUpdate
 
                 ClientManager.updateActiveSiege(newClaim);
 
-                MinecraftForge.EVENT_BUS.post(new ClientClaimEvent.DataUpdated(newClaim, isCurrentClaim));
+                RecruitsEventBus.post(new ClientClaimEvent.DataUpdated(newClaim, isCurrentClaim));
                 return;
             }
         }
@@ -64,11 +64,11 @@ public class MessageToClientUpdateClaim implements Message<MessageToClientUpdate
         ClientManager.recruitsClaims.add(newClaim);
         WorldMapClaimIndex.invalidate();
         ClientManager.updateActiveSiege(newClaim);
-        MinecraftForge.EVENT_BUS.post(
+        RecruitsEventBus.post(
                 new ClientClaimEvent.DataUpdated(newClaim, false));
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private void removeClaim(RecruitsClaim removedClaim) {
         boolean wasCurrentClaim = ClientManager.currentClaim != null
                 && ClientManager.currentClaim.getUUID().equals(removedClaim.getUUID());
@@ -81,7 +81,7 @@ public class MessageToClientUpdateClaim implements Message<MessageToClientUpdate
         }
 
         WorldMapClaimIndex.invalidate();
-        MinecraftForge.EVENT_BUS.post(new ClientClaimEvent.DataUpdated(removedClaim, wasCurrentClaim));
+        RecruitsEventBus.post(new ClientClaimEvent.DataUpdated(removedClaim, wasCurrentClaim));
     }
 
     @Override

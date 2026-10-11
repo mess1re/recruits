@@ -11,11 +11,10 @@ import net.minecraft.world.item.SpawnEggItem;
 import dev.architectury.registry.registries.RegistrySupplier;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class RegistryUtils {
 
-    public static RegistrySupplier<SpawnEggItem> createSpawnEggItem(String entityName, Supplier<? extends EntityType<? extends AbstractRecruitEntity>> supplier, int primaryColor, int secondaryColor) {
+    public static RegistrySupplier<SpawnEggItem> createSpawnEggItem(String entityName, RegistrySupplier<? extends EntityType<? extends AbstractRecruitEntity>> supplier, int primaryColor, int secondaryColor) {
         RegistrySupplier<SpawnEggItem> spawnEgg = ModItems.ITEMS.register(entityName + "_spawn_egg", () -> new RecruitsSpawnEgg(supplier, primaryColor, secondaryColor, new Item.Properties()));
         ModItems.SPAWN_EGGS.add(spawnEgg);
         return spawnEgg;

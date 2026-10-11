@@ -3,21 +3,20 @@ package com.talhanation.recruits;
 import com.talhanation.recruits.world.RecruitsFaction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import com.talhanation.recruits.events.Cancelable;
+import com.talhanation.recruits.events.Event;
 
 import javax.annotation.Nullable;
 
 /**
  * Events für den Lebenszyklus von Fraktionen. Alle Sub-Events werden auf dem
- * {@code MinecraftForge.EVENT_BUS} gepostet und sind server-side only.
+ * {@link com.talhanation.recruits.events.RecruitsEventBus} gepostet und sind server-side only.
  *
  * <pre>
- *   {@code @SubscribeEvent}
- *   public void onFactionCreated(FactionEvent.Created event) {
+ *   RecruitsEventBus.register(FactionEvent.Created.class, event -> {
  *       RecruitsFaction faction = event.getFaction();
  *       ServerPlayer leader = event.getCreator();
- *   }
+ *   });
  * </pre>
  */
 public abstract class FactionEvent extends Event {
@@ -47,7 +46,7 @@ public abstract class FactionEvent extends Event {
      * <p>Cancelable: {@code setCanceled(true)} rollt die Erstellung zurück.</p>
      */
     @Cancelable
-    public static class Created extends FactionEvent implements RecruitsCancellableEvent {
+    public static class Created extends FactionEvent {
         @Nullable
         private final ServerPlayer creator;
 
@@ -81,7 +80,7 @@ public abstract class FactionEvent extends Event {
      * <p>Cancelable: {@code setCanceled(true)} verhindert den Beitritt.</p>
      */
     @Cancelable
-    public static class PlayerJoined extends FactionEvent implements RecruitsCancellableEvent {
+    public static class PlayerJoined extends FactionEvent {
         private final ServerPlayer player;
 
         public PlayerJoined(RecruitsFaction faction, ServerLevel level, ServerPlayer player) {

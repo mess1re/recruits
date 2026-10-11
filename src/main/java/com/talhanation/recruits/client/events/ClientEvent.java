@@ -8,103 +8,78 @@ import com.talhanation.recruits.client.render.RecruitHumanRenderer;
 import com.talhanation.recruits.client.render.RecruitVillagerRenderer;
 import com.talhanation.recruits.client.render.layer.RecruitArmorLayer;
 import com.talhanation.recruits.config.RecruitsClientConfig;
+import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.init.ModEntityTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import com.talhanation.recruits.platform.ClientPlatformEvents;
+import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
+import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ModelEvent;
-//? if forge {
-import net.minecraftforge.client.event.TextureStitchEvent;
-//?} else {
-/*import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
-*///?}
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import javax.annotation.Nullable;
 
-@Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD , value = Dist.CLIENT)
 public class ClientEvent {
 
     public static ModelLayerLocation RECRUIT = new ModelLayerLocation(new ResourceLocation(Main.MOD_ID + "recruit"), "recruit");
     public static ModelLayerLocation RECRUIT_OUTER_ARMOR = new ModelLayerLocation(new ResourceLocation(Main.MOD_ID + "recruit_outer_layer"), "recruit_outer_layer");
     public static ModelLayerLocation RECRUIT_INNER_ARMOR = new ModelLayerLocation(new ResourceLocation(Main.MOD_ID + "recruit_inner_layer"), "recruit_inner_layer");
 
-    @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public static void entityRenderersEvent(EntityRenderersEvent.RegisterRenderers event){
+    public static void register() {
+        entityRenderersEvent();
+        layerDefinitions();
+        ClientPlatformEvents.MODELS_BAKED.register(ClientEvent::modelBakingCompleted);
+        ClientPlatformEvents.BLOCK_ATLAS_STITCHED.register(ClientEvent::textureStitchCompleted);
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static void entityRenderersEvent(){
+        EntityRendererRegistry.register(ModEntityTypes.RECRUIT, ClientEvent::createRecruitRenderer);
+        EntityRendererRegistry.register(ModEntityTypes.BOWMAN, ClientEvent::createRecruitRenderer);
+        EntityRendererRegistry.register(ModEntityTypes.NOMAD, ClientEvent::createRecruitRenderer);
+        EntityRendererRegistry.register(ModEntityTypes.HORSEMAN, ClientEvent::createRecruitRenderer);
+        EntityRendererRegistry.register(ModEntityTypes.CROSSBOWMAN, ClientEvent::createRecruitRenderer);
+        EntityRendererRegistry.register(ModEntityTypes.RECRUIT_SHIELDMAN, ClientEvent::createRecruitRenderer);
+
+        //COMPANIONS
+        EntityRendererRegistry.register(ModEntityTypes.MESSENGER, ClientEvent::createRecruitRenderer);
+        EntityRendererRegistry.register(ModEntityTypes.SCOUT, ClientEvent::createRecruitRenderer);
+        EntityRendererRegistry.register(ModEntityTypes.PATROL_LEADER, ClientEvent::createRecruitRenderer);
+        EntityRendererRegistry.register(ModEntityTypes.CAPTAIN, ClientEvent::createRecruitRenderer);
+        EntityRendererRegistry.register(ModEntityTypes.SIEGE_ENGINEER, ClientEvent::createRecruitRenderer);
+
+        //OTHER
+        EntityRendererRegistry.register(ModEntityTypes.VILLAGER_NOBLE, ClientEvent::createRecruitRenderer);
+    }
+
+    // The config is read when renderers are created, it is not loaded yet when they are registered.
+    private static EntityRenderer<AbstractRecruitEntity> createRecruitRenderer(EntityRendererProvider.Context context) {
         if(RecruitsClientConfig.RecruitsLookLikeVillagers.get()){
-            EntityRenderers.register(ModEntityTypes.RECRUIT.get(), RecruitVillagerRenderer::new );
-            EntityRenderers.register(ModEntityTypes.BOWMAN.get(), RecruitVillagerRenderer::new );
-            EntityRenderers.register(ModEntityTypes.NOMAD.get(), RecruitVillagerRenderer::new );
-            EntityRenderers.register(ModEntityTypes.HORSEMAN.get(), RecruitVillagerRenderer::new );
-            EntityRenderers.register(ModEntityTypes.CROSSBOWMAN.get(), RecruitVillagerRenderer::new );
-            EntityRenderers.register(ModEntityTypes.RECRUIT_SHIELDMAN.get(), RecruitVillagerRenderer::new );
-
-            //COMPANIONS
-            EntityRenderers.register(ModEntityTypes.MESSENGER.get(), RecruitVillagerRenderer::new );
-            EntityRenderers.register(ModEntityTypes.SCOUT.get(), RecruitVillagerRenderer::new );
-            EntityRenderers.register(ModEntityTypes.PATROL_LEADER.get(), RecruitVillagerRenderer::new );
-            EntityRenderers.register(ModEntityTypes.CAPTAIN.get(), RecruitVillagerRenderer::new );
-            EntityRenderers.register(ModEntityTypes.SIEGE_ENGINEER.get(), RecruitVillagerRenderer::new );
-
-            //OTHER
-            EntityRenderers.register(ModEntityTypes.VILLAGER_NOBLE.get(), RecruitVillagerRenderer::new );
-
+            return new RecruitVillagerRenderer(context);
         }
-        else{
-            EntityRenderers.register(ModEntityTypes.RECRUIT.get(), RecruitHumanRenderer::new);
-            EntityRenderers.register(ModEntityTypes.BOWMAN.get(), RecruitHumanRenderer::new );
-            EntityRenderers.register(ModEntityTypes.NOMAD.get(), RecruitHumanRenderer::new );
-            EntityRenderers.register(ModEntityTypes.HORSEMAN.get(), RecruitHumanRenderer::new );
-            EntityRenderers.register(ModEntityTypes.CROSSBOWMAN.get(), RecruitHumanRenderer::new );
-            EntityRenderers.register(ModEntityTypes.RECRUIT_SHIELDMAN.get(), RecruitHumanRenderer::new );
-
-            //COMPANIONS
-            EntityRenderers.register(ModEntityTypes.MESSENGER.get(), RecruitHumanRenderer::new );
-            EntityRenderers.register(ModEntityTypes.SCOUT.get(), RecruitHumanRenderer::new );
-            EntityRenderers.register(ModEntityTypes.PATROL_LEADER.get(), RecruitHumanRenderer::new );
-            EntityRenderers.register(ModEntityTypes.CAPTAIN.get(), RecruitHumanRenderer::new );
-            EntityRenderers.register(ModEntityTypes.SIEGE_ENGINEER.get(), RecruitHumanRenderer::new );
-			
-            //OTHER
-            EntityRenderers.register(ModEntityTypes.VILLAGER_NOBLE.get(), RecruitHumanRenderer::new );
-
-  
-
-        }
+        return new RecruitHumanRenderer(context);
     }
 
-    @SubscribeEvent
-    public static void layerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(ClientEvent.RECRUIT, RecruitVillagerModel::createLayerDefinition);
-        event.registerLayerDefinition(ClientEvent.RECRUIT_OUTER_ARMOR, RecruitArmorLayer::createOuterArmorLayer);
-        event.registerLayerDefinition(ClientEvent.RECRUIT_INNER_ARMOR, RecruitArmorLayer::createInnerArmorLayer);
+    public static void layerDefinitions() {
+        EntityModelLayerRegistry.register(ClientEvent.RECRUIT, RecruitVillagerModel::createLayerDefinition);
+        EntityModelLayerRegistry.register(ClientEvent.RECRUIT_OUTER_ARMOR, RecruitArmorLayer::createOuterArmorLayer);
+        EntityModelLayerRegistry.register(ClientEvent.RECRUIT_INNER_ARMOR, RecruitArmorLayer::createInnerArmorLayer);
 
     }
 
-    @SubscribeEvent
-    public static void modelBakingCompleted(ModelEvent.BakingCompleted event) {
+    public static void modelBakingCompleted() {
         WorldMapCacheManager.getInstance().onClientModelsReloaded();
     }
 
-    @SubscribeEvent
-    //? if forge {
-    public static void textureStitchCompleted(TextureStitchEvent.Post event) {
-    //?} else {
-    /*public static void textureStitchCompleted(TextureAtlasStitchedEvent event) {
-    *///?}
-        if (TextureAtlas.LOCATION_BLOCKS.equals(event.getAtlas().location())) {
-            WorldMapCacheManager.getInstance().onClientBlockAtlasStitched();
-        }
+    public static void textureStitchCompleted() {
+        WorldMapCacheManager.getInstance().onClientBlockAtlasStitched();
     }
 
     @Nullable

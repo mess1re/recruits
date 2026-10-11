@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 import org.lwjgl.glfw.GLFW;
 
 public class MessengerTreatyAnswerScreen extends RecruitsScreenBase {
@@ -110,7 +110,9 @@ public class MessengerTreatyAnswerScreen extends RecruitsScreenBase {
     @Override
     public void tick() {
         super.tick();
+        //? if <1.21 {
         if (descriptionBox != null) descriptionBox.tick();
+        //?}
     }
 
     @Override

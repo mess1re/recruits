@@ -42,7 +42,7 @@ public interface ICompanion {
     boolean isAtMission();
     default void applyRecruitValues(AbstractRecruitEntity recruit){
         //ATTRIBUTES
-        //? if forge {
+        //? if <1.21 {
         this.get().getAttributes().assignValues(recruit.getAttributes());
         //?} else {
         /*this.get().getAttributes().assignAllValues(recruit.getAttributes());

@@ -8,12 +8,11 @@ import com.talhanation.recruits.Main;
 import com.talhanation.recruits.network.MessageToClientSetDiplomaticToast;
 import com.talhanation.recruits.network.MessageToClientUpdateDiplomacyList;
 import com.talhanation.recruits.network.MessageToClientUpdateEmbargoes;
-import com.talhanation.recruits.util.RecruitsEventBus;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.MinecraftForge;
+import com.talhanation.recruits.events.RecruitsEventBus;
 
 import java.util.*;
 
@@ -53,7 +52,7 @@ public class RecruitsDiplomacyManager {
 
         DiplomacyEvent.RelationChanged relEvent =
                 new DiplomacyEvent.RelationChanged(team, otherTeam, level, currentRelation, relation);
-        if (RecruitsEventBus.postCancelable(relEvent)) return;
+        if (RecruitsEventBus.post(relEvent)) return;
 
         diplomacyMap.computeIfAbsent(team, k -> new HashMap<>()).put(otherTeam, relation);
         if(notifyPlayers) this.notifyPlayersInTeam(team, otherTeam, relation, level);

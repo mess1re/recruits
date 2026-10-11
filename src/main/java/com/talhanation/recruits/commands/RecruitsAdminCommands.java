@@ -7,6 +7,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.talhanation.recruits.ClaimEvents;
 import com.talhanation.recruits.RecruitEvents;
@@ -20,6 +21,7 @@ import com.talhanation.recruits.world.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.*;
 import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.core.BlockPos;
@@ -34,7 +36,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
-import net.minecraftforge.server.command.EnumArgument;
 
 import java.util.*;
 import java.util.function.Function;
@@ -230,11 +231,12 @@ public class RecruitsAdminCommands {
                         .then(Commands.literal("setRelations")
                                 .then(Commands.argument("Faction1", TeamArgument.team())
                                         .then(Commands.argument("Faction2", TeamArgument.team())
-                                                .then(Commands.argument("Relation", EnumArgument.enumArgument(RecruitsDiplomacyManager.DiplomacyStatus.class))
+                                                .then(Commands.argument("Relation", StringArgumentType.word())
+                                                        .suggests((context, builder) -> SharedSuggestionProvider.suggest(Arrays.stream(RecruitsDiplomacyManager.DiplomacyStatus.values()).map(Enum::name), builder))
                                                         .executes((context) -> {
                                                             PlayerTeam playerTeam1 = TeamArgument.getTeam(context, "Faction1");
                                                             PlayerTeam playerTeam2 = TeamArgument.getTeam(context, "Faction2");
-                                                            RecruitsDiplomacyManager.DiplomacyStatus status = context.getArgument("Relation", RecruitsDiplomacyManager.DiplomacyStatus.class);
+                                                            RecruitsDiplomacyManager.DiplomacyStatus status = getDiplomacyStatus(context, "Relation");
 
                                                             if(playerTeam1.equals(playerTeam2)){
                                                                 context.getSource().sendFailure(Component.literal("Cannot set Diplomacy of same Faction!").withStyle(ChatFormatting.RED));
@@ -728,8 +730,19 @@ public class RecruitsAdminCommands {
         dispatcher.register(literalBuilder);
     }
 
+    private static final DynamicCommandExceptionType UNKNOWN_RELATION = new DynamicCommandExceptionType(value -> Component.literal("Unknown relation: " + value));
+
+    private static RecruitsDiplomacyManager.DiplomacyStatus getDiplomacyStatus(CommandContext<CommandSourceStack> context, String argument) throws CommandSyntaxException {
+        String value = StringArgumentType.getString(context, argument);
+        try {
+            return RecruitsDiplomacyManager.DiplomacyStatus.valueOf(value);
+        } catch (IllegalArgumentException e) {
+            throw UNKNOWN_RELATION.create(value);
+        }
+    }
+
     private static String getScoreHolderName(CommandContext<CommandSourceStack> context, String argument) throws CommandSyntaxException {
-        //? if forge {
+        //? if <1.21 {
         return ScoreHolderArgument.getName(context, argument);
         //?} else {
         /*return ScoreHolderArgument.getName(context, argument).getScoreboardName();
@@ -737,7 +750,7 @@ public class RecruitsAdminCommands {
     }
 
     private static Collection<String> getScoreHolderNames(CommandContext<CommandSourceStack> context, String argument) throws CommandSyntaxException {
-        //? if forge {
+        //? if <1.21 {
         return ScoreHolderArgument.getNamesWithDefaultWildcard(context, argument);
         //?} else {
         /*return ScoreHolderArgument.getNamesWithDefaultWildcard(context, argument).stream()

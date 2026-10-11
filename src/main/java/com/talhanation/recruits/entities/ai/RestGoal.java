@@ -3,6 +3,7 @@ package com.talhanation.recruits.entities.ai;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.entities.ICompanion;
 import com.talhanation.recruits.entities.VillagerNobleEntity;
+import com.talhanation.recruits.platform.PlatformHooks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
@@ -87,7 +88,7 @@ public class RestGoal extends Goal {
         if(!stackOfBeds.isEmpty()){
             if(this.sleepPos != null){
                 BlockState state = recruit.getCommandSenderWorld().getBlockState(sleepPos);
-                if (state.isBed(recruit.getCommandSenderWorld(), sleepPos, recruit) && !state.getValue(BlockStateProperties.OCCUPIED)) {
+                if (PlatformHooks.INSTANCE.isBed(state, recruit.getCommandSenderWorld(), sleepPos, recruit) && !state.getValue(BlockStateProperties.OCCUPIED)) {
                     this.goToBed(sleepPos);
                 }
 
@@ -137,7 +138,7 @@ public class RestGoal extends Goal {
                     BlockPos pos = recruit.getOnPos().offset(x, y, z);
                     BlockState state = recruit.getCommandSenderWorld().getBlockState(pos);
 
-                    if (state.isBed(recruit.getCommandSenderWorld(), pos, this.recruit) && !state.getValue(BlockStateProperties.OCCUPIED)){
+                    if (PlatformHooks.INSTANCE.isBed(state, recruit.getCommandSenderWorld(), pos, this.recruit) && !state.getValue(BlockStateProperties.OCCUPIED)){
                         try{
                             if (state.getValue(MULTI_BLOCK_INDEX) == 1){
                                 stack.push(pos);

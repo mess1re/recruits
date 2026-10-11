@@ -13,7 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.scores.Team;
-import net.minecraftforge.common.MinecraftForge;
+import com.talhanation.recruits.events.RecruitsEventBus;
 
 import java.util.Objects;
 import java.util.List;
@@ -156,7 +156,7 @@ public class MessageWriteSpawnEgg implements Message<MessageWriteSpawnEgg> {
 
         entityTag.put("HandItems", listtag1);
 
-        MinecraftForge.EVENT_BUS.post(new RecruitsOnWriteSpawnEggEvent(recruitEntity, entityTag));
+        RecruitsEventBus.post(new RecruitsOnWriteSpawnEggEvent(recruitEntity, entityTag));
 
         return entityTag;
     }

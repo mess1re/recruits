@@ -3,15 +3,15 @@ package com.talhanation.recruits.client.api;
 import com.talhanation.recruits.client.gui.overlay.ClaimOverlayManager;
 import com.talhanation.recruits.world.RecruitsClaim;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import com.talhanation.recruits.events.Cancelable;
+import com.talhanation.recruits.events.Event;
 
 import javax.annotation.Nullable;
 
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public abstract class ClientOverlayEvent extends Event {
 
     @Nullable
@@ -34,7 +34,7 @@ public abstract class ClientOverlayEvent extends Event {
 
 
     @Cancelable
-    public static class RenderPre extends ClientOverlayEvent implements com.talhanation.recruits.RecruitsCancellableEvent {
+    public static class RenderPre extends ClientOverlayEvent {
         private final GuiGraphics guiGraphics;
 
         public RenderPre(GuiGraphics guiGraphics,
@@ -63,7 +63,7 @@ public abstract class ClientOverlayEvent extends Event {
     }
 
     @Cancelable
-    public static class StateChanged extends ClientOverlayEvent implements com.talhanation.recruits.RecruitsCancellableEvent {
+    public static class StateChanged extends ClientOverlayEvent {
         private final ClaimOverlayManager.OverlayState previousState;
 
         public StateChanged(@Nullable RecruitsClaim claim, ClaimOverlayManager.OverlayState previousState, ClaimOverlayManager.OverlayState newState, float alpha) {

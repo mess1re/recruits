@@ -9,7 +9,12 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
-/** Shared base for Recruits menus: the player inventory layout and shift-click handling. */
+/**
+ * Shared base for Recruits menus.
+ *
+ * <p>This is intentionally small: it owns only the player-inventory layout and the
+ * standard shift-click/validity behavior used by the existing menus.</p>
+ */
 public abstract class ContainerBase extends AbstractContainerMenu {
 
     @Nullable

@@ -8,6 +8,7 @@ import com.talhanation.recruits.client.gui.group.RecruitsCommandButton;
 import com.talhanation.recruits.client.gui.faction.FactionMainScreen;
 import com.talhanation.recruits.network.*;
 import com.talhanation.recruits.world.RecruitsGroup;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -95,7 +96,7 @@ public class OtherCategory implements ICommandCategory {
         //TEAM
         RecruitsCommandButton factionButton = new RecruitsCommandButton(x - 60, y + 50, TEXT_TEAM,
                 button -> {
-                    screen.getMinecraft().setScreen(new FactionMainScreen(player));
+                    Minecraft.getInstance().setScreen(new FactionMainScreen(player));
                 });
         factionButton.setTooltip(Tooltip.create(TOOLTIP_TEAM));
         screen.addRenderableWidget(factionButton);

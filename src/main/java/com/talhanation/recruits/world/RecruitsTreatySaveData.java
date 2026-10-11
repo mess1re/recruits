@@ -17,17 +17,30 @@ public class RecruitsTreatySaveData extends SavedData {
     }
 
     public static RecruitsTreatySaveData get(ServerLevel level) {
+        //? if <1.21 {
         return level.getDataStorage().computeIfAbsent(RecruitsTreatySaveData::load, RecruitsTreatySaveData::new, DATA_NAME);
+        //?} else {
+        /*return level.getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(RecruitsTreatySaveData::new, RecruitsTreatySaveData::load, null), DATA_NAME);
+        *///?}
     }
 
+    //? if <1.21 {
     public static RecruitsTreatySaveData load(CompoundTag nbt) {
+    //?} else {
+    /*public static RecruitsTreatySaveData load(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+    *///?}
         RecruitsTreatySaveData data = new RecruitsTreatySaveData();
         data.treaties = RecruitsTreatyManager.mapFromNbt(nbt.getCompound("treaties"));
         return data;
     }
 
     @Override
+    //? if <1.21 {
     public CompoundTag save(CompoundTag nbt) {
+    //?} else {
+    /*public CompoundTag save(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+    *///?}
         nbt.put("treaties", RecruitsTreatyManager.mapToNbt(treaties));
         return nbt;
     }

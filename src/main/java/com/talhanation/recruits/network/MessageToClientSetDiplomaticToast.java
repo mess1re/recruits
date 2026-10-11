@@ -4,8 +4,8 @@ import com.talhanation.recruits.client.events.RecruitsToastManager;
 import com.talhanation.recruits.world.RecruitsFaction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import static com.talhanation.recruits.client.events.RecruitsToastManager.*;
 
@@ -33,7 +33,7 @@ public class MessageToClientSetDiplomaticToast implements Message<MessageToClien
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void executeClientSide(MessageContext context) {
         RecruitsFaction team = RecruitsFaction.fromNBT(nbt);
         switch (x){

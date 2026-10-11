@@ -27,7 +27,7 @@ public class PlayersList extends ListScreenListBase<RecruitsPlayerEntry> {
         this.filterType = filterType;
         this.player = player;
         this.includeSelf = includeSelf;
-        //? if forge {
+        //? if <1.21 {
         setRenderBackground(false);
         setRenderTopAndBottom(false);
         setRenderSelection(true);

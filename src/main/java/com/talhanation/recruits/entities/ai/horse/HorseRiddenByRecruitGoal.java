@@ -2,6 +2,7 @@ package com.talhanation.recruits.entities.ai.horse;
 
 import com.talhanation.recruits.entities.AbstractLeaderEntity;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
+import com.talhanation.recruits.platform.PlatformHooks;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.camel.Camel;
@@ -28,12 +29,12 @@ public class HorseRiddenByRecruitGoal extends Goal {
 
     private void applyHorseSpeed() {
         double speed;
-        if(this.horse.getPersistentData().contains("oldSpeed")){
-            speed = horse.getPersistentData().getDouble("oldSpeed");
+        if(PlatformHooks.INSTANCE.getPersistentData(this.horse).contains("oldSpeed")){
+            speed = PlatformHooks.INSTANCE.getPersistentData(horse).getDouble("oldSpeed");
         }
         else{
             speed = this.horse.getAttribute(Attributes.MOVEMENT_SPEED).getValue();
-            this.horse.getPersistentData().putDouble("oldSpeed", speed);
+            PlatformHooks.INSTANCE.getPersistentData(this.horse).putDouble("oldSpeed", speed);
         }
         if(this.horse.getControllingPassenger() instanceof AbstractLeaderEntity leader){
             leaderFastSpeed = leader.getFastPatrolling();
@@ -62,7 +63,7 @@ public class HorseRiddenByRecruitGoal extends Goal {
     @Override
     public void stop() {
         super.stop();
-        double oldSpeed = horse.getPersistentData().getDouble("oldSpeed");
+        double oldSpeed = PlatformHooks.INSTANCE.getPersistentData(horse).getDouble("oldSpeed");
         this.horse.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(oldSpeed);
     }
 }

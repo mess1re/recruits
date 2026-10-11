@@ -6,23 +6,28 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import com.talhanation.recruits.platform.PlatformHooks;
+import dev.architectury.event.events.client.ClientPlayerEvent;
+import dev.architectury.event.events.common.LifecycleEvent;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.VersionChecker;
 
 public class UpdateChecker {
 
-    @SubscribeEvent
-    public void onPlayerJoinWorld(PlayerEvent.PlayerLoggedInEvent event){
-        if(!event.getEntity().getCommandSenderWorld().isClientSide()) return;
+    public void register() {
+        LifecycleEvent.SERVER_STARTED.register(this::onServerStarted);
+    }
+
+    public void registerClient() {
+        ClientPlayerEvent.CLIENT_PLAYER_JOIN.register(this::onPlayerJoinWorld);
+    }
+
+    public void onPlayerJoinWorld(Player player){
+        if(!player.getCommandSenderWorld().isClientSide()) return;
         if(RecruitsClientConfig.UpdateCheckerClientside.get()){
-            VersionChecker.Status status = VersionChecker.getResult((ModList.get().getModContainerById("recruits").get()).getModInfo()).status();
+            PlatformHooks.UpdateStatus status = PlatformHooks.INSTANCE.getUpdateStatus();
             switch (status){
                 case OUTDATED -> {
-                    Player player = event.getEntity();
                     if(player != null){
 						player.sendSystemMessage(Component.literal("A new version of Villager Recruits is available!").withStyle(ChatFormatting.GOLD));
 						MutableComponent link = Component.literal("Download the update " + ChatFormatting.BLUE + "here").withStyle(ChatFormatting.GREEN);
@@ -41,10 +46,9 @@ public class UpdateChecker {
         }
     }
 
-    @SubscribeEvent
-    public void onServerStarted(ServerStartedEvent event){
+    public void onServerStarted(MinecraftServer server){
         if(RecruitsServerConfig.UpdateCheckerServerside.get()){
-            VersionChecker.Status status = VersionChecker.getResult((ModList.get().getModContainerById("recruits").get()).getModInfo()).status();
+            PlatformHooks.UpdateStatus status = PlatformHooks.INSTANCE.getUpdateStatus();
 
             switch (status){
                 case OUTDATED -> {

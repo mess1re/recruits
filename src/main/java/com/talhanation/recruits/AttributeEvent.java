@@ -2,32 +2,28 @@ package com.talhanation.recruits;
 
 import com.talhanation.recruits.entities.*;
 import com.talhanation.recruits.init.ModEntityTypes;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import dev.architectury.registry.level.entity.EntityAttributeRegistry;
 
 import java.util.Random;
 
-@Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class AttributeEvent {
     protected final Random random = new Random();
 
-    @SubscribeEvent
-    public static void entityAttributeEvent(final EntityAttributeCreationEvent event) {
-        //event.put(ModEntityTypes.ASSASSIN.get(), AssassinEntity.setAttributes().build());
-        //event.put(ModEntityTypes.ASSASSIN_LEADER.get(), AssassinLeaderEntity.setAttributes().build());
-        event.put(ModEntityTypes.BOWMAN.get(), BowmanEntity.setAttributes().build());
-        event.put(ModEntityTypes.CROSSBOWMAN.get(), CrossBowmanEntity.setAttributes().build());
-        event.put(ModEntityTypes.NOMAD.get(), NomadEntity.setAttributes().build());
-        event.put(ModEntityTypes.RECRUIT.get(), RecruitEntity.setAttributes().build());
-        event.put(ModEntityTypes.RECRUIT_SHIELDMAN.get(), RecruitShieldmanEntity.setAttributes().build());
-        event.put(ModEntityTypes.HORSEMAN.get(), HorsemanEntity.setAttributes().build());
-        event.put(ModEntityTypes.MESSENGER.get(), MessengerEntity.setAttributes().build());
-        event.put(ModEntityTypes.PATROL_LEADER.get(), CommanderEntity.setAttributes().build());
-        event.put(ModEntityTypes.CAPTAIN.get(), CaptainEntity.setAttributes().build());
-        event.put(ModEntityTypes.SCOUT.get(), ScoutEntity.setAttributes().build());
-        event.put(ModEntityTypes.VILLAGER_NOBLE.get(), VillagerNobleEntity.setAttributes().build());
-        event.put(ModEntityTypes.SIEGE_ENGINEER.get(), SiegeEngineerEntity.setAttributes().build());
+    public static void entityAttributeEvent() {
+        //EntityAttributeRegistry.register(ModEntityTypes.ASSASSIN, AssassinEntity::setAttributes);
+        //EntityAttributeRegistry.register(ModEntityTypes.ASSASSIN_LEADER, AssassinLeaderEntity::setAttributes);
+        EntityAttributeRegistry.register(ModEntityTypes.BOWMAN, BowmanEntity::setAttributes);
+        EntityAttributeRegistry.register(ModEntityTypes.CROSSBOWMAN, CrossBowmanEntity::setAttributes);
+        EntityAttributeRegistry.register(ModEntityTypes.NOMAD, NomadEntity::setAttributes);
+        EntityAttributeRegistry.register(ModEntityTypes.RECRUIT, RecruitEntity::setAttributes);
+        EntityAttributeRegistry.register(ModEntityTypes.RECRUIT_SHIELDMAN, RecruitShieldmanEntity::setAttributes);
+        EntityAttributeRegistry.register(ModEntityTypes.HORSEMAN, HorsemanEntity::setAttributes);
+        EntityAttributeRegistry.register(ModEntityTypes.MESSENGER, MessengerEntity::setAttributes);
+        EntityAttributeRegistry.register(ModEntityTypes.PATROL_LEADER, CommanderEntity::setAttributes);
+        EntityAttributeRegistry.register(ModEntityTypes.CAPTAIN, CaptainEntity::setAttributes);
+        EntityAttributeRegistry.register(ModEntityTypes.SCOUT, ScoutEntity::setAttributes);
+        EntityAttributeRegistry.register(ModEntityTypes.VILLAGER_NOBLE, VillagerNobleEntity::setAttributes);
+        EntityAttributeRegistry.register(ModEntityTypes.SIEGE_ENGINEER, SiegeEngineerEntity::setAttributes);
 
     }
 }

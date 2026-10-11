@@ -95,13 +95,41 @@ public final class MapFramebufferPass implements AutoCloseable {
         float right = left + frame.screenWidth();
         float bottom = top + frame.screenHeight();
 
+        //? if <1.21 {
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+        //?} else {
+        /*BufferBuilder buffer;
+        *///?}
+        //? if <1.21 {
         buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        //?} else {
+        /*buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        *///?}
+        //? if <1.21 {
         buffer.vertex(matrix, left, bottom, 0.0F).uv(0.0F, 0.0F).endVertex();
+        //?} else {
+        /*buffer.addVertex(matrix, left, bottom, 0.0F).setUv(0.0F, 0.0F);
+        *///?}
+        //? if <1.21 {
         buffer.vertex(matrix, right, bottom, 0.0F).uv(1.0F, 0.0F).endVertex();
+        //?} else {
+        /*buffer.addVertex(matrix, right, bottom, 0.0F).setUv(1.0F, 0.0F);
+        *///?}
+        //? if <1.21 {
         buffer.vertex(matrix, right, top, 0.0F).uv(1.0F, 1.0F).endVertex();
+        //?} else {
+        /*buffer.addVertex(matrix, right, top, 0.0F).setUv(1.0F, 1.0F);
+        *///?}
+        //? if <1.21 {
         buffer.vertex(matrix, left, top, 0.0F).uv(0.0F, 1.0F).endVertex();
+        //?} else {
+        /*buffer.addVertex(matrix, left, top, 0.0F).setUv(0.0F, 1.0F);
+        *///?}
+        //? if <1.21 {
         BufferUploader.drawWithShader(buffer.end());
+        //?} else {
+        /*BufferUploader.drawWithShader(buffer.buildOrThrow());
+        *///?}
     }
 
     @Override

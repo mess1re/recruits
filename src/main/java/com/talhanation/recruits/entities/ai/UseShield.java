@@ -4,6 +4,7 @@ import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.entities.HorsemanEntity;
 import com.talhanation.recruits.pathfinding.AsyncPathfinderMob;
 import com.talhanation.recruits.util.AttackUtil;
+import com.talhanation.recruits.platform.PlatformHooks;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -14,7 +15,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
-import net.minecraftforge.common.ToolActions;
 
 public class UseShield extends Goal {
     public final AsyncPathfinderMob entity;
@@ -38,16 +38,16 @@ public class UseShield extends Goal {
     }
 
     public void start() {
-        if (this.entity.getOffhandItem().getItem().canPerformAction(entity.getOffhandItem(), ToolActions.SHIELD_BLOCK)){
+        if (PlatformHooks.INSTANCE.canBlockWithShield(this.entity.getOffhandItem())){
             this.entity.startUsingItem(InteractionHand.OFF_HAND);
             this.entity.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.12D);
         }
     }
     public boolean hasShieldInHand(){
         if(entity instanceof AbstractRecruitEntity recruit){
-            recruit.switchOffHandItem(itemStack -> itemStack.getItem().canPerformAction(entity.getOffhandItem(), ToolActions.SHIELD_BLOCK));
+            recruit.switchOffHandItem(itemStack -> PlatformHooks.INSTANCE.canBlockWithShield(itemStack));
         }
-        return this.entity.getOffhandItem().getItem().canPerformAction(entity.getOffhandItem(), ToolActions.SHIELD_BLOCK);
+        return PlatformHooks.INSTANCE.canBlockWithShield(this.entity.getOffhandItem());
     }
     public  void stop(){
         this.entity.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.3D);

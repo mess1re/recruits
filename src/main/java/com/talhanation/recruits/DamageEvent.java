@@ -1,110 +1,87 @@
 package com.talhanation.recruits;
 
 import com.talhanation.recruits.config.RecruitsServerConfig;
+import com.talhanation.recruits.platform.PlatformEvents;
+import dev.architectury.event.EventResult;
+import dev.architectury.event.events.common.EntityEvent;
+import dev.architectury.event.events.common.PlayerEvent;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-//? if forge {
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-//?} else {
-/*import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-*///?}
-import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
 
 public class DamageEvent {
 
+    public void register() {
+        PlayerEvent.ATTACK_ENTITY.register(this::onPlayerAttack);
+        PlatformEvents.LIVING_KNOCKBACK.register(this::onKnockback);
+        EntityEvent.LIVING_HURT.register(this::onEntityHurt);
+        PlayerEvent.ATTACK_ENTITY.register(this::onEntityHurtByPlayer);
+    }
 
-    @SubscribeEvent
-    public static void onPlayerAttack(AttackEntityEvent event) {
-        if (!event.isCanceled()) {
-            Player player = event.getEntity();
-            if (player.getCommandSenderWorld().isClientSide()) {
-                return;
-            }
-            float str = player.getAttackStrengthScale(0);
-            if (str <= 0.1) {
-                event.setCanceled(true);
-                return;
-            }
-            if (str <= 0.75) {
-                Entity target = event.getTarget();
-                if (target != null && target instanceof LivingEntity) {
-                    ((LivingEntity)target).swinging = true;
-                }
+    public EventResult onPlayerAttack(Player player, Level level, Entity target, InteractionHand hand, EntityHitResult hitResult) {
+        if (player.getCommandSenderWorld().isClientSide()) {
+            return EventResult.pass();
+        }
+        float str = player.getAttackStrengthScale(0);
+        if (str <= 0.1) {
+            return EventResult.interruptFalse();
+        }
+        if (str <= 0.75) {
+            if (target != null && target instanceof LivingEntity) {
+                ((LivingEntity)target).swinging = true;
             }
         }
+        return EventResult.pass();
     }
 
 
-    @SubscribeEvent
-    public static void onKnockback(LivingKnockBackEvent event) {
-        if (!event.isCanceled()) {
-            LivingEntity entity = event.getEntity();
-            if (entity.swinging) {
-                event.setCanceled(true);
-                entity.swinging = false;
-            }
+    public EventResult onKnockback(LivingEntity entity) {
+        if (entity.swinging) {
+            entity.swinging = false;
+            return EventResult.interruptFalse();
         }
+        return EventResult.pass();
     }
 
-    @SubscribeEvent
-    public void onEntityHurt(
-            //? if forge {
-            LivingHurtEvent event
-            //?} else {
-            /*LivingIncomingDamageEvent event
-            *///?}
-    ) {
-        if (!event.isCanceled()) {
-
-            LivingEntity target = event.getEntity();
-
-            if (target.getCommandSenderWorld().isClientSide()) {
-                return;
-            }
-
-            DamageSource source = event.getSource();
-            Entity sourceEntity = event.getEntity();
-
-            if(!RecruitsServerConfig.NoDamageImmunity.get()) return;
-
-            if (target.getCommandSenderWorld().isClientSide()) {
-                return;
-            }
-
-            //Velocity Damage
-            if(source != null && sourceEntity != null){
-
-            }
-
-            //NO Damage Immunity
-            if(!RecruitsServerConfig.NoDamageImmunity.get()) return;
-
-
-            if (source != null && RecruitsServerConfig.AcceptedDamagesourceImmunity.get().contains(source.getMsgId())) {
-                return;
-            }
-            target.invulnerableTime = 0;
-            //? if neoforge {
-            /*event.setInvulnerabilityTicks(0);
-            *///?}
+    public EventResult onEntityHurt(LivingEntity target, DamageSource source, float amount) {
+        if (target.getCommandSenderWorld().isClientSide()) {
+            return EventResult.pass();
         }
+
+        Entity sourceEntity = target;
+
+        if(!RecruitsServerConfig.NoDamageImmunity.get()) return EventResult.pass();
+
+        if (target.getCommandSenderWorld().isClientSide()) {
+            return EventResult.pass();
+        }
+
+        //Velocity Damage
+        if(source != null && sourceEntity != null){
+
+        }
+
+        //NO Damage Immunity
+        if(!RecruitsServerConfig.NoDamageImmunity.get()) return EventResult.pass();
+
+
+        if (source != null && RecruitsServerConfig.AcceptedDamagesourceImmunity.get().contains(source.getMsgId())) {
+            return EventResult.pass();
+        }
+        target.invulnerableTime = 0;
+        return EventResult.pass();
     }
 
-    @SubscribeEvent
-    public void onEntityHurtByPlayer(AttackEntityEvent event) {
-        if (!event.isCanceled()) {
-            Player player = event.getEntity();
-            Entity target = event.getTarget();
-
-            if(target.getFirstPassenger() instanceof LivingEntity passenger){
-                if (!RecruitEvents.canHarmTeam(player, passenger)) {
-                    event.setCanceled(true);
-                }
+    public EventResult onEntityHurtByPlayer(Player player, Level level, Entity target, InteractionHand hand, EntityHitResult hitResult) {
+        if(target.getFirstPassenger() instanceof LivingEntity passenger){
+            if (!RecruitEvents.canHarmTeam(player, passenger)) {
+                return EventResult.interruptFalse();
             }
         }
+        return EventResult.pass();
     }
 }

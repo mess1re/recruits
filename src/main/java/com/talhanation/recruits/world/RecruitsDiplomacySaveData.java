@@ -21,10 +21,19 @@ public class RecruitsDiplomacySaveData extends SavedData {
     }
 
     public static RecruitsDiplomacySaveData get(ServerLevel level) {
+        //? if <1.21 {
         return level.getDataStorage().computeIfAbsent(RecruitsDiplomacySaveData::load, RecruitsDiplomacySaveData::new, DATA_NAME);
+        //?} else {
+        /*return level.getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(RecruitsDiplomacySaveData::new, RecruitsDiplomacySaveData::load, null), DATA_NAME);
+        *///?}
     }
 
+    //? if <1.21 {
     public static RecruitsDiplomacySaveData load(CompoundTag nbt) {
+    //?} else {
+    /*public static RecruitsDiplomacySaveData load(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+    *///?}
         RecruitsDiplomacySaveData data = new RecruitsDiplomacySaveData();
 
         CompoundTag teamsTag = nbt.getCompound("teams");
@@ -50,7 +59,11 @@ public class RecruitsDiplomacySaveData extends SavedData {
     }
 
     @Override
+    //? if <1.21 {
     public CompoundTag save(CompoundTag nbt) {
+    //?} else {
+    /*public CompoundTag save(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+    *///?}
         CompoundTag teamsTag = new CompoundTag();
         for (Map.Entry<String, Map<String, DiplomacyStatus>> teamEntry : diplomacyMap.entrySet()) {
             CompoundTag relationsTag = new CompoundTag();

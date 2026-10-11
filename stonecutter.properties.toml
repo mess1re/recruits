@@ -8,18 +8,43 @@ mod.license = "All rights reserved"
 mod.description = "This Mod adds hire-able Villager Recruits with different Ranks like in M&B-Bannerlord into Minecraft. Adds Ability to claim und siege."
 mod.update_url = "https://raw.githubusercontent.com/talhanation/recruits/main/update.json"
 mod.display_url = "https://modrinth.com/mod/villager-recruits/versions"
+deps.fabric_loader = "0.16.14"
+
+[common."1.20.1"]
+deps.architectury = "9.2.14"
+deps.forge_config_api_port = "fuzs.forgeconfigapiport:forgeconfigapiport-common:8.0.3"
+mod.java = 17
+
+[common."1.21.1"]
+deps.architectury = "13.0.11"
+deps.forge_config_api_port = "fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:21.1.6"
+mod.java = 21
 
 [forge."1.20.1"]
+mod.pack_format = "15"
 mod.minecraft_range = "[1.20.1,1.21)"
 mod.forge_range = "[47.4.10,)"
 mod.loader_range = "[47,)"
-mod.pack_format = "15"
 deps.forge = "1.20.1-47.4.10"
 deps.architectury = "9.2.14"
 
 [neoforge."1.21.1"]
+mod.pack_format = "34"
 mod.minecraft_range = "[1.21.1]"
 mod.loader_range = "[1,)"
-mod.pack_format = "34"
 deps.neoforge = "21.1.248"
 deps.architectury = "13.0.11"
+
+[fabric."1.20.1"]
+mod.minecraft_range = "~1.20.1"
+deps.fabric_api = "0.92.6+1.20.1"
+deps.architectury = "9.2.14"
+deps.forge_config_api_port = "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.3"
+mod.java = 17
+
+[fabric."1.21.1"]
+mod.minecraft_range = "~1.21.1"
+deps.fabric_api = "0.116.7+1.21.1"
+deps.architectury = "13.0.11"
+deps.forge_config_api_port = "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.1.6"
+mod.java = 21

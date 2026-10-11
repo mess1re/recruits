@@ -118,7 +118,7 @@ public abstract class AbstractLeaderEntity extends AbstractChunkLoaderEntity imp
             if (!itemstack.isEmpty()) {
                 CompoundTag compoundnbt = new CompoundTag();
                 compoundnbt.putByte("WaypointItem", (byte) i);
-                //? if forge {
+                //? if <1.21 {
                 itemstack.save(compoundnbt);
                 //?} else {
                 /*compoundnbt.merge((CompoundTag) itemstack.save(this.registryAccess()));
@@ -176,7 +176,7 @@ public abstract class AbstractLeaderEntity extends AbstractChunkLoaderEntity imp
         for (int i = 0; i < waypointItems.size(); ++i) {
             CompoundTag compoundnbt = waypointItems.getCompound(i);
 
-            //? if forge {
+            //? if <1.21 {
             ItemStack itemStack = ItemStack.of(compoundnbt);
             //?} else {
             /*ItemStack itemStack = ItemStack.parse(this.registryAccess(), compoundnbt).orElse(ItemStack.EMPTY);

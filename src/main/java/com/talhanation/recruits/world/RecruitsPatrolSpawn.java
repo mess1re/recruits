@@ -6,6 +6,7 @@ import com.talhanation.recruits.entities.*;
 import com.talhanation.recruits.entities.ai.villager.FollowCaravanOwner;
 import com.talhanation.recruits.init.ModEntityTypes;
 import com.talhanation.recruits.util.NPCArmy;
+import com.talhanation.recruits.platform.PlatformHooks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.data.worldgen.DimensionTypes;
 import net.minecraft.network.chat.Component;
@@ -15,7 +16,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
-//? if forge {
+//? if <1.21 {
 import net.minecraft.world.entity.SpawnPlacements.Type;
 //?} else {
 /*import net.minecraft.world.entity.SpawnPlacements;
@@ -404,7 +405,7 @@ public class RecruitsPatrolSpawn {
         horse.finalizeSpawn(world, world.getCurrentDifficultyAt(upPos), MobSpawnType.PATROL, null, null);
         horse.setPersistenceRequired();
         horse.setTamed(true);
-        //? if forge {
+        //? if <1.21 {
         horse.equipSaddle(null);
         //?} else {
         /*horse.equipSaddle(new ItemStack(Items.SADDLE), null);
@@ -430,12 +431,12 @@ public class RecruitsPatrolSpawn {
         llama.setPersistenceRequired();
         llama.setTamed(true);
         llama.setChest(true);
-        llama.getPersistentData().putInt("Strength", 5);
-        //? if forge {
+        PlatformHooks.INSTANCE.getPersistentData(llama).putInt("Strength", 5);
+        //? if <1.21 {
         llama.createInventory();
         //?}
         llama.setLeashedTo(villager, true);
-        llama.getPersistentData().putBoolean("Caravan", true);
+        PlatformHooks.INSTANCE.getPersistentData(llama).putBoolean("Caravan", true);
         fillLlamaInventory(llama);
         world.addFreshEntity(llama);
     }
@@ -467,11 +468,11 @@ public class RecruitsPatrolSpawn {
         mule.setPersistenceRequired();
         mule.setTamed(true);
         mule.setChest(true);
-        //? if forge {
+        //? if <1.21 {
         mule.createInventory();
         //?}
         mule.setLeashedTo(owner, true);
-        mule.getPersistentData().putBoolean("Caravan", true);
+        PlatformHooks.INSTANCE.getPersistentData(mule).putBoolean("Caravan", true);
         fillMuleInventory(mule);
         world.addFreshEntity(mule);
     }
@@ -488,11 +489,7 @@ public class RecruitsPatrolSpawn {
     }
 
     private static net.minecraft.world.SimpleContainer horseInventory(AbstractHorse horse) {
-        //? if forge {
         return horse.inventory;
-        //?} else {
-        /*return (net.minecraft.world.SimpleContainer) horse.getInventory();
-        *///?}
     }
 
     // -------------------------------------------------------------------------
@@ -620,7 +617,7 @@ public class RecruitsPatrolSpawn {
             int z = center.getZ() + random.nextInt(spread * 2) - spread;
             int y = world.getHeight(Types.WORLD_SURFACE, x, z);
             BlockPos pos = new BlockPos(x, y, z);
-            //? if forge {
+            //? if <1.21 {
             if (NaturalSpawner.isSpawnPositionOk(Type.ON_GROUND, world, pos, EntityType.WANDERING_TRADER)) {
             //?} else {
             /*if (SpawnPlacements.isSpawnPositionOk(EntityType.WANDERING_TRADER, world, pos)) {

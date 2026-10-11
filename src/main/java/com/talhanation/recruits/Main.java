@@ -1,51 +1,18 @@
 package com.talhanation.recruits;
 
-import com.talhanation.recruits.client.gui.overlay.ClaimOverlayManager;
-import com.talhanation.recruits.client.events.CommandCategoryManager;
-import com.talhanation.recruits.client.events.KeyEvents;
-import com.talhanation.recruits.client.events.ClientPlayerEvents;
-import com.talhanation.recruits.client.gui.commandscreen.CombatCategory;
-import com.talhanation.recruits.client.gui.commandscreen.MovementCategory;
-import com.talhanation.recruits.client.gui.commandscreen.OtherCategory;
-import com.talhanation.recruits.network.MessageSaveTeamSettings;
 import com.talhanation.recruits.commands.PatrolSpawnCommand;
 import com.talhanation.recruits.commands.RecruitsAdminCommands;
-import com.talhanation.recruits.config.RecruitsClientConfig;
-import com.talhanation.recruits.config.RecruitsServerConfig;
-import com.talhanation.recruits.entities.AbstractChunkLoaderEntity;
-import com.talhanation.recruits.init.ModBlocks;
-import com.talhanation.recruits.init.ModEntityTypes;
-import com.talhanation.recruits.init.ModItems;
-import com.talhanation.recruits.init.ModScreens;
 import com.talhanation.recruits.init.*;
 import com.talhanation.recruits.network.*;
+import dev.architectury.event.events.common.CommandRegistrationEvent;
+import dev.architectury.event.events.common.LifecycleEvent;
+import dev.architectury.platform.Platform;
+import dev.architectury.registry.CreativeTabRegistry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.CreativeModeTabs;
-//? if forge {
-import dev.architectury.platform.forge.EventBuses;
-//?}
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.*;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-//? if forge {
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-//?} else {
-/*import net.neoforged.fml.ModContainer;
-*///?}
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(Main.MOD_ID)
 public class Main {
     public static final String MOD_ID = "recruits";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
@@ -58,69 +25,63 @@ public class Main {
     public static boolean isCorpseLoaded;
     public static boolean isRPGZLoaded;
 
-    //? if forge {
-    public Main() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        EventBuses.registerModEventBus(MOD_ID, modEventBus);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, RecruitsServerConfig.SERVER);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, RecruitsClientConfig.CLIENT);
-        initialize(modEventBus);
+    /**
+     * Called by every loader when the mod is constructed.
+     */
+    public static void init() {
+        registerContent();
+        AttributeEvent.entityAttributeEvent();
+        addCreativeTabs();
+
+        CommandRegistrationEvent.EVENT.register((dispatcher, registryAccess, selection) -> {
+            PatrolSpawnCommand.register(dispatcher);
+            RecruitsAdminCommands.register(dispatcher);
+        });
+
+        LifecycleEvent.SETUP.register(() -> {
+            new RecruitEvents().register();
+            new VillagerEvents().register();
+            new PillagerEvents().register();
+            new CommandEvents().register();
+            new FactionEvents().register();
+            new DamageEvent().register();
+            new UpdateChecker().register();
+            new ClaimEvents().register();
+
+            setup();
+        });
     }
-    //?} else {
-    /*public Main(IEventBus modEventBus, ModContainer modContainer) {
-        modContainer.registerConfig(ModConfig.Type.SERVER, RecruitsServerConfig.SERVER);
-        modContainer.registerConfig(ModConfig.Type.CLIENT, RecruitsClientConfig.CLIENT);
-        initialize(modEventBus);
+
+    private static void addCreativeTabs() {
+        CreativeTabRegistry.appendBuiltin(BuiltInRegistries.CREATIVE_MODE_TAB.getOrThrow(CreativeModeTabs.SPAWN_EGGS),
+                ModItems.BOWMAN_SPAWN_EGG,
+                ModItems.RECRUIT_SHIELD_SPAWN_EGG,
+                ModItems.RECRUIT_SPAWN_EGG,
+                ModItems.NOMAD_SPAWN_EGG,
+                ModItems.HORSEMAN_SPAWN_EGG,
+                ModItems.CROSSBOWMAN_SPAWN_EGG,
+                ModItems.VILLAGER_NOBLE_SPAWN_EGG);
+
+        CreativeTabRegistry.appendBuiltin(BuiltInRegistries.CREATIVE_MODE_TAB.getOrThrow(CreativeModeTabs.FUNCTIONAL_BLOCKS),
+                ModBlocks.RECRUIT_BLOCK,
+                ModBlocks.BOWMAN_BLOCK,
+                ModBlocks.RECRUIT_SHIELD_BLOCK,
+                ModBlocks.CROSSBOWMAN_BLOCK,
+                ModBlocks.HORSEMAN_BLOCK,
+                ModBlocks.NOMAD_BLOCK);
     }
-    *///?}
 
-    private void initialize(IEventBus modEventBus) {
-        //? if forge {
-        RecruitsClientConfig.loadConfig(RecruitsClientConfig.CLIENT, FMLPaths.CONFIGDIR.get().resolve("recruits-client.toml"));
-        //?}
-
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            modEventBus.addListener(Main.this::clientSetup);
-            modEventBus.addListener(ModShortcuts::registerBindings);
-        }
-
-        modEventBus.addListener(this::setup);
+    public static void registerContent() {
         ModBlocks.BLOCKS.register();
         ModPois.POIS.register();
         ModProfessions.PROFESSIONS.register();
         ModScreens.MENU_TYPES.register();
         ModItems.ITEMS.register();
         ModEntityTypes.ENTITY_TYPES.register();
-        //? if neoforge {
-        /*modEventBus.addListener(RecruitsCapabilities::register);
-        modEventBus.addListener(AbstractChunkLoaderEntity::registerTicketController);
-        *///?}
-
-        modEventBus.addListener(this::addCreativeTabs);
-
-        //ModSounds.SOUNDS.register(modEventBus);
-        MinecraftForge.EVENT_BUS.register(this);
-    }
-
-    @SubscribeEvent
-    public void onRegisterCommands(RegisterCommandsEvent event) {
-        PatrolSpawnCommand.register(event.getDispatcher());
-        RecruitsAdminCommands.register(event.getDispatcher());
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private void setup(final FMLCommonSetupEvent event) {
-        MinecraftForge.EVENT_BUS.register(new RecruitEvents());
-        MinecraftForge.EVENT_BUS.register(new VillagerEvents());
-        MinecraftForge.EVENT_BUS.register(new PillagerEvents());
-        MinecraftForge.EVENT_BUS.register(new CommandEvents());
-        MinecraftForge.EVENT_BUS.register(new DebugEvents());
-        MinecraftForge.EVENT_BUS.register(new FactionEvents());
-        MinecraftForge.EVENT_BUS.register(new DamageEvent());
-        MinecraftForge.EVENT_BUS.register(new UpdateChecker());
-        MinecraftForge.EVENT_BUS.register(new ClaimEvents());
-        MinecraftForge.EVENT_BUS.register(this);
-
+    public static void setup() {
         Class[] messages = {
                 MessageAggro.class,
                 MessageAggroGui.class,
@@ -238,57 +199,23 @@ public class Main {
         RecruitsNetwork.register(messages);
 
 
-        isMusketModLoaded = ModList.get().isLoaded("musketmod");//MusketMod
-        isSmallShipsLoaded = ModList.get().isLoaded("smallships");//small ships
-        isSiegeWeaponsLoaded = ModList.get().isLoaded("siegeweapons");//siege weapons
-        isRPGZLoaded = ModList.get().isLoaded("rpgz");//rpgz mod
-        isCorpseLoaded = ModList.get().isLoaded("corpse");//corpse mod
-        isEpicKnightsLoaded = ModList.get().isLoaded("magistuarmory");//epic knights mod
+        isMusketModLoaded = Platform.isModLoaded("musketmod");//MusketMod
+        isSmallShipsLoaded = Platform.isModLoaded("smallships");//small ships
+        isSiegeWeaponsLoaded = Platform.isModLoaded("siegeweapons");//siege weapons
+        isRPGZLoaded = Platform.isModLoaded("rpgz");//rpgz mod
+        isCorpseLoaded = Platform.isModLoaded("corpse");//corpse mod
+        isEpicKnightsLoaded = Platform.isModLoaded("magistuarmory");//epic knights mod
 
         isSmallShipsCompatible = false;
         if(isSmallShipsLoaded){
-            String smallshipsversion = ModList.get().getModFileById("smallships").versionString();
+            String smallshipsversion = Platform.getMod("smallships").getVersion();
             isSmallShipsCompatible = isVersionAtLeast(smallshipsversion, "2.0.0-b1.4");
         }
 
         isSiegeWeaponsCompatible = false;
         if(isSiegeWeaponsLoaded){
-            String siegeweaponsVersion = ModList.get().getModFileById("siegeweapons").versionString();
+            String siegeweaponsVersion = Platform.getMod("siegeweapons").getVersion();
             isSiegeWeaponsCompatible = isVersionAtLeast(siegeweaponsVersion, "0.2.5");
-        }
-    }
-
-    @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public void clientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(ModScreens::registerMenus);
-        MinecraftForge.EVENT_BUS.register(new KeyEvents());
-        MinecraftForge.EVENT_BUS.register(new ClientPlayerEvents());
-        MinecraftForge.EVENT_BUS.register(new ClaimOverlayManager());
-
-        CommandCategoryManager.register(new MovementCategory(), -2);
-        CommandCategoryManager.register(new CombatCategory(), -3);
-        CommandCategoryManager.register(new OtherCategory(), -1);
-    }
-
-    private void addCreativeTabs(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey().equals(CreativeModeTabs.SPAWN_EGGS)) {
-            event.accept(ModItems.BOWMAN_SPAWN_EGG.get());
-            event.accept(ModItems.RECRUIT_SHIELD_SPAWN_EGG.get());
-            event.accept(ModItems.RECRUIT_SPAWN_EGG.get());
-            event.accept(ModItems.NOMAD_SPAWN_EGG.get());
-            event.accept(ModItems.HORSEMAN_SPAWN_EGG.get());
-            event.accept(ModItems.CROSSBOWMAN_SPAWN_EGG.get());
-            event.accept(ModItems.VILLAGER_NOBLE_SPAWN_EGG.get());
-        }
-
-        if (event.getTabKey().equals(CreativeModeTabs.FUNCTIONAL_BLOCKS)){
-            event.accept(ModBlocks.RECRUIT_BLOCK.get());
-            event.accept(ModBlocks.BOWMAN_BLOCK.get());
-            event.accept(ModBlocks.RECRUIT_SHIELD_BLOCK.get());
-            event.accept(ModBlocks.CROSSBOWMAN_BLOCK.get());
-            event.accept(ModBlocks.HORSEMAN_BLOCK.get());
-            event.accept(ModBlocks.NOMAD_BLOCK.get());
         }
     }
 

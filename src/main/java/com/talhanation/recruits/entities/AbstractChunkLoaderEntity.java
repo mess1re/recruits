@@ -1,36 +1,18 @@
 package com.talhanation.recruits.entities;
-import com.talhanation.recruits.Main;
 import com.talhanation.recruits.config.RecruitsServerConfig;
+import com.talhanation.recruits.platform.PlatformHooks;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-//? if neoforge {
-/*import net.minecraft.resources.ResourceLocation;
-*///?}
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-//? if forge {
-import net.minecraftforge.common.world.ForgeChunkManager;
-//?}
-//? if neoforge {
-/*import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
-import net.neoforged.neoforge.common.world.chunk.TicketController;
-*///?}
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public abstract class AbstractChunkLoaderEntity extends BowmanEntity {
-    //? if neoforge {
-    /*private static final TicketController CHUNK_TICKETS = new TicketController(ResourceLocation.fromNamespaceAndPath(Main.MOD_ID, "recruit_entities"));
-
-    public static void registerTicketController(RegisterTicketControllersEvent event) {
-        event.register(CHUNK_TICKETS);
-    }
-    *///?}
-
     private Optional<RecruitsChunk> loadedChunk = Optional.empty();
 
     public AbstractChunkLoaderEntity(EntityType<? extends AbstractChunkLoaderEntity> entityType, Level world) {
@@ -41,7 +23,8 @@ public abstract class AbstractChunkLoaderEntity extends BowmanEntity {
 
     public void tick() {
         super.tick();
-        if(shouldLoadChunk()) updateChunkLoading();
+        // Dying entities keep ticking until they are removed and must not force their chunks again.
+        if(this.isAlive() && shouldLoadChunk()) updateChunkLoading();
     }
 
     public boolean shouldLoadChunk(){
@@ -108,11 +91,7 @@ public abstract class AbstractChunkLoaderEntity extends BowmanEntity {
     ////////////////////////////////////SET////////////////////////////////////
 
     private void setForceChunk(RecruitsChunk chunk, boolean add) {
-        //? if forge {
-        ForgeChunkManager.forceChunk((ServerLevel) this.getCommandSenderWorld(), Main.MOD_ID, this, chunk.x, chunk.z, add, false);
-        //?} else {
-        /*CHUNK_TICKETS.forceChunk((ServerLevel) this.getCommandSenderWorld(), this, chunk.x, chunk.z, add, false);
-        *///?}
+        PlatformHooks.INSTANCE.forceChunk((ServerLevel) this.getCommandSenderWorld(), this, chunk.x, chunk.z, add);
     }
 
     public void die(DamageSource dmg) {
@@ -136,6 +115,17 @@ public abstract class AbstractChunkLoaderEntity extends BowmanEntity {
         public boolean isSame(RecruitsChunk otherChunk){
             if(otherChunk != null) return this.x == otherChunk.x && this.z == otherChunk.z;
             else return false;
+        }
+
+        // Chunk changes are detected with equals and the chunks to (un)force are computed with sets.
+        @Override
+        public boolean equals(Object other) {
+            return other instanceof RecruitsChunk chunk && isSame(chunk);
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * x + z;
         }
 
         public RecruitsChunk getNextChunk(Direction direction) {

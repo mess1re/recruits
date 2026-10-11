@@ -14,15 +14,15 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 
 import java.util.Locale;
 
 import static com.talhanation.recruits.client.ClientManager.ownFaction;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class DiplomacyTeamListScreen extends ListScreenBase {
 
     protected static final ResourceLocation TEXTURE = new ResourceLocation(Main.MOD_ID, "textures/gui/select_with_filter.png");
@@ -167,7 +167,7 @@ public class DiplomacyTeamListScreen extends ListScreenBase {
     public void tick() {
         super.tick();
         if (searchBox != null) {
-            //? if forge {
+            //? if <1.21 {
             searchBox.tick();
             //?}
         }

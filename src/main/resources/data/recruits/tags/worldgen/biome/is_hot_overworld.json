@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#forge:is_hot/overworld",
+      "required": false
+    },
+    {
+      "id": "#c:is_hot/overworld",
+      "required": false
+    },
+    {
+      "id": "#c:climate_hot",
+      "required": false
+    }
+  ]
+}

@@ -16,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 
 import org.lwjgl.glfw.GLFW;
 
@@ -82,7 +82,9 @@ public class PromoteScreen extends ScreenBase<PromoteContainer> {
 
     protected void containerTick() {
         super.containerTick();
+        //? if <1.21 {
         if(textField != null) textField.tick();
+        //?}
     }
 
 

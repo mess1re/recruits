@@ -3,16 +3,16 @@ package com.talhanation.recruits.world;
 import com.talhanation.recruits.network.RecruitsNetwork;
 
 import com.talhanation.recruits.ClaimEvent;
+import com.talhanation.recruits.ClaimEvents;
 import com.talhanation.recruits.FactionEvents;
 import com.talhanation.recruits.Main;
 import com.talhanation.recruits.config.RecruitsServerConfig;
 import com.talhanation.recruits.network.MessageToClientUpdateClaim;
 import com.talhanation.recruits.network.MessageToClientUpdateClaims;
-import com.talhanation.recruits.util.RecruitsEventBus;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraftforge.common.MinecraftForge;
+import com.talhanation.recruits.events.RecruitsEventBus;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class RecruitsClaimManager {
         // ClaimEvent.Updated feuern – cancelable
         boolean isNew = !claimsById.containsKey(claim.getUUID());
         ClaimEvent.Updated updateEvent = new ClaimEvent.Updated(claim, level, isNew);
-        if (RecruitsEventBus.postCancelable(updateEvent)) return;
+        if (RecruitsEventBus.post(updateEvent)) return;
 
         this.removeClaimFromIndexes(claim.getUUID());
 
@@ -69,7 +69,7 @@ public class RecruitsClaimManager {
 
     public void removeClaim(RecruitsClaim claim) {
         if (claim == null) return;
-        ServerLevel level = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().overworld();
+        ServerLevel level = ClaimEvents.server.overworld();
         this.removeClaim(level, claim);
     }
 
@@ -85,7 +85,7 @@ public class RecruitsClaimManager {
 
     private void removeClaim(ServerLevel level, RecruitsClaim claim) {
         // ClaimEvent.Removed feuern
-        MinecraftForge.EVENT_BUS.post(new ClaimEvent.Removed(claim, level));
+        RecruitsEventBus.post(new ClaimEvent.Removed(claim, level));
 
         this.removeClaimFromIndexes(claim.getUUID());
         activeSieges.remove(claim.getUUID());

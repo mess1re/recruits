@@ -18,7 +18,11 @@ public class RecruitPlayerUnitSaveData extends SavedData {
         this.setDirty();
     }
 
+    //? if <1.21 {
     public static RecruitPlayerUnitSaveData load(CompoundTag nbt) {
+    //?} else {
+    /*public static RecruitPlayerUnitSaveData load(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+    *///?}
         RecruitPlayerUnitSaveData data = new RecruitPlayerUnitSaveData();
         CompoundTag recruitCounts = nbt.getCompound("recruitCounts");
 
@@ -32,7 +36,11 @@ public class RecruitPlayerUnitSaveData extends SavedData {
     }
 
     @Override
+    //? if <1.21 {
     public CompoundTag save(CompoundTag nbt) {
+    //?} else {
+    /*public CompoundTag save(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+    *///?}
         CompoundTag recruitCounts = new CompoundTag();
 
         for (Map.Entry<UUID, Integer> entry : recruitCountMap.entrySet()) {
@@ -52,8 +60,13 @@ public class RecruitPlayerUnitSaveData extends SavedData {
         return recruitCountMap;
     }
     public static RecruitPlayerUnitSaveData get(ServerLevel level) {
+        //? if <1.21 {
         return level
                 .getDataStorage()
                 .computeIfAbsent(RecruitPlayerUnitSaveData::load, RecruitPlayerUnitSaveData::new, DATA_NAME);
+        //?} else {
+        /*return level.getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(RecruitPlayerUnitSaveData::new, RecruitPlayerUnitSaveData::load, null), DATA_NAME);
+        *///?}
     }
 }

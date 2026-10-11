@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-//? if forge {
+//? if <1.21 {
 import net.minecraft.world.level.block.GlassBlock;
 //?} else {
 /*import net.minecraft.world.level.block.TransparentBlock;
@@ -45,7 +45,7 @@ public final class MapStateClassifier {
         Block block = state.getBlock();
         if (block == Blocks.GLASS || block == Blocks.GLASS_PANE) return false;
 
-        //? if forge {
+        //? if <1.21 {
         if (block instanceof GlassBlock) return true;
         //?} else {
         /*if (block instanceof TransparentBlock) return true;
@@ -87,7 +87,7 @@ public final class MapStateClassifier {
         if (!state.getFluidState().isEmpty()) return true;
 
         Block block = state.getBlock();
-        //? if forge {
+        //? if <1.21 {
         if (block == Blocks.GRASS
         //?} else {
         /*if (block == Blocks.SHORT_GRASS
@@ -103,7 +103,7 @@ public final class MapStateClassifier {
 
     private static boolean hasTranslucentRenderType(BlockState state) {
         try {
-            return ItemBlockRenderTypes.getRenderLayers(state).contains(RenderType.translucent());
+            return ItemBlockRenderTypes.getChunkRenderType(state) == RenderType.translucent();
         } catch (RuntimeException ignored) {
             return false;
         }

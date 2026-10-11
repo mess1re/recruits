@@ -71,7 +71,9 @@ public class RouteNamePopup {
     }
 
     public void tick() {
+        //? if <1.21 {
         if (visible && nameField != null) nameField.tick();
+        //?}
     }
 
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY) {

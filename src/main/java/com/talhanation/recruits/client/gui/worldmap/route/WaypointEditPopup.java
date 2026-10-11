@@ -114,7 +114,9 @@ public class WaypointEditPopup {
     }
 
     public void tick() {
+        //? if <1.21 {
         if (visible && waitField != null) waitField.tick();
+        //?}
     }
 
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY) {

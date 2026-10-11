@@ -65,7 +65,7 @@ public class RecruitsPlayerEntry extends ListScreenEntryBase<RecruitsPlayerEntry
             guiGraphics.fill(skinX, skinY, skinX + SKIN_SIZE, skinY + SKIN_SIZE, FastColor.ARGB32.color(120, 0, 0, 0));
         }
         RenderSystem.disableBlend();
-        guiGraphics.drawString(minecraft.font, player.getName(), (float) textX, (float) textY, nameColor, false);
+        guiGraphics.drawString(minecraft.font, player.getName(), textX, textY, nameColor, false);
 
         if(bannerRenderer != null){
             bannerRenderer.renderBanner(guiGraphics, left + 185, top, width, height, 15);

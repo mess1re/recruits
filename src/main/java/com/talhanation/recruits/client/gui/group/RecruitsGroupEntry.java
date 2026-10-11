@@ -10,11 +10,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class RecruitsGroupEntry extends ListScreenEntryBase<RecruitsGroupEntry> {
     protected static final int SKIN_SIZE = 24;
     protected static final int PADDING = 4;
@@ -63,8 +63,8 @@ public class RecruitsGroupEntry extends ListScreenEntryBase<RecruitsGroupEntry> 
             guiGraphics.blit(this.image,  left + 5,  top + 5, 0, 0, 21, 21, 21, 21);
         }
 
-        guiGraphics.drawString(minecraft.font, group.getName(), (float) textX, (float) textY,  PLAYER_NAME_COLOR, false);
-        guiGraphics.drawString(minecraft.font, "[" + group.getCount() + "/" + group.getSize() + "]", (float) textX + 130, (float) textY,  PLAYER_NAME_COLOR, false);
+        guiGraphics.drawString(minecraft.font, group.getName(), textX, textY,  PLAYER_NAME_COLOR, false);
+        guiGraphics.drawString(minecraft.font, "[" + group.getCount() + "/" + group.getSize() + "]", textX + 130, textY,  PLAYER_NAME_COLOR, false);
 
     }
     public RecruitsGroup getGroup() {

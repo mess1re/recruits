@@ -4,6 +4,8 @@ import com.talhanation.recruits.Main;
 import com.talhanation.recruits.RecruitEvents;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.util.RecruitsItemStacks;
+import dev.architectury.core.item.ArchitecturySpawnEggItem;
+import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -12,12 +14,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraft.world.phys.Vec3;
 
 import net.minecraft.world.scores.PlayerTeam;
@@ -25,17 +27,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 
-public class RecruitsSpawnEgg extends ForgeSpawnEggItem {
-    private final Supplier<? extends EntityType<? extends AbstractRecruitEntity>> entityType;
+public class RecruitsSpawnEgg extends ArchitecturySpawnEggItem {
+    private final RegistrySupplier<? extends EntityType<? extends AbstractRecruitEntity>> entityType;
 
-    public RecruitsSpawnEgg(Supplier<? extends EntityType<? extends AbstractRecruitEntity>> entityType, int primaryColor, int secondaryColor, Properties properties) {
+    public RecruitsSpawnEgg(RegistrySupplier<? extends EntityType<? extends AbstractRecruitEntity>> entityType, int primaryColor, int secondaryColor, Properties properties) {
         super(entityType, primaryColor, secondaryColor, properties);
         this.entityType = entityType;
     }
-    //? if forge {
+    //? if <1.21 {
     @Override
     public @NotNull EntityType<?> getType(CompoundTag compound){
         if(compound != null && compound.contains("EntityTag", 10)) {
@@ -50,7 +51,7 @@ public class RecruitsSpawnEgg extends ForgeSpawnEggItem {
     //?}
 
     public @NotNull EntityType<?> getRecruitsType(ItemStack stack) {
-        //? if forge {
+        //? if <1.21 {
         return this.getType(stack.getTag());
         //?} else {
         /*CompoundTag entityData = RecruitsItemStacks.getEntityData(stack);
@@ -64,20 +65,26 @@ public class RecruitsSpawnEgg extends ForgeSpawnEggItem {
         if (world.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        else{
+        else {
             ItemStack stack = context.getItemInHand();
             BlockPos pos = context.getClickedPos();
             EntityType<?> entitytype = this.getRecruitsType(stack);
             Entity entity = entitytype.create(world);
 
             CompoundTag entityTag = RecruitsItemStacks.getEntityData(stack);
-            if(entity instanceof AbstractRecruitEntity recruit && entityTag != null && !entityTag.isEmpty()) {
-
-                fillRecruit(recruit, entityTag, pos);
-
+            if (entity instanceof AbstractRecruitEntity recruit && world instanceof ServerLevel serverLevel) {
+                //? if <1.21 {
+                recruit.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.SPAWN_EGG, null, null);
+                //?} else {
+                /*recruit.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.SPAWN_EGG, null, null);
+                *///?}
+                recruit.setPos(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
                 world.addFreshEntity(recruit);
+                if (!entityTag.isEmpty()) {
+                    fillRecruit(recruit, entityTag, pos);
+                }
 
-                if (!context.getPlayer().isCreative()) {
+                if (context.getPlayer() == null || !context.getPlayer().isCreative()) {
                     stack.shrink(1);
                 }
                 return InteractionResult.SUCCESS;
@@ -207,14 +214,22 @@ public class RecruitsSpawnEgg extends ForgeSpawnEggItem {
         ListTag armorItems = nbt.getList("ArmorItems", 10);
         for (int i = 0; i < armorItems.size(); ++i) {
             ItemStack armorItem = RecruitsItemStacks.parse(armorItems.getCompound(i), recruit.level().registryAccess());
-            int index = recruit.getInventorySlotIndex(recruit.getEquipmentSlotForItem(armorItem));
-            recruit.setItemSlot(recruit.getEquipmentSlotIndex(index), armorItem);
+            EquipmentSlot slot = switch (i) {
+                case 0 -> EquipmentSlot.FEET;
+                case 1 -> EquipmentSlot.LEGS;
+                case 2 -> EquipmentSlot.CHEST;
+                case 3 -> EquipmentSlot.HEAD;
+                default -> null;
+            };
+            if (slot != null) {
+                recruit.setItemSlot(slot, armorItem);
+            }
         }
 
         ListTag handItems = nbt.getList("HandItems", 10);
         for (int i = 0; i < handItems.size(); ++i) {
-            int index = i == 0 ? 5 : 4; //5 = mainhand 4 = offhand
-            recruit.setItemSlot(recruit.getEquipmentSlotIndex(index), RecruitsItemStacks.parse(handItems.getCompound(i), recruit.level().registryAccess()));
+            EquipmentSlot slot = i == 0 ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+            recruit.setItemSlot(slot, RecruitsItemStacks.parse(handItems.getCompound(i), recruit.level().registryAccess()));
         }
 
         recruit.setPos(pos.getX() + 0.5, pos.getY() + 1 , pos.getZ() + 0.5);

@@ -1,0 +1,29 @@
+accessWidener v2 named
+
+accessible field net/minecraft/world/SimpleContainer items Lnet/minecraft/core/NonNullList;
+accessible field net/minecraft/world/entity/Mob armorItems Lnet/minecraft/core/NonNullList;
+accessible field net/minecraft/world/entity/Mob handItems Lnet/minecraft/core/NonNullList;
+accessible field net/minecraft/world/entity/Mob goalSelector Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+accessible field net/minecraft/world/entity/Mob targetSelector Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+accessible field net/minecraft/world/entity/projectile/AbstractArrow inGroundTime I
+accessible field net/minecraft/world/entity/projectile/AbstractArrow inGround Z
+accessible field net/minecraft/world/entity/animal/horse/AbstractHorse inventory Lnet/minecraft/world/SimpleContainer;
+accessible method net/minecraft/world/entity/animal/horse/AbstractHorse createInventory ()V
+accessible method net/minecraft/world/entity/animal/horse/Horse setVariantAndMarkings (Lnet/minecraft/world/entity/animal/horse/Variant;Lnet/minecraft/world/entity/animal/horse/Markings;)V
+accessible method net/minecraft/world/level/storage/DimensionDataStorage getDataFile (Ljava/lang/String;)Ljava/io/File;
+accessible field net/minecraft/world/entity/vehicle/Boat deltaRotation F
+accessible method net/minecraft/world/entity/vehicle/Boat getMaxPassengers ()I
+accessible method net/minecraft/world/entity/vehicle/Boat controlBoat ()V
+extendable method net/minecraft/world/entity/vehicle/Boat controlBoat ()V
+accessible method net/minecraft/world/entity/vehicle/ChestBoat getMaxPassengers ()I
+accessible field net/minecraft/world/level/pathfinder/Path nodes Ljava/util/List;
+accessible field net/minecraft/client/gui/components/BossHealthOverlay events Ljava/util/Map;
+accessible field net/minecraft/client/gui/components/PlayerTabOverlay visible Z
+accessible method net/minecraft/world/level/Level getEntities ()Lnet/minecraft/world/level/entity/LevelEntityGetter;
+accessible method net/minecraft/server/level/ServerLevel getEntities ()Lnet/minecraft/world/level/entity/LevelEntityGetter;
+accessible method net/minecraft/client/multiplayer/ClientLevel getEntities ()Lnet/minecraft/world/level/entity/LevelEntityGetter;
+accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;
+accessible field net/minecraft/client/renderer/texture/SpriteContents originalImage Lcom/mojang/blaze3d/platform/NativeImage;
+accessible field net/minecraft/world/level/Explosion x D
+accessible field net/minecraft/world/level/Explosion y D
+accessible field net/minecraft/world/level/Explosion z D

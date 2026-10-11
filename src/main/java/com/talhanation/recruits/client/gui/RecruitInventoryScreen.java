@@ -18,7 +18,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -27,11 +26,11 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class RecruitInventoryScreen extends ScreenBase<RecruitInventoryMenu> {
     private static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(Main.MOD_ID,"textures/gui/recruit_gui.png" );
 
@@ -313,23 +312,23 @@ public class RecruitInventoryScreen extends ScreenBase<RecruitInventoryMenu> {
             Button promoteButton = addRenderableWidget(new ExtendedButton(zeroLeftPos, zeroTopPos + (20 + topPosGab) * 8, 80, 20, TEXT_SPECIAL,
                     button -> {
                         if(recruit instanceof ScoutEntity scout){
-                            this.minecraft.setScreen(new ScoutScreen(scout, getMinecraft().player));
+                            this.minecraft.setScreen(new ScoutScreen(scout, this.minecraft.player));
                             return;
                         }
                         else if(recruit instanceof SiegeEngineerEntity siegeEngineer){
-                            this.minecraft.setScreen(new SiegeEngineerScreen(siegeEngineer, getMinecraft().player));
+                            this.minecraft.setScreen(new SiegeEngineerScreen(siegeEngineer, this.minecraft.player));
                             return;
                         }
                         else if(recruit instanceof MessengerEntity messenger){
-                            this.minecraft.setScreen(new MessengerMainScreen(messenger, getMinecraft().player));
+                            this.minecraft.setScreen(new MessengerMainScreen(messenger, this.minecraft.player));
                             return;
                         }
                         else if(recruit instanceof AbstractLeaderEntity leader){
-                            this.minecraft.setScreen(new PatrolLeaderScreen(leader, getMinecraft().player));
+                            this.minecraft.setScreen(new PatrolLeaderScreen(leader, this.minecraft.player));
                             return;
                         }
                         else if(recruit instanceof IVillagerWorker worker && worker.hasOnlyScreen()){
-                            this.minecraft.setScreen(worker.getSpecialScreen(recruit, getMinecraft().player));
+                            this.minecraft.setScreen(worker.getSpecialScreen(recruit, this.minecraft.player));
                             return;
                         }
                         RecruitsNetwork.sendToServer(new MessageOpenSpecialScreen(this.playerInventory.player, recruit.getUUID()));
@@ -393,7 +392,7 @@ public class RecruitInventoryScreen extends ScreenBase<RecruitInventoryMenu> {
         return super.mouseClicked(mouseX, mouseY, button);
     }
     @Override
-    //? if forge {
+    //? if <1.21 {
     public boolean mouseScrolled(double x, double y, double d) {
         if(groupSelectionDropDownMenu != null) groupSelectionDropDownMenu.mouseScrolled(x,y,d);
         return super.mouseScrolled(x, y, d);
@@ -547,10 +546,6 @@ public class RecruitInventoryScreen extends ScreenBase<RecruitInventoryMenu> {
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
 
-        //? if forge {
-        InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, i + 50, j + 82, 30, (float)(i + 50) - mouseX, (float)(j + 75 - 50) - mouseY, this.recruit);
-        //?} else {
-        /*InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, i + 25, j + 12, i + 75, j + 82, 30, 0.0625F, mouseX, mouseY, this.recruit);
-        *///?}
+        renderEntityFollowsMouse(guiGraphics, i + 50, j + 82, 30, (float)(i + 50) - mouseX, (float)(j + 75 - 50) - mouseY, this.recruit);
     }
 }

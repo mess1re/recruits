@@ -215,7 +215,7 @@ public class WorldMapScreen extends Screen {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         camera.animate();
         refreshSelectedClaim();
-        //? if forge {
+        //? if <1.21 {
         renderBackground(guiGraphics);
         //?} else {
         /*renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
@@ -313,7 +313,7 @@ public class WorldMapScreen extends Screen {
     }
 
     @Override
-    //? if forge {
+    //? if <1.21 {
     public void renderBackground(GuiGraphics guiGraphics) {
         guiGraphics.fill(0, 0, width, height, DARK_GRAY_BG);
     }
@@ -621,7 +621,7 @@ public class WorldMapScreen extends Screen {
     }
 
     @Override
-    //? if forge {
+    //? if <1.21 {
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         if (routeNamePopup.isVisible() || routeEditPopup.isVisible() || waypointEditPopup.isVisible())
             return true;

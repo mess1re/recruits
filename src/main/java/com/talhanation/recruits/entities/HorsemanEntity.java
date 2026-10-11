@@ -23,13 +23,14 @@ import net.minecraft.world.entity.animal.horse.Markings;
 import net.minecraft.world.entity.animal.horse.Variant;
 import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.item.ItemEntity;
-//? if neoforge {
+//? if >=1.21 {
 /*import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 *///?}
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import com.talhanation.recruits.util.RecruitsAttributes;
+import com.talhanation.recruits.platform.PlatformHooks;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -94,9 +95,17 @@ public class HorsemanEntity extends RecruitShieldmanEntity {
     }
 
     @Nullable
+    //? if <1.21 {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData data, @Nullable CompoundTag nbt) {
+    //?} else {
+    /*public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData data) {
+    *///?}
         RandomSource randomsource = world.getRandom();
+        //? if <1.21 {
         SpawnGroupData ilivingentitydata = super.finalizeSpawn(world, difficultyInstance, reason, data, nbt);
+        //?} else {
+        /*SpawnGroupData ilivingentitydata = super.finalizeSpawn(world, difficultyInstance, reason, data);
+        *///?}
         ((AsyncGroundPathNavigation)this.getNavigation()).setCanOpenDoors(true);
         this.populateDefaultEquipmentEnchantments(randomsource, difficultyInstance);
 
@@ -131,7 +140,7 @@ public class HorsemanEntity extends RecruitShieldmanEntity {
                     Camel camel = new Camel(EntityType.CAMEL, this.getCommandSenderWorld());
                     camel.setPos(this.getX(), this.getY(), this.getZ());
                     camel.setTamed(true);
-                    //? if forge {
+                    //? if <1.21 {
                     camel.equipSaddle(null);
                     //?} else {
                     /*camel.equipSaddle(new ItemStack(Items.SADDLE), null);
@@ -144,7 +153,7 @@ public class HorsemanEntity extends RecruitShieldmanEntity {
                     Horse horse = new Horse(EntityType.HORSE, this.getCommandSenderWorld());
                     horse.setPos(this.getX(), this.getY(), this.getZ());
                     horse.setTamed(true);
-                    //? if forge {
+                    //? if <1.21 {
                     horse.equipSaddle(null);
                     //?} else {
                     /*horse.equipSaddle(new ItemStack(Items.SADDLE), null);
@@ -152,7 +161,7 @@ public class HorsemanEntity extends RecruitShieldmanEntity {
 
                     Variant variant = Util.getRandom(Variant.values(), this.random);
                     Markings markings = Util.getRandom(Markings.values(), this.random);
-                    //? if forge {
+                    //? if <1.21 {
                     horse.setVariantAndMarkings(variant, markings);
                     //?} else {
                     /*horse.setVariant(variant);
@@ -171,7 +180,8 @@ public class HorsemanEntity extends RecruitShieldmanEntity {
     public void aiStep() {
         super.aiStep();
         this.getCommandSenderWorld().getProfiler().push("looting");
-        if (!this.getCommandSenderWorld().isClientSide && this.canPickUpLoot() && this.isAlive() && !this.dead && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.getCommandSenderWorld(), this)) {
+        boolean canGrief = !this.getCommandSenderWorld().isClientSide && PlatformHooks.INSTANCE.canEntityGrief(this.getCommandSenderWorld(), this);
+        if (canGrief && this.canPickUpLoot() && this.isAlive() && !this.dead) {
             for(ItemEntity itementity : this.getCommandSenderWorld().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(2.5D, 2.5D, 2.5D))) {
                 if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && !itementity.hasPickUpDelay() && this.wantsToPickUp(itementity.getItem())) {
                     this.pickUpItem(itementity);

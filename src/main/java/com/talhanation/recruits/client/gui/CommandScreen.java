@@ -28,16 +28,17 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
+import com.talhanation.recruits.platform.PlatformHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class CommandScreen extends ScreenBase<CommandMenu> {
 
     private static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(Main.MOD_ID, "textures/gui/command_gui.png");
@@ -181,18 +182,18 @@ public class CommandScreen extends ScreenBase<CommandMenu> {
     }
 
     private ICommandCategory getSelectionFromClient() {
-        CompoundTag playerNBT = player.getPersistentData();
-        CompoundTag nbt = playerNBT.getCompound(Player.PERSISTED_NBT_TAG);
+        CompoundTag playerNBT = PlatformHooks.INSTANCE.getPersistentData(player);
+        CompoundTag nbt = playerNBT.getCompound(PlatformHooks.PERSISTED_NBT_TAG);
 
         byte x = nbt.getByte("RecruitsCategory");
         return CommandCategoryManager.getByIndex(x);
     }
     private void saveCategoryOnClient() {
-        CompoundTag playerNBT = player.getPersistentData();
-        CompoundTag nbt = playerNBT.getCompound(Player.PERSISTED_NBT_TAG);
+        CompoundTag playerNBT = PlatformHooks.INSTANCE.getPersistentData(player);
+        CompoundTag nbt = playerNBT.getCompound(PlatformHooks.PERSISTED_NBT_TAG);
 
         nbt.putInt("RecruitsCategory", CommandCategoryManager.getCategories().indexOf(currentCategory));
-        playerNBT.put(Player.PERSISTED_NBT_TAG, nbt);
+        playerNBT.put(PlatformHooks.PERSISTED_NBT_TAG, nbt);
     }
 
     private void createCategoryButtons(int centerX, int centerY) {
@@ -452,7 +453,7 @@ public class CommandScreen extends ScreenBase<CommandMenu> {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY,
-                                 //? if forge {
+                                 //? if <1.21 {
                                  double scrollAmount
                                  //?} else {
                                  /*double scrollX, double scrollAmount
@@ -465,7 +466,7 @@ public class CommandScreen extends ScreenBase<CommandMenu> {
             this.setCurrentCategory(CommandCategoryManager.getNext(currentCategory));
         }
 
-        //? if forge {
+        //? if <1.21 {
         return super.mouseScrolled(mouseX, mouseY, scrollAmount);
         //?} else {
         /*return super.mouseScrolled(mouseX, mouseY, scrollX, scrollAmount);
@@ -499,7 +500,7 @@ public class CommandScreen extends ScreenBase<CommandMenu> {
         return allActive;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public enum Formation {
         NONE((byte) 0),
         LINE((byte) 1),

@@ -13,7 +13,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 
 import java.util.List;
 import java.util.Locale;
@@ -111,7 +111,9 @@ public class SelectGroupScreen extends ListScreenBase implements IGroupSelection
         super.tick();
         ClientManager.updateGroups();
         if(searchBox != null){
+            //? if <1.21 {
             searchBox.tick();
+            //?}
         }
 
         if(groupList != null){

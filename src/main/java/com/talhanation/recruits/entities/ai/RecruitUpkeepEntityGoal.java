@@ -69,11 +69,7 @@ public class RecruitUpkeepEntityGoal extends Goal {
             this.pos = this.entity.get().getOnPos();
 
             if (entity.get() instanceof AbstractHorse horse) {
-                //? if forge {
                 this.container = horse.inventory;
-                //?} else {
-                /*this.container = horse.getInventory();
-                *///?}
                 //Main.LOGGER.debug("found horse");
             } else if (entity.get() instanceof InventoryCarrier carrier) {
                 this.container = carrier.getInventory();

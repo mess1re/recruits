@@ -14,10 +14,19 @@ public class RecruitsGroupsSaveData extends SavedData {
     private Map<UUID, UUID> redirects = new HashMap<>();
     private Map<UUID, UUID> recruitRedirects = new HashMap<>();
     public static RecruitsGroupsSaveData get(ServerLevel level) {
+        //? if <1.21 {
         return level.getDataStorage().computeIfAbsent(RecruitsGroupsSaveData::load, RecruitsGroupsSaveData::new, FILE_ID);
+        //?} else {
+        /*return level.getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(RecruitsGroupsSaveData::new, RecruitsGroupsSaveData::load, null), FILE_ID);
+        *///?}
     }
 
+    //? if <1.21 {
     public static RecruitsGroupsSaveData load(CompoundTag nbt) {
+    //?} else {
+    /*public static RecruitsGroupsSaveData load(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+    *///?}
         RecruitsGroupsSaveData data = new RecruitsGroupsSaveData();
         if (nbt.contains("groups", Tag.TAG_LIST)) {
             ListTag list = nbt.getList("groups", Tag.TAG_COMPOUND);
@@ -50,7 +59,11 @@ public class RecruitsGroupsSaveData extends SavedData {
     }
 
     @Override
+    //? if <1.21 {
     public CompoundTag save(CompoundTag nbt) {
+    //?} else {
+    /*public CompoundTag save(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
+    *///?}
         ListTag list = new ListTag();
         for (RecruitsGroup group : this.groups) {
             list.add(group.toNBT());

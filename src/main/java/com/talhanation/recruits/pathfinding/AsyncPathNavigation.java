@@ -16,7 +16,6 @@ import net.minecraft.world.level.PathNavigationRegion;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.*;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.util.thread.SidedThreadGroups;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -88,7 +87,7 @@ public abstract class AsyncPathNavigation extends PathNavigation {
 
     @Nullable
     protected Path createPath(Set<BlockPos> p_148223_, int p_148224_, boolean p_148225_, int p_148226_, float p_148227_) {
-        if(Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) return null;
+        if(this.level.isClientSide()) return null;
         if (p_148223_.isEmpty()) {
             return null;
         } else if (this.mob.getY() < (double) this.level.getMinBuildHeight()) {
@@ -140,7 +139,7 @@ public abstract class AsyncPathNavigation extends PathNavigation {
 
     @Override
     public boolean moveTo(@NotNull Entity p_26532_, double p_26533_) {
-        if(Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) return false;
+        if(this.level.isClientSide()) return false;
         long currentTick = this.level.getGameTime();
         // Paper start - Pathfinding optimizations
         if (this.pathfindFailures > 10 && this.path == null && currentTick < this.lastFailure + 40) {
@@ -163,7 +162,7 @@ public abstract class AsyncPathNavigation extends PathNavigation {
 
     @Override
     public boolean moveTo(@Nullable Path p_26537_, double p_26538_) {
-        if(Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) return false;
+        if(this.level.isClientSide()) return false;
         if (p_26537_ == null) {
             this.path = null;
             return false;

@@ -6,7 +6,7 @@ import com.talhanation.recruits.entities.ai.FleeTarget;
 import com.talhanation.recruits.entities.ai.UseShield;
 import com.talhanation.recruits.util.RecruitsAttributeModifiers;
 import net.minecraft.core.BlockPos;
-//? if neoforge {
+//? if >=1.21 {
 /*import net.minecraft.core.component.DataComponents;
 *///?}
 import net.minecraft.nbt.CompoundTag;
@@ -90,7 +90,11 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
     }
 
     @Nullable
+    //? if <1.21 {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance diff, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag nbt) {
+    //?} else {
+    /*public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance diff, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+    *///?}
         return spawnData;
     }
 
@@ -210,7 +214,7 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
     }
 
     protected float getStandingEyeHeight(Pose pos, EntityDimensions size) {
-        //? if forge {
+        //? if <1.21 {
         return size.height * 0.9F;
         //?} else {
         /*return size.height() * 0.9F;
@@ -292,7 +296,7 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
     }
 
     public boolean doHurtTarget(Entity entity) {
-        //? if forge {
+        //? if <1.21 {
         boolean flag = entity.hurt(this.damageSources().mobAttack(this), (float)((int)this.getAttributeValue(Attributes.ATTACK_DAMAGE)));
         if (flag) {
             this.doEnchantDamageEffects(this, entity);
@@ -362,7 +366,7 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
 
     @Override
     public boolean canBeLeashed(
-            //? if forge {
+            //? if <1.21 {
             Player player
             //?}
     ) {
@@ -405,7 +409,7 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
         if (this.useItem.getItem() instanceof ShieldItem) {
             int i = 1 + Mth.floor(damage);
             InteractionHand hand = this.getUsedItemHand();
-            //? if forge {
+            //? if <1.21 {
             this.useItem.hurtAndBreak(i, this, (entity) -> entity.broadcastBreakEvent(hand));
             //?} else {
             /*this.useItem.hurtAndBreak(i, this, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
@@ -432,7 +436,7 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
     }
 
     private boolean isFireResistant(ItemStack stack) {
-        //? if forge {
+        //? if <1.21 {
         return stack.getItem().isFireResistant();
         //?} else {
         /*return stack.has(DataComponents.FIRE_RESISTANT);

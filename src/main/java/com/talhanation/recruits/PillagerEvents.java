@@ -1,5 +1,7 @@
 package com.talhanation.recruits;
 
+import com.talhanation.recruits.platform.PlatformEvents;
+
 import com.talhanation.recruits.config.RecruitsServerConfig;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.entities.ai.pillager.PillagerMeleeAttackGoal;
@@ -27,9 +29,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import dev.architectury.event.EventResult;
 
 import java.util.EnumSet;
 import java.util.Random;
@@ -37,9 +37,11 @@ import java.util.Random;
 public class PillagerEvents {
     protected final Random random = new Random();
 
-    @SubscribeEvent
-    public void attackRecruit(EntityJoinLevelEvent event) {
-        Entity entity = event.getEntity();
+    public void register() {
+        PlatformEvents.ENTITY_JOIN.register(this::attackRecruit);
+    }
+
+    public EventResult attackRecruit(Entity entity, Level level) {
 
         if (entity instanceof Pillager pillager) {
             if(RecruitsServerConfig.PillagerIncreasedCombatRange.get()) {
@@ -128,6 +130,7 @@ public class PillagerEvents {
             }
         }
         */
+        return EventResult.pass();
     }
 /*
     @SubscribeEvent
@@ -144,10 +147,8 @@ public class PillagerEvents {
 
     //Raider
 
-    @SubscribeEvent
-    public void raidStartOnBurningOminous(EntityEvent event) {
+    public static void raidStartOnBurningOminous(Entity entity) {
         if(!RecruitsServerConfig.QuickStartPillagerRaid.get()) return;
-        Entity entity = event.getEntity();
 
         if (entity instanceof ItemEntity itemEntity) {
             ItemStack itemStack = itemEntity.getItem();
@@ -155,12 +156,12 @@ public class PillagerEvents {
             Level level = itemEntity.getCommandSenderWorld();
             if (itemStack.getItem() instanceof BannerItem) {
 
-                //? if forge {
-                boolean isLeaderBanner = ItemStack.matches(itemStack, Raid.getLeaderBannerInstance());
-                //?} else {
+                //? if >=1.21 {
                 /*boolean isLeaderBanner = ItemStack.matches(itemStack, Raid.getLeaderBannerInstance(
                         level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.BANNER_PATTERN)));
-                *///?}
+                *///?} else {
+                boolean isLeaderBanner = ItemStack.matches(itemStack, Raid.getLeaderBannerInstance());
+                //?}
                 if (itemEntity.isOnFire() && isLeaderBanner) {
                     Player player = level.getNearestPlayer(itemEntity, 16D);
                     if (player != null) {

@@ -8,7 +8,6 @@ import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.inventory.*;
 import com.talhanation.recruits.network.*;
 import com.talhanation.recruits.util.DelayedExecutor;
-import com.talhanation.recruits.util.RecruitsEventBus;
 import com.talhanation.recruits.util.RegistryUtils;
 import com.talhanation.recruits.util.RecruitsItemStacks;
 import com.talhanation.recruits.world.*;
@@ -30,14 +29,13 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.Team;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.CommandEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import com.talhanation.recruits.events.RecruitsEventBus;
+import com.talhanation.recruits.platform.PlatformEvents;
+import dev.architectury.event.EventResult;
+import dev.architectury.event.events.common.CommandPerformEvent;
+import dev.architectury.event.events.common.LifecycleEvent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,9 +48,17 @@ public class FactionEvents {
     public static RecruitsDiplomacyManager recruitsDiplomacyManager;
     public static RecruitsTreatyManager recruitsTreatyManager;
 
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-        this.server = event.getServer();
+    public void register() {
+        LifecycleEvent.SERVER_STARTING.register(this::onServerStarting);
+        LifecycleEvent.SERVER_STOPPING.register(this::onServerStopping);
+        LifecycleEvent.SERVER_LEVEL_SAVE.register(this::onWorldSave);
+        PlatformEvents.ENTITY_JOIN.register(this::onPlayerJoin);
+        PlatformEvents.ENTITY_LEAVE.register(this::onPlayerLeave);
+        CommandPerformEvent.EVENT.register(this::onTypeCommandEvent);
+    }
+
+    public void onServerStarting(MinecraftServer minecraftServer) {
+        this.server = minecraftServer;
         ServerLevel level = this.server.overworld();
 
         Collection<PlayerTeam> list =  level.getScoreboard().getPlayerTeams();
@@ -72,25 +78,22 @@ public class FactionEvents {
         recruitsTreatyManager.load(server.overworld());
     }
 
-    @SubscribeEvent
-    public void onServerStopping(ServerStoppingEvent event) {
+    public void onServerStopping(MinecraftServer minecraftServer) {
         recruitsFactionManager.save(server.overworld());
         recruitsDiplomacyManager.save(server.overworld());
         recruitsTreatyManager.save(server.overworld());
     }
 
-    @SubscribeEvent
-    public void onWorldSave(LevelEvent.Save event){
+    public void onWorldSave(ServerLevel serverLevel){
         recruitsFactionManager.save(server.overworld());
         recruitsDiplomacyManager.save(server.overworld());
         recruitsTreatyManager.save(server.overworld());
     }
 
-    @SubscribeEvent
-    public void onPlayerJoin(EntityJoinLevelEvent event){
-        if(event.getLevel().isClientSide()) return;
+    public EventResult onPlayerJoin(Entity entity, Level level){
+        if(level.isClientSide()) return EventResult.pass();
 
-        if(event.getEntity() instanceof Player player){
+        if(entity instanceof Player player){
 
             //Migration of old world factions
             if(player.getTeam() != null){
@@ -107,13 +110,13 @@ public class FactionEvents {
             recruitsTreatyManager.broadcastTreatiesToPlayer((ServerPlayer) player);
             recruitsDiplomacyManager.broadcastEmbargoesToPlayer(player);
         }
+        return EventResult.pass();
     }
 
-    @SubscribeEvent
-    public void onPlayerLeave(EntityLeaveLevelEvent event){
-        if(event.getLevel().isClientSide()) return;
+    public void onPlayerLeave(Entity entity, Level level){
+        if(level.isClientSide()) return;
 
-        if(event.getEntity() instanceof Player){
+        if(entity instanceof Player){
             DelayedExecutor.runLater(()-> recruitsFactionManager.broadcastOnlinePlayersToAll(server.overworld()),1000L);
         }
     }
@@ -177,7 +180,7 @@ public class FactionEvents {
             RecruitsFaction createdFaction = recruitsFactionManager.getFactionByStringID(teamName);
             if (createdFaction != null) {
                 FactionEvent.Created createdEvent = new FactionEvent.Created(createdFaction, level, serverPlayer);
-                if (RecruitsEventBus.postCancelable(createdEvent)) {
+                if (RecruitsEventBus.post(createdEvent)) {
                     // Addon hat gecanceled – Fraktion wieder entfernen
                     removeTeam(level, teamName);
                 }
@@ -205,7 +208,7 @@ public class FactionEvents {
                 isLeader = command;
 
             if (recruitsFaction != null) {
-                MinecraftForge.EVENT_BUS.post(new FactionEvent.PlayerLeft(recruitsFaction, level, player, isLeader));
+                RecruitsEventBus.post(new FactionEvent.PlayerLeft(recruitsFaction, level, player, isLeader));
             }
             int recruits = getRecruitsOfPlayer(player.getUUID(), level).size();
             addNPCToData(level, teamName, -recruits);
@@ -314,7 +317,7 @@ public class FactionEvents {
 
         RecruitsFaction disbandingFaction = recruitsFactionManager.getFactionByStringID(teamName);
         if (disbandingFaction != null) {
-            MinecraftForge.EVENT_BUS.post(new FactionEvent.Disbanded(disbandingFaction, level));
+            RecruitsEventBus.post(new FactionEvent.Disbanded(disbandingFaction, level));
         }
         if(playerTeam != null){
             server.getScoreboard().removePlayerTeam(playerTeam);
@@ -355,7 +358,7 @@ public class FactionEvents {
             RecruitsFaction joiningFaction = recruitsFactionManager.getFactionByStringID(teamName);
             if (joiningFaction != null) {
                 FactionEvent.PlayerJoined joinEvent = new FactionEvent.PlayerJoined(joiningFaction, level, playerToAdd);
-                if (RecruitsEventBus.postCancelable(joinEvent)) return;
+                if (RecruitsEventBus.post(joinEvent)) return;
             }
 
             server.getScoreboard().addPlayerToTeam(namePlayerToAdd, playerTeam);
@@ -599,11 +602,11 @@ public class FactionEvents {
         }
     }
 
-    @SubscribeEvent
-    public void onTypeCommandEvent(CommandEvent event){
-        if (event.getParseResults() != null) {
-            String command = event.getParseResults().getReader().getString();
-            CommandSourceStack sourceStack = event.getParseResults().getContext().build(command).getSource();
+    public EventResult onTypeCommandEvent(CommandPerformEvent event){
+        boolean canceled = false;
+        if (event.getResults() != null) {
+            String command = event.getResults().getReader().getString();
+            CommandSourceStack sourceStack = event.getResults().getContext().build(command).getSource();
             ServerPlayer sender = sourceStack.getPlayer();
             ServerLevel level = this.server.overworld();
 
@@ -617,7 +620,7 @@ public class FactionEvents {
                         createTeam(false, sender, level, teamName, teamName, sender.getName().getString(), mainhand.getItem() instanceof BannerItem ? mainhand : null, ChatFormatting.WHITE, (byte) 0);
                         sourceStack.sendSuccess(() -> Component.translatable("commands.team.add.success", teamName), true);
 
-                        event.setCanceled(true);
+                        canceled = true;
                         delayedServerSideUpdate(level);
                     }
                     else if(command.contains("remove")){
@@ -625,7 +628,7 @@ public class FactionEvents {
                         String teamName = parts[2];
                         leaveTeam(true,sender, teamName, level, false);
                         sourceStack.sendSuccess(() -> Component.translatable("commands.team.remove.success", teamName), true);
-                        event.setCanceled(true);
+                        canceled = true;
                         delayedServerSideUpdate(level);
                     }
                     else if(command.contains("join") || command.contains("leave")){
@@ -639,7 +642,7 @@ public class FactionEvents {
                         String[] parts = command.split(" ");
                         String teamName = parts[2];
                         createTeamConsole(sourceStack, level, teamName, "white", (byte) 0);
-                        event.setCanceled(true);
+                        canceled = true;
                     }
                     else if (command.contains("remove")) {
                         String[] parts = command.split(" ");
@@ -656,7 +659,7 @@ public class FactionEvents {
                         } else {
                             sourceStack.sendFailure(Component.translatable("team.notFound", teamName));
                         }
-                        event.setCanceled(true);
+                        canceled = true;
                     }
                     else if (command.contains("join")) {
                         String[] parts = command.split(" ");
@@ -671,7 +674,7 @@ public class FactionEvents {
                         } else {
                             sourceStack.sendFailure(Component.translatable("argument.player.unknown"));
                         }
-                        event.setCanceled(true);
+                        canceled = true;
                     }
                     else if (command.contains("leave")) {
                         String[] parts = command.split(" ");
@@ -686,11 +689,12 @@ public class FactionEvents {
                         } else {
                             sourceStack.sendFailure(Component.translatable("argument.player.unknown"));
                         }
-                        event.setCanceled(true);
+                        canceled = true;
                     }
                 }
             }
         }
+        return canceled ? EventResult.interruptFalse() : EventResult.pass();
     }
 
     public void delayedServerSideUpdate(ServerLevel serverLevel){

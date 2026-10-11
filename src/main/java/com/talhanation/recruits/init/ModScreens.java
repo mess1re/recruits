@@ -32,15 +32,14 @@ public class ModScreens {
             DeferredRegister.create(Main.MOD_ID, Registries.MENU);
 
     public static void registerMenus() {
-        registerMenu(RECRUIT_CONTAINER_TYPE.get(), RecruitInventoryScreen::new);
-        registerMenu(DEBUG_CONTAINER_TYPE.get(), DebugInvScreen::new);
-        registerMenu(COMMAND_CONTAINER_TYPE.get(), CommandScreen::new);
-        registerMenu(ASSASSIN_CONTAINER_TYPE.get(), AssassinLeaderScreen::new);
-        registerMenu(HIRE_CONTAINER_TYPE.get(), RecruitHireScreen::new);
-        registerMenu(TEAM_EDIT_TYPE.get(), FactionEditScreen::new);
-        registerMenu(PROMOTE.get(), PromoteScreen::new);
+        registerMenu(RECRUIT_CONTAINER_TYPE, RecruitInventoryScreen::new);
+        registerMenu(DEBUG_CONTAINER_TYPE, DebugInvScreen::new);
+        registerMenu(COMMAND_CONTAINER_TYPE, CommandScreen::new);
+        registerMenu(ASSASSIN_CONTAINER_TYPE, AssassinLeaderScreen::new);
+        registerMenu(HIRE_CONTAINER_TYPE, RecruitHireScreen::new);
+        registerMenu(TEAM_EDIT_TYPE, FactionEditScreen::new);
+        registerMenu(PROMOTE, PromoteScreen::new);
 
-        logger.info("MenuScreens registered");
     }
 
     public static final RegistrySupplier<MenuType<RecruitInventoryMenu>> RECRUIT_CONTAINER_TYPE =
@@ -221,8 +220,9 @@ public class ModScreens {
      *
      * It has a try/catch block because the Forge screen constructor fails silently.
      */
-    private static <M extends AbstractContainerMenu, U extends Screen & MenuAccess<M>> void registerMenu(MenuType<? extends M> menuType, MenuScreens.ScreenConstructor<M, U> screenConstructor) {
-        MenuRegistry.registerScreenFactory(menuType, (MenuRegistry.ScreenFactory<M, U>) (menu, inventory, title) -> {
+    private static <M extends AbstractContainerMenu, U extends Screen & MenuAccess<M>> void registerMenu(RegistrySupplier<MenuType<M>> menuType, MenuRegistry.ScreenFactory<M, U> screenConstructor) {
+        // NeoForge collects screen factories before client setup, so each one is registered as soon as its menu type exists.
+        menuType.listen(type -> MenuRegistry.registerScreenFactory(type, (MenuRegistry.ScreenFactory<M, U>) (menu, inventory, title) -> {
             try {
                 return screenConstructor.create(menu, inventory, title);
             } catch (Exception e) {
@@ -231,7 +231,7 @@ public class ModScreens {
                 logger.error(Arrays.toString(e.getStackTrace()));
                 return null;
             }
-        });
+        }));
     }
 
 

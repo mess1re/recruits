@@ -25,7 +25,7 @@ final class WorldMapTextureAtlas implements AutoCloseable {
     private static final AtomicLong ATLAS_SEQUENCE = new AtomicLong();
 
     private final PixelTexture texture = new PixelTexture();
-    //? if forge {
+    //? if <1.21 {
     private final ResourceLocation textureId =
             new ResourceLocation(Main.MOD_ID, "worldmap/atlas_" + ATLAS_SEQUENCE.incrementAndGet());
     //?} else {

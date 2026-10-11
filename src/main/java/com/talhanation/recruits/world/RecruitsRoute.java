@@ -93,7 +93,7 @@ public class RecruitsRoute {
     public void saveToFile(File directory) throws IOException {
         if (!directory.exists()) directory.mkdirs();
         File routeFile = routeFile(directory);
-        //? if forge {
+        //? if <1.21 {
         NbtIo.write(this.toNBT(), routeFile);
         //?} else {
         /*NbtIo.write(this.toNBT(), routeFile.toPath());
@@ -114,7 +114,7 @@ public class RecruitsRoute {
     @Nullable
     public static RecruitsRoute loadFromFile(File file) throws IOException {
         if (!file.exists()) return null;
-        //? if forge {
+        //? if <1.21 {
         CompoundTag nbt = NbtIo.read(file);
         //?} else {
         /*CompoundTag nbt = NbtIo.read(file.toPath());

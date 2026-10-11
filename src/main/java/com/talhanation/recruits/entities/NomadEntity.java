@@ -23,13 +23,14 @@ import net.minecraft.world.entity.animal.horse.Markings;
 import net.minecraft.world.entity.animal.horse.Variant;
 import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.item.ItemEntity;
-//? if neoforge {
+//? if >=1.21 {
 /*import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 *///?}
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import com.talhanation.recruits.util.RecruitsAttributes;
+import com.talhanation.recruits.platform.PlatformHooks;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -90,9 +91,17 @@ public class NomadEntity extends BowmanEntity {
     }
 
     @Nullable
+    //? if <1.21 {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData data, @Nullable CompoundTag nbt) {
+    //?} else {
+    /*public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData data) {
+    *///?}
         RandomSource randomsource = world.getRandom();
+        //? if <1.21 {
         SpawnGroupData ilivingentitydata = super.finalizeSpawn(world, difficultyInstance, reason, data, nbt);
+        //?} else {
+        /*SpawnGroupData ilivingentitydata = super.finalizeSpawn(world, difficultyInstance, reason, data);
+        *///?}
         ((AsyncGroundPathNavigation)this.getNavigation()).setCanOpenDoors(true);
         this.populateDefaultEquipmentEnchantments(randomsource, difficultyInstance);
 
@@ -129,7 +138,7 @@ public class NomadEntity extends BowmanEntity {
                     Camel camel = new Camel(EntityType.CAMEL, this.getCommandSenderWorld());
                     camel.setPos(this.getX(), this.getY(), this.getZ());
                     camel.setTamed(true);
-                    //? if forge {
+                    //? if <1.21 {
                     camel.equipSaddle(null);
                     //?} else {
                     /*camel.equipSaddle(new ItemStack(Items.SADDLE), null);
@@ -142,7 +151,7 @@ public class NomadEntity extends BowmanEntity {
                     Horse horse = new Horse(EntityType.HORSE, this.getCommandSenderWorld());
                     horse.setPos(this.getX(), this.getY(), this.getZ());
                     horse.setTamed(true);
-                    //? if forge {
+                    //? if <1.21 {
                     horse.equipSaddle(null);
                     //?} else {
                     /*horse.equipSaddle(new ItemStack(Items.SADDLE), null);
@@ -150,7 +159,7 @@ public class NomadEntity extends BowmanEntity {
 
                     Variant variant = Util.getRandom(Variant.values(), this.getRandom());
                     Markings markings = Util.getRandom(Markings.values(), this.getRandom());
-                    //? if forge {
+                    //? if <1.21 {
                     horse.setVariantAndMarkings(variant, markings);
                     //?} else {
                     /*horse.setVariant(variant);
@@ -169,7 +178,8 @@ public class NomadEntity extends BowmanEntity {
     public void aiStep() {
         super.aiStep();
         this.getCommandSenderWorld().getProfiler().push("looting");
-        if (!this.getCommandSenderWorld().isClientSide && this.canPickUpLoot() && this.isAlive() && !this.dead && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.getCommandSenderWorld(), this)) {
+        boolean canGrief = !this.getCommandSenderWorld().isClientSide && PlatformHooks.INSTANCE.canEntityGrief(this.getCommandSenderWorld(), this);
+        if (canGrief && this.canPickUpLoot() && this.isAlive() && !this.dead) {
             this.getCommandSenderWorld().getEntitiesOfClass(
                     ItemEntity.class,
                     this.getBoundingBox().inflate(2.5D, 2.5D, 2.5D),

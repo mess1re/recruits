@@ -24,7 +24,7 @@ public class RecruitsFactionList extends ListScreenListBase<RecruitsFactionEntry
         this.filter = "";
         this.showPlayerCount = showPlayerCount;
         this.includeOwn = includeOwn;
-        //? if forge {
+        //? if <1.21 {
         setRenderBackground(false);
         setRenderTopAndBottom(false);
         setRenderSelection(true);

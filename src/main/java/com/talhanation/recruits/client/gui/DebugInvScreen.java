@@ -20,10 +20,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 import com.talhanation.recruits.util.RecruitsAttributes;
 import org.lwjgl.glfw.GLFW;
 
@@ -31,7 +31,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFW;
 import java.text.DecimalFormat;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class DebugInvScreen extends ScreenBase<DebugInvMenu> {
 
     private static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(Main.MOD_ID,"textures/gui/debug_gui.png" );
@@ -93,7 +93,7 @@ public class DebugInvScreen extends ScreenBase<DebugInvMenu> {
 
     protected void containerTick() {
         super.containerTick();
-        //? if forge {
+        //? if <1.21 {
         if(textField != null) textField.tick();
         //?}
     }

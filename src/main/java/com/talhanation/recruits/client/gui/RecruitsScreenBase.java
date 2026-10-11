@@ -38,7 +38,7 @@ public abstract class RecruitsScreenBase extends Screen{
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        //? if forge {
+        //? if <1.21 {
         renderBackground(guiGraphics);
         //?}
         renderBackground(guiGraphics, mouseX, mouseY, delta);

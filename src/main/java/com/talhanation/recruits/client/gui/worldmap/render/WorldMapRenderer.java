@@ -236,7 +236,11 @@ public final class WorldMapRenderer {
 
     private void drawBatches(GuiGraphics guiGraphics, MapFramebufferPass.Frame frame) {
         Matrix4f matrix = guiGraphics.pose().last().pose();
+        //? if <1.21 {
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+        //?} else {
+        /*BufferBuilder buffer;
+        *///?}
         Iterator<DrawBatch> iterator = drawBatches.values().iterator();
         while (iterator.hasNext()) {
             DrawBatch drawBatch = iterator.next();
@@ -246,11 +250,19 @@ public final class WorldMapRenderer {
             }
 
             RenderSystem.setShaderTexture(0, drawBatch.textureId);
+            //? if <1.21 {
             buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+            //?} else {
+            /*buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+            *///?}
             for (DrawTile drawTile : drawBatch.tiles) {
                 appendWorldTile(buffer, matrix, drawTile, frame);
             }
+            //? if <1.21 {
             BufferUploader.drawWithShader(buffer.end());
+            //?} else {
+            /*BufferUploader.drawWithShader(buffer.buildOrThrow());
+            *///?}
         }
     }
 
@@ -282,10 +294,26 @@ public final class WorldMapRenderer {
             float v1,
             float u2,
             float v2) {
+        //? if <1.21 {
         buffer.vertex(matrix, (float) x1, (float) z2, 0.0F).uv(u1, v2).endVertex();
+        //?} else {
+        /*buffer.addVertex(matrix, (float) x1, (float) z2, 0.0F).setUv(u1, v2);
+        *///?}
+        //? if <1.21 {
         buffer.vertex(matrix, (float) x2, (float) z2, 0.0F).uv(u2, v2).endVertex();
+        //?} else {
+        /*buffer.addVertex(matrix, (float) x2, (float) z2, 0.0F).setUv(u2, v2);
+        *///?}
+        //? if <1.21 {
         buffer.vertex(matrix, (float) x2, (float) z1, 0.0F).uv(u2, v1).endVertex();
+        //?} else {
+        /*buffer.addVertex(matrix, (float) x2, (float) z1, 0.0F).setUv(u2, v1);
+        *///?}
+        //? if <1.21 {
         buffer.vertex(matrix, (float) x1, (float) z1, 0.0F).uv(u1, v1).endVertex();
+        //?} else {
+        /*buffer.addVertex(matrix, (float) x1, (float) z1, 0.0F).setUv(u1, v1);
+        *///?}
     }
 
     private static float getMapBrightness() {

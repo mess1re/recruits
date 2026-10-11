@@ -2,22 +2,19 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.talhanation.recruits.mixin",
-  "plugin": "com.talhanation.recruits.mixin.OptionalCompatMixinPlugin",
   "compatibilityLevel": "${java_compatibility}",
-  "refmap": "mixins.recruits.refmap.json",
   "mixins": [
     "AbstractHorseMixin",
     "AnimalMixin",
     "CamelMixin",
     "ClassInstanceMultiMapMixin",
     "GoalUtilsMixin",
+    "ItemEntityMixin",
     "LivingEntityMixin",
     "MobMixin",
-    "compat.corpse.CorpseEntityAccessor",
     "WalkNodeEvaluatorMixin"
   ],
   "client": [
-    "compat.corpse.CorpseRendererMixin",
     "client.ClientLevelMixin",
     "MixinMinecraft"
   ],

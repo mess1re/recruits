@@ -2,19 +2,18 @@ package com.talhanation.recruits;
 
 import com.talhanation.recruits.world.RecruitsClaim;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import com.talhanation.recruits.events.Cancelable;
+import com.talhanation.recruits.events.Event;
 
 /**
- * Siege-Events werden auf dem {@code MinecraftForge.EVENT_BUS} gepostet
+ * Siege-Events werden auf dem {@link com.talhanation.recruits.events.RecruitsEventBus} gepostet
  * und können von anderen Mods abonniert werden.
  *
  * <pre>
- *   {@code @SubscribeEvent}
- *   public void onSiegeStart(SiegeEvent.Start event) {
+ *   RecruitsEventBus.register(SiegeEvent.Start.class, event -> {
  *       // event.getClaim(), event.getLevel()
  *       // event.setCanceled(true) verhindert den Siege-Start
- *   }
+ *   });
  * </pre>
  */
 public abstract class SiegeEvent extends Event {
@@ -44,7 +43,7 @@ public abstract class SiegeEvent extends Event {
      * <p>Ist cancelable: {@code event.setCanceled(true)} verhindert den Start.</p>
      */
     @Cancelable
-    public static class Start extends SiegeEvent implements RecruitsCancellableEvent {
+    public static class Start extends SiegeEvent {
         public Start(RecruitsClaim claim, ServerLevel level) {
             super(claim, level);
         }
@@ -85,17 +84,16 @@ public abstract class SiegeEvent extends Event {
      * </ul>
      *
      * <pre>
-     *   {@code @SubscribeEvent}
-     *   public void onSiegeTick(SiegeEvent.Tick event) {
+     *   RecruitsEventBus.register(SiegeEvent.Tick.class, event -> {
      *       int atk = event.getAttackerCount();
      *       int def = event.getDefenderCount();
      *       // Ratio-basierte Geschwindigkeit berechnen
      *       event.setDamage(customDamage);
-     *   }
+     *   });
      * </pre>
      */
     @Cancelable
-    public static class Tick extends SiegeEvent implements RecruitsCancellableEvent {
+    public static class Tick extends SiegeEvent {
         private final int attackerCount;
         private final int defenderCount;
         private int damage;

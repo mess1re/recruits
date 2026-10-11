@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-//? if forge {
+//? if <1.21 {
 public class SailorNodeEvaluator extends SwimNodeEvaluator {
     private float oldWaterMalus;
     private float oldBlockedMalus;
@@ -142,12 +142,12 @@ public class SailorNodeEvaluator extends SwimNodeEvaluator {
     @Override
     public void prepare(@NotNull PathNavigationRegion region, @NotNull Mob mob) {
         super.prepare(region, mob);
-        this.oldWaterMalus = mob.getPathfindingMalus(PathType.WATER);
-        this.oldBlockedMalus = mob.getPathfindingMalus(PathType.BLOCKED);
-        this.oldBreachMalus = mob.getPathfindingMalus(PathType.BREACH);
-        mob.setPathfindingMalus(PathType.WATER, 8.0F);
-        mob.setPathfindingMalus(PathType.BLOCKED, -1.0F);
-        mob.setPathfindingMalus(PathType.BREACH, 0.0F);
+        this.oldWaterMalus = mob.getPathfindingMalus(BlockPathTypes.WATER);
+        this.oldBlockedMalus = mob.getPathfindingMalus(BlockPathTypes.BLOCKED);
+        this.oldBreachMalus = mob.getPathfindingMalus(BlockPathTypes.BREACH);
+        mob.setPathfindingMalus(BlockPathTypes.WATER, 8.0F);
+        mob.setPathfindingMalus(BlockPathTypes.BLOCKED, -1.0F);
+        mob.setPathfindingMalus(BlockPathTypes.BREACH, 0.0F);
     }
 
     @Override
@@ -187,9 +187,9 @@ public class SailorNodeEvaluator extends SwimNodeEvaluator {
 
     @Override
     public void done() {
-        this.mob.setPathfindingMalus(PathType.WATER, this.oldWaterMalus);
-        this.mob.setPathfindingMalus(PathType.BLOCKED, this.oldBlockedMalus);
-        this.mob.setPathfindingMalus(PathType.BREACH, this.oldBreachMalus);
+        this.mob.setPathfindingMalus(BlockPathTypes.WATER, this.oldWaterMalus);
+        this.mob.setPathfindingMalus(BlockPathTypes.BLOCKED, this.oldBlockedMalus);
+        this.mob.setPathfindingMalus(BlockPathTypes.BREACH, this.oldBreachMalus);
         super.done();
     }
 }

@@ -33,7 +33,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import com.talhanation.recruits.client.gui.widgets.ExtendedButton;
 import org.lwjgl.glfw.GLFW;
 
 
@@ -232,7 +232,9 @@ public class FactionEditScreen extends ScreenBase<TeamEditMenu> {
     public void containerTick() {
         super.containerTick();
 
+        //? if <1.21 {
         if(textFieldTeamName != null) textFieldTeamName.tick();
+        //?}
 
         if(postInit) {
             this.postInit();

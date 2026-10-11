@@ -19,13 +19,13 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Main.MOD_ID, Registries.ITEM);
     public static final List<RegistrySupplier<SpawnEggItem>> SPAWN_EGGS = Lists.newArrayList();
 
-    public static final RegistrySupplier<SpawnEggItem> RECRUIT_SPAWN_EGG = createSpawnEggItem("recruit", ModEntityTypes.RECRUIT::get, 16755200, 16777045);
-    public static final RegistrySupplier<SpawnEggItem> BOWMAN_SPAWN_EGG = createSpawnEggItem("bowman", ModEntityTypes.BOWMAN::get, 16755200, 16777045);
-    public static final RegistrySupplier<SpawnEggItem> NOMAD_SPAWN_EGG = createSpawnEggItem("nomad", ModEntityTypes.NOMAD::get, 16755200, 16777045);
-    public static final RegistrySupplier<SpawnEggItem> RECRUIT_SHIELD_SPAWN_EGG = createSpawnEggItem("recruit_shieldman", ModEntityTypes.RECRUIT_SHIELDMAN::get, 16755200, 16777045);
-    public static final RegistrySupplier<SpawnEggItem> HORSEMAN_SPAWN_EGG = createSpawnEggItem("horseman", ModEntityTypes.HORSEMAN::get, 16755200, 16777045);
-    public static final RegistrySupplier<SpawnEggItem> CROSSBOWMAN_SPAWN_EGG = createSpawnEggItem("crossbowman", ModEntityTypes.CROSSBOWMAN::get, 16755200, 16777045);
-    public static final RegistrySupplier<SpawnEggItem> VILLAGER_NOBLE_SPAWN_EGG = createSpawnEggItem("villager_noble", ModEntityTypes.VILLAGER_NOBLE::get, 16755200, 16777045);
+    public static final RegistrySupplier<SpawnEggItem> RECRUIT_SPAWN_EGG = createSpawnEggItem("recruit", ModEntityTypes.RECRUIT, 16755200, 16777045);
+    public static final RegistrySupplier<SpawnEggItem> BOWMAN_SPAWN_EGG = createSpawnEggItem("bowman", ModEntityTypes.BOWMAN, 16755200, 16777045);
+    public static final RegistrySupplier<SpawnEggItem> NOMAD_SPAWN_EGG = createSpawnEggItem("nomad", ModEntityTypes.NOMAD, 16755200, 16777045);
+    public static final RegistrySupplier<SpawnEggItem> RECRUIT_SHIELD_SPAWN_EGG = createSpawnEggItem("recruit_shieldman", ModEntityTypes.RECRUIT_SHIELDMAN, 16755200, 16777045);
+    public static final RegistrySupplier<SpawnEggItem> HORSEMAN_SPAWN_EGG = createSpawnEggItem("horseman", ModEntityTypes.HORSEMAN, 16755200, 16777045);
+    public static final RegistrySupplier<SpawnEggItem> CROSSBOWMAN_SPAWN_EGG = createSpawnEggItem("crossbowman", ModEntityTypes.CROSSBOWMAN, 16755200, 16777045);
+    public static final RegistrySupplier<SpawnEggItem> VILLAGER_NOBLE_SPAWN_EGG = createSpawnEggItem("villager_noble", ModEntityTypes.VILLAGER_NOBLE, 16755200, 16777045);
 
     public static final RegistrySupplier<BlockItem> RECRUIT_BLOCK = ITEMS.register("recruit_block", () -> new BlockItem(ModBlocks.RECRUIT_BLOCK.get(), new Item.Properties()));
     public static final RegistrySupplier<BlockItem> BOWMAN_BLOCK = ITEMS.register("bowman_block", () -> new BlockItem(ModBlocks.BOWMAN_BLOCK.get(), new Item.Properties()));

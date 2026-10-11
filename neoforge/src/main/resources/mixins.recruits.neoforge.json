@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.talhanation.recruits.neoforge.mixin",
+  "plugin": "com.talhanation.recruits.compat.OptionalCompatMixinPlugin",
+  "compatibilityLevel": "${java_compatibility}",
+  "mixins": [
+    "corpse.CorpseEntityAccessor"
+  ],
+  "client": [
+    "corpse.CorpseRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

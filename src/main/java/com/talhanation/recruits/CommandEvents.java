@@ -13,6 +13,7 @@ import com.talhanation.recruits.network.*;
 import com.talhanation.recruits.util.FormationUtils;
 import com.talhanation.recruits.util.RegistryUtils;
 import com.talhanation.recruits.world.RecruitsGroup;
+import com.talhanation.recruits.platform.PlatformHooks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -29,13 +30,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.*;
 import net.minecraft.world.phys.*;
-//? if forge {
-import net.minecraftforge.event.TickEvent;
-//?} else {
-/*import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-*///?}
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import dev.architectury.event.events.common.PlayerEvent;
+import dev.architectury.event.events.common.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -458,14 +454,12 @@ public class CommandEvents {
             RecruitsNetwork.sendToServer(new MessageCommandScreen(player));
         }
     }
-    @SubscribeEvent
-    //? if forge {
-    public void onServerPlayerTick(TickEvent.PlayerTickEvent event){
-        Player player = event.player;
-    //?} else {
-    /*public void onServerPlayerTick(PlayerTickEvent event){
-        Player player = event.getEntity();
-    *///?}
+    public void register() {
+        TickEvent.PLAYER_POST.register(this::onServerPlayerTick);
+        PlayerEvent.PLAYER_JOIN.register(this::onPlayerLoggedIn);
+    }
+
+    public void onServerPlayerTick(Player player){
         if(player instanceof ServerPlayer serverPlayer && serverPlayer.tickCount % 20 == 0){
             int formation = getSavedFormation(serverPlayer);
 
@@ -503,39 +497,38 @@ public class CommandEvents {
         }
     }
 
-    @SubscribeEvent
-    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        CompoundTag playerData = event.getEntity().getPersistentData();
-        CompoundTag data = playerData.getCompound(Player.PERSISTED_NBT_TAG);
+    public void onPlayerLoggedIn(ServerPlayer player) {
+        CompoundTag playerData = PlatformHooks.INSTANCE.getPersistentData(player);
+        CompoundTag data = playerData.getCompound(PlatformHooks.PERSISTED_NBT_TAG);
             if (!data.contains("MaxRecruits")) data.putInt("MaxRecruits", RecruitsServerConfig.MaxRecruitsForPlayer.get());
             if (!data.contains("CommandingGroup")) data.putInt("CommandingGroup", 0);
             if (!data.contains("TotalRecruits")) data.putInt("TotalRecruits", 0);
             if (!data.contains("ActiveGroups")) data.put("ActiveGroups", new ListTag());
             if (!data.contains("Formation")) data.putInt("Formation", 0);
-            if (!data.contains("FormationPos")) data.putIntArray("FormationPos", new int[]{(int) event.getEntity().getX(), (int) event.getEntity().getZ()});
+            if (!data.contains("FormationPos")) data.putIntArray("FormationPos", new int[]{(int) player.getX(), (int) player.getZ()});
 
-        playerData.put(Player.PERSISTED_NBT_TAG, data);
+        playerData.put(PlatformHooks.PERSISTED_NBT_TAG, data);
     }
 
     public static int getSavedFormation(Player player) {
-        CompoundTag playerNBT = player.getPersistentData();
-        CompoundTag nbt = playerNBT.getCompound(Player.PERSISTED_NBT_TAG);
+        CompoundTag playerNBT = PlatformHooks.INSTANCE.getPersistentData(player);
+        CompoundTag nbt = playerNBT.getCompound(PlatformHooks.PERSISTED_NBT_TAG);
 
         return nbt.getInt("Formation");
     }
 
     public static void saveFormation(Player player, int formation) {
-        CompoundTag playerNBT = player.getPersistentData();
-        CompoundTag nbt = playerNBT.getCompound(Player.PERSISTED_NBT_TAG);
+        CompoundTag playerNBT = PlatformHooks.INSTANCE.getPersistentData(player);
+        CompoundTag nbt = playerNBT.getCompound(PlatformHooks.PERSISTED_NBT_TAG);
 
         nbt.putInt( "Formation", formation);
-        playerNBT.put(Player.PERSISTED_NBT_TAG, nbt);
+        playerNBT.put(PlatformHooks.PERSISTED_NBT_TAG, nbt);
     }
 
 
     public static void saveUUIDList(Player player, String key, Collection<UUID> uuids) {
-        CompoundTag playerNBT = player.getPersistentData();
-        CompoundTag persisted = playerNBT.getCompound(Player.PERSISTED_NBT_TAG);
+        CompoundTag playerNBT = PlatformHooks.INSTANCE.getPersistentData(player);
+        CompoundTag persisted = playerNBT.getCompound(PlatformHooks.PERSISTED_NBT_TAG);
 
         ListTag list = new ListTag();
         for (UUID uuid : uuids) {
@@ -545,12 +538,12 @@ public class CommandEvents {
         }
 
         persisted.put(key, list);
-        playerNBT.put(Player.PERSISTED_NBT_TAG, persisted);
+        playerNBT.put(PlatformHooks.PERSISTED_NBT_TAG, persisted);
     }
 
     public static List<UUID> getSavedUUIDList(Player player, String key) {
-        CompoundTag playerNBT = player.getPersistentData();
-        CompoundTag persisted = playerNBT.getCompound(Player.PERSISTED_NBT_TAG);
+        CompoundTag playerNBT = PlatformHooks.INSTANCE.getPersistentData(player);
+        CompoundTag persisted = playerNBT.getCompound(PlatformHooks.PERSISTED_NBT_TAG);
 
         List<UUID> result = new ArrayList<>();
         if (!persisted.contains(key, Tag.TAG_LIST)) return result;
@@ -567,34 +560,34 @@ public class CommandEvents {
     }
 
     public static int[] getSavedFormationPos(Player player) {
-        CompoundTag playerNBT = player.getPersistentData();
-        CompoundTag nbt = playerNBT.getCompound(Player.PERSISTED_NBT_TAG);
+        CompoundTag playerNBT = PlatformHooks.INSTANCE.getPersistentData(player);
+        CompoundTag nbt = playerNBT.getCompound(PlatformHooks.PERSISTED_NBT_TAG);
 
         return nbt.getIntArray("FormationPos");
     }
 
     public static void saveFormationPos(Player player, int[] pos) {
-        CompoundTag playerNBT = player.getPersistentData();
-        CompoundTag nbt = playerNBT.getCompound(Player.PERSISTED_NBT_TAG);
+        CompoundTag playerNBT = PlatformHooks.INSTANCE.getPersistentData(player);
+        CompoundTag nbt = playerNBT.getCompound(PlatformHooks.PERSISTED_NBT_TAG);
 
         nbt.putIntArray( "FormationPos", pos);
-        playerNBT.put(Player.PERSISTED_NBT_TAG, nbt);
+        playerNBT.put(PlatformHooks.PERSISTED_NBT_TAG, nbt);
     }
 
     public static void saveFormationCenter(Player player, Vec3 center) {
-        CompoundTag playerNBT = player.getPersistentData();
-        CompoundTag nbt = playerNBT.getCompound(Player.PERSISTED_NBT_TAG);
+        CompoundTag playerNBT = PlatformHooks.INSTANCE.getPersistentData(player);
+        CompoundTag nbt = playerNBT.getCompound(PlatformHooks.PERSISTED_NBT_TAG);
 
         nbt.putDouble("FormationCenterX", center.x);
         nbt.putDouble("FormationCenterY", center.y);
         nbt.putDouble("FormationCenterZ", center.z);
-        playerNBT.put(Player.PERSISTED_NBT_TAG, nbt);
+        playerNBT.put(PlatformHooks.PERSISTED_NBT_TAG, nbt);
     }
 
     @Nullable
     public static Vec3 getSavedFormationCenter(Player player) {
-        CompoundTag playerNBT = player.getPersistentData();
-        CompoundTag nbt = playerNBT.getCompound(Player.PERSISTED_NBT_TAG);
+        CompoundTag playerNBT = PlatformHooks.INSTANCE.getPersistentData(player);
+        CompoundTag nbt = playerNBT.getCompound(PlatformHooks.PERSISTED_NBT_TAG);
 
         if(!nbt.contains("FormationCenterX")) return null;
 
