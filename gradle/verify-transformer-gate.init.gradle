@@ -1,0 +1,31 @@
+import java.util.concurrent.atomic.AtomicInteger
+
+// Run with --parallel --no-build-cache --no-configuration-cache -I this file.
+// Force transformer execution while leaving compilation and other inputs cached.
+def active = new AtomicInteger()
+def completed = new AtomicInteger()
+
+gradle.beforeProject { project ->
+    project.tasks.configureEach { task ->
+        if (task.name.startsWith('transformProduction')) {
+            task.outputs.upToDateWhen { false }
+            task.doFirst {
+                if (active.incrementAndGet() != 1) {
+                    throw new GradleException("Architectury transformers overlap: ${task.path}")
+                }
+                task.logger.lifecycle("Transformer gate: START ${task.path}")
+            }
+            task.doLast {
+                active.decrementAndGet()
+                completed.incrementAndGet()
+                task.logger.lifecycle("Transformer gate: END ${task.path}")
+            }
+        }
+    }
+}
+
+gradle.buildFinished { result ->
+    if (result.failure == null && completed.get() < 2) {
+        throw new GradleException('Gate verification requires at least two executed transformer tasks.')
+    }
+}
