@@ -1,26 +1,18 @@
 package com.talhanation.recruits.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.talhanation.recruits.Main;
+import com.talhanation.recruits.client.events.ClientEvent;
 import com.talhanation.recruits.client.render.layer.RecruitHumanBiomeLayer;
 import com.talhanation.recruits.client.render.layer.RecruitHumanCompanionLayer;
 import com.talhanation.recruits.client.render.layer.RecruitHumanTeamColorLayer;
-import com.talhanation.recruits.compat.musketmod.IWeapon;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
-import com.talhanation.recruits.entities.CrossBowmanEntity;
-import com.talhanation.recruits.platform.ClientPlatformHooks;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.layers.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.item.CrossbowItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.UseAnim;
 
 public class RecruitHumanRenderer extends MobRenderer<AbstractRecruitEntity, HumanoidModel<AbstractRecruitEntity>> {
 
@@ -54,9 +46,9 @@ public class RecruitHumanRenderer extends MobRenderer<AbstractRecruitEntity, Hum
     public RecruitHumanRenderer(EntityRendererProvider.Context mgr) {
         super(mgr, new HumanoidModel<>((mgr.bakeLayer(ModelLayers.PLAYER))), 0.5F);
         this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel(mgr.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)), new HumanoidModel(mgr.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)), mgr.getModelManager()));
-        this.addLayer(new RecruitHumanTeamColorLayer(this));
-        this.addLayer(new RecruitHumanBiomeLayer(this));
-        this.addLayer(new RecruitHumanCompanionLayer(this));
+        this.addLayer(new RecruitHumanTeamColorLayer(this, mgr.bakeLayer(ClientEvent.RECRUIT_HUMAN_TEAM_LAYER)));
+        this.addLayer(new RecruitHumanBiomeLayer(this, mgr.bakeLayer(ClientEvent.RECRUIT_HUMAN_BIOME_LAYER)));
+        this.addLayer(new RecruitHumanCompanionLayer(this, mgr.bakeLayer(ClientEvent.RECRUIT_HUMAN_COMPANION_LAYER)));
         //this.addLayer(new ArrowLayer<>(mgr, this));
         this.addLayer(new ItemInHandLayer<>(this, mgr.getItemInHandRenderer()));
         this.addLayer(new CustomHeadLayer<>(this, mgr.getModelSet(), mgr.getItemInHandRenderer()));
@@ -70,60 +62,9 @@ public class RecruitHumanRenderer extends MobRenderer<AbstractRecruitEntity, Hum
     }
 
     private void setModelProperties(AbstractRecruitEntity recruit) {
-        HumanoidModel<AbstractRecruitEntity> model = this.getModel();
-
-        model.setAllVisible(true);
-        model.crouching = recruit.isCrouching();
-        HumanoidModel.ArmPose humanoidmodel$armpose = getArmPose(recruit, InteractionHand.MAIN_HAND);
-        HumanoidModel.ArmPose humanoidmodel$armpose1 = getArmPose(recruit, InteractionHand.OFF_HAND);
-        if (humanoidmodel$armpose.isTwoHanded()) {
-            humanoidmodel$armpose1 = recruit.getOffhandItem().isEmpty() ? HumanoidModel.ArmPose.EMPTY : HumanoidModel.ArmPose.ITEM;
-        }
-        if (recruit.getMainArm() == HumanoidArm.RIGHT) {
-            model.rightArmPose = humanoidmodel$armpose;
-            model.leftArmPose = humanoidmodel$armpose1;
-        } else {
-            model.rightArmPose = humanoidmodel$armpose1;
-            model.leftArmPose = humanoidmodel$armpose;
-        }
+        RecruitModelProperties.configure(this.getModel(), recruit);
     }
 
-    private static HumanoidModel.ArmPose getArmPose(AbstractRecruitEntity recruit, InteractionHand hand) {
-        ItemStack itemstack = recruit.getItemInHand(hand);
-        boolean isMusket = IWeapon.isMusketModWeapon(itemstack) && (recruit instanceof CrossBowmanEntity crossBowman)  && crossBowman.isAggressive();
-        if (itemstack.isEmpty()) {
-            return HumanoidModel.ArmPose.EMPTY;
-        } else {
-            if (recruit.getUsedItemHand() == hand && recruit.getUseItemRemainingTicks() > 0) {
-                UseAnim useanim = itemstack.getUseAnimation();
-                if (useanim == UseAnim.BLOCK) {
-                    return HumanoidModel.ArmPose.BLOCK;
-                }
 
-                if (useanim == UseAnim.BOW) {
-                    return HumanoidModel.ArmPose.BOW_AND_ARROW;
-                }
-
-                if (useanim == UseAnim.SPEAR) {
-                    return HumanoidModel.ArmPose.THROW_SPEAR;
-                }
-
-                if (useanim == UseAnim.CROSSBOW && hand == recruit.getUsedItemHand() || isMusket) {
-                    return HumanoidModel.ArmPose.CROSSBOW_CHARGE;
-                }
-
-                if (useanim == UseAnim.SPYGLASS) {
-                    return HumanoidModel.ArmPose.SPYGLASS;
-                }
-            } else if (!recruit.swinging && itemstack.is(Items.CROSSBOW) && CrossbowItem.isCharged(itemstack) || isMusket) {
-                return HumanoidModel.ArmPose.CROSSBOW_HOLD;
-            }
-
-            HumanoidModel.ArmPose forgeArmPose = ClientPlatformHooks.INSTANCE.getArmPose(recruit, hand, itemstack);
-            if (forgeArmPose != null) return forgeArmPose;
-
-            return HumanoidModel.ArmPose.ITEM;
-        }
-    }
 
 }

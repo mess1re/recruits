@@ -11,6 +11,9 @@ import com.talhanation.recruits.config.RecruitsClientConfig;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import com.talhanation.recruits.init.ModEntityTypes;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -31,6 +34,18 @@ public class ClientEvent {
     public static ModelLayerLocation RECRUIT = new ModelLayerLocation(new ResourceLocation(Main.MOD_ID + "recruit"), "recruit");
     public static ModelLayerLocation RECRUIT_OUTER_ARMOR = new ModelLayerLocation(new ResourceLocation(Main.MOD_ID + "recruit_outer_layer"), "recruit_outer_layer");
     public static ModelLayerLocation RECRUIT_INNER_ARMOR = new ModelLayerLocation(new ResourceLocation(Main.MOD_ID + "recruit_inner_layer"), "recruit_inner_layer");
+
+    public static final ModelLayerLocation RECRUIT_HUMAN_TEAM_LAYER = humanLayer("team");
+    public static final ModelLayerLocation RECRUIT_HUMAN_BIOME_LAYER = humanLayer("biome");
+    public static final ModelLayerLocation RECRUIT_HUMAN_COMPANION_LAYER = humanLayer("companion");
+
+    private static ModelLayerLocation humanLayer(String name) {
+        return new ModelLayerLocation(new ResourceLocation(Main.MOD_ID, "recruit_human_" + name), name);
+    }
+
+    private static LayerDefinition humanLayerDefinition(float deformation) {
+        return LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(deformation), 0.0F), 64, 64);
+    }
 
     public static void register() {
         entityRenderersEvent();
@@ -71,6 +86,9 @@ public class ClientEvent {
         EntityModelLayerRegistry.register(ClientEvent.RECRUIT, RecruitVillagerModel::createLayerDefinition);
         EntityModelLayerRegistry.register(ClientEvent.RECRUIT_OUTER_ARMOR, RecruitArmorLayer::createOuterArmorLayer);
         EntityModelLayerRegistry.register(ClientEvent.RECRUIT_INNER_ARMOR, RecruitArmorLayer::createInnerArmorLayer);
+        EntityModelLayerRegistry.register(RECRUIT_HUMAN_TEAM_LAYER, () -> humanLayerDefinition(0.20F));
+        EntityModelLayerRegistry.register(RECRUIT_HUMAN_BIOME_LAYER, () -> humanLayerDefinition(0.22F));
+        EntityModelLayerRegistry.register(RECRUIT_HUMAN_COMPANION_LAYER, () -> humanLayerDefinition(0.24F));
 
     }
 
